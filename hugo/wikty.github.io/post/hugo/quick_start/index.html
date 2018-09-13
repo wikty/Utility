@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Wikty  | Hugo 起步</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.31-DEV" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    <link href='http://wikty.github.io/dist/main.css' rel='stylesheet' type="text/css" />
+    
+      
+    
+
+    
+
+    <meta property="og:title" content="Hugo 起步" />
+<meta property="og:description" content="简介 Hugo 是一款静态网站生成工具。如果你之前使用过 Jekyll ，那么一定不会对这类工具感到陌生。简单来说静态网站生成工具允许你以不同于传统博客系统（比如：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://wikty.github.io/post/hugo/quick_start/" />
+
+
+
+<meta property="article:published_time" content="2017-08-17T10:58:08-04:00"/>
+
+<meta property="article:modified_time" content="2017-08-17T10:58:08-04:00"/>
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Hugo 起步">
+<meta itemprop="description" content="简介 Hugo 是一款静态网站生成工具。如果你之前使用过 Jekyll ，那么一定不会对这类工具感到陌生。简单来说静态网站生成工具允许你以不同于传统博客系统（比如：">
+
+
+<meta itemprop="datePublished" content="2017-08-17T10:58:08-04:00" />
+<meta itemprop="dateModified" content="2017-08-17T10:58:08-04:00" />
+<meta itemprop="wordCount" content="2983">
+
+
+
+<meta itemprop="keywords" content="hugo," />
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Hugo 起步"/>
+<meta name="twitter:description" content="简介 Hugo 是一款静态网站生成工具。如果你之前使用过 Jekyll ，那么一定不会对这类工具感到陌生。简单来说静态网站生成工具允许你以不同于传统博客系统（比如："/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="http://wikty.github.io/" class="f3 fw2 hover-white no-underline white-90 dib">
+      Wikty
+    </a>
+    <div class="flex-l items-center">
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/post/" title="Posts page">
+              Posts
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+
+
+
+
+
+
+
+  <a href="https://github.com/wikty" class="link-transition github link dib z-999 pt3 pt0-l mr2" title="Github link">
+    <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+  </a>
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  <div class="flex-l mt2 mw8 center">
+    <article class="center cf pv5 ph3 ph4-ns mw7">
+      <p class="f6 b helvetica tracked">
+        
+        POST
+      </p>
+      <h1 class="f1 athelas">
+        Hugo 起步
+      </h1>
+        
+        
+      <time class="f6 mv4 dib tracked" datetime="2017-08-17T10:58:08-04:00">
+        August 17, 2017
+      </time>
+      <section class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray">
+        
+
+<h2 id="简介">简介</h2>
+
+<p><a href="https://www.gohugo.io/" title="Hugo Site">Hugo</a> 是一款静态网站生成工具。如果你之前使用过 <a href="http://jekyllrb.com/" title="Jekyll Site">Jekyll</a> ，那么一定不会对这类工具感到陌生。简单来说静态网站生成工具允许你以不同于传统博客系统（比如：<a href="https://wordpress.org/" title="WordPress Site">WordPress</a> ）的模式书写/发布内容，你可以用 <a href="http://daringfireball.net/projects/markdown/syntax" title="Markdown ">Markdown</a> 之类的文本标记语言撰写内容，然后使用静态网站生成工具将内容转换为网站形式。这里之所以说生成的网站是静态的，是由于网站内容在生成那一刻就是固定不变的了，不会像普通网站那样可以通过跟用户交互来动态生成内容。博客、文章以及技术文档等内容本来就是很少变化的，跟用户也没有交互性，因此这类站点很适合用静态网站工具来生成。</p>
+
+<p>静态网站生成工具的巨大优势在于：*书写语言灵活性带来内容创作的自由*。首先，Markdown 等标记语言本来就是通过简单的格式标记符来撰写文档的利器，使得内容创作者将精力集中在内容本身而不是内容的显示格式上；其次，用 Markdown 等标记语言书写的文档不仅仅可以通过静态网站生成工具转换为网站，利用 <a href="http://pandoc.org/" title="Pandoc Site">Pandoc</a> 这类文档转换工具可以将其转换为 PDF 、Word 等各种格式。使用 Markdown 等标记语言创作的内容数据源，可以使用各种工具将其转换为丰富多样的格式。更进一步来说，使用标记语言创作内容，使得内容创作过程和内容展示发布过程独立开来，给予了内容创作者极大的自由空间。</p>
+
+<p>为什么选择 Hugo 而不是 Jekyll ：Hugo 简单易用、安装方便而且生成网站的速度快。我是一个懒惰而且懒惰的人，以上两点足够成为我拥抱 Hugo 的理由，或者说只是不小心入坑了，懒得再爬出来。</p>
+
+<h2 id="安装-hugo">安装 Hugo</h2>
+
+<p>Hugo 支持各种操作系统而且安装方式也很多，最为简单的方法是<a href="https://github.com/spf13/hugo/releases" title="Hugo Download">下载</a>一个二进制程序（要下载跟自己操作系统对应的版本），然后将程序移动到合适的位置，就可以使用了 Hugo 。虽然将该程序放在任意位置都可以，不过为了使用起来方便，通常应将其移动到操作体系环境变量 <code>PATH</code> 可以搜索到的位置或者将程序所在位置添加到 <code>PATH</code> 环境变量中。下载 Hugo 并将程序移动到 <code>PATH</code> 可以搜索的位置，就算安装好 Hugo 了，要注意的是 Hugo 是一个基于命令行的工具（并没有图形界面），测试 Hugo 是否安装成功，打开命令行运行以下命令：</p>
+
+<pre><code class="language-shell">$ hugo version
+</code></pre>
+
+<p>如果成功的返回了 Hugo 的版本信息，说明安装成功。如果提示找不到 hugo 命令，说明没有将程序移动到 <code>PATH</code> 可以搜索到的位置。</p>
+
+<p>此外 Hugo 还可以通过操作系统的软件包管理工具来安装，比如 MacOS 可以使用 <a href="https://brew.sh/" title="MacOS Homebrew">Homebrew</a>，Windows 可以使用 <a href="https://chocolatey.org/" title="Windows Chocolatey">Chocolatey</a> 。如果有需要甚至可以自己编译源码进行安装，更多关于安装介绍参见[官网][]。</p>
+
+<h2 id="创建网站">创建网站</h2>
+
+<p>运行以下命令来创建网站</p>
+
+<pre><code class="language-shell">$ hugo new site your-folder-name
+</code></pre>
+
+<p><code>your-folder-name</code> 替换为自己的网站根目录名称（可以是相对路径或者绝对路径）。命令运行完后，可以看到 Hugo 创建了如下目录结构：</p>
+
+<pre><code>your-folder-name
+ ├─config.toml
+ ├─archetypes
+ ├─content
+ ├─data
+ ├─layouts
+ ├─static
+ └─themes
+</code></pre>
+
+<p>现在暂时不需要担心这么多目录到底用来干嘛的，只要记住我们平时使用最多的就是目录 <code>content</code> ，该目录用来存放我们编辑的文档。</p>
+
+<p>注：接下来大多数命令都需要在网站根目录（<code>your-folder-name</code>）中运行，如果没有特殊强调，假定你已经将命令行切换到了网站根目录。</p>
+
+<h2 id="添加主题">添加主题</h2>
+
+<p>主题是用来对网站内容进行布局和排版的资源文件，简单来说，主题用来决定网站的外观。Hugo 官网为我们提供了许多开源的主题资源，本文我们以 <a href="https://themes.gohugo.io/gohugo-theme-ananke/" title="Hugo Ananke Theme">Ananke 主题</a>为例，更多主题资源参见<a href="https://themes.gohugo.io/" title="Hugo Theme">官网</a>。</p>
+
+<p>主题的安装，可直接从主题网站下载，然后解压到网站源码目录中的主题目录下，也可以通过 Git 来安装。通过Git 安装主题的好处在于，以后更新主题时会比较方便。</p>
+
+<p>运行以下命令来添加 Ananke 主题：</p>
+
+<pre><code class="language-shell">$ cd your-folder-name
+$ git init
+$ git submodule add https://github.com/budparr/gohugo-theme-ananke.git themes/ananke
+$ echo 'theme = &quot;ananke&quot;' &gt;&gt; config.toml
+</code></pre>
+
+<p>如果命令行报错说找不到 git 命令，那是由于系统并未安装版本控制软件 Git，推荐前往 <a href="https://git-scm.com/" title="Git">git-scm.com</a> 下载安装 Git。或者直接前往 <a href="https://themes.gohugo.io/gohugo-theme-ananke/">https://themes.gohugo.io/gohugo-theme-ananke/</a> 下载主题的资源文件后，将其解压至目录 <code>your-folder-name/themes</code> 中。</p>
+
+<p>最后一行命令 <code>echo 'theme = &quot;ananke&quot;' &gt;&gt; config.toml</code> 用来将网站主题配置信息添加到 <code>config.toml</code> 文件中。注：在 Windows 下，应该将这样命令替换为 <code>echo theme = &quot;ananke&quot; &gt;&gt; config.toml</code> 。或者也可以直接用文本编辑器打开，添加一行字符串 <code>theme = &quot;ananke&quot;</code> 。</p>
+
+<h2 id="添加文档">添加文档</h2>
+
+<p>运行以下命令来创建内容文档：</p>
+
+<pre><code class="language-shell">$ hugo new post/first-article.md
+</code></pre>
+
+<p>此时可以在目录 <code>your-folder-name/content/post</code> 中发现新建文件 <code>first-article.md</code>，这是一个普通的 Markdown 文档，是我们写作的起点。这里之所以使用 Hugo 命令而不是自己创建 Markdown 文档，是因为通过 Hugo 命令创建的文档会包含一些初始内容，打开该文档可以看到如下内容：</p>
+
+<pre><code class="language-toml">+++
+date = &quot;2016-02-14T16:11:58+05:30&quot;
+draft = true
+title = &quot;First Article&quot;
+
++++
+</code></pre>
+
+<p>这些内容主要用来声明文档创建时间、标题等信息，我们可以修改这些这些内容，也可以添加其它内容到这里。上面内容中有一项 <code>draft=true</code> 表示当前文档是草稿，新创建的文档默认是草稿文档，在生成静态网站时是不会被发布出去的。现在在文档尾部另起一行，然后随便写一些内容，以便后续生成静态网站时可以看到文档的内容。</p>
+
+<h2 id="配置网站">配置网站</h2>
+
+<p>之前添加主题时，向文件 <code>config.toml</code> 添加过配置内容，其实该文件是网站的配置文件。现在该文件的内容应该是这样的：</p>
+
+<pre><code class="language-toml">languageCode = &quot;en-us&quot;
+title = &quot;My New Hugo Site&quot;
+baseURL = &quot;http://example.org/&quot;
+theme = &quot;ananke&quot;
+</code></pre>
+
+<p>其中<code>languageCode</code> 是网站语言信息； <code>title</code> 是网站标题；<code>baseURL</code> 是网站 URL 地址，在网站发布时需要设置此项；现在可以试着自己设置一个网站标题 <code>title</code> ，其它配置项暂时不改动。</p>
+
+<h2 id="预览网站">预览网站</h2>
+
+<p>运行以下命令来预览网站：</p>
+
+<pre><code class="language-shell">$ hugo server -D
+</code></pre>
+
+<p>命令运行完成后，可以通过浏览器来预览网站，在地址栏输入 <a href="http://localhost:1313/">http://localhost:1313/</a> 就可以看到生成的静态网站。</p>
+
+<p>以上命令中的 <code>-D</code> 用来表明草稿文档也同时发布，如果没有该选项草稿文档是不会被发布出去的。当然也可以将草稿文档变为非草稿状态：将文档头部的 <code>draft=true</code> 改为 <code>draft=false</code> ，或者使用 Hugo 命令来完成：</p>
+
+<pre><code class="language-shell">$ hugo undraft content/post/first-article.md
+</code></pre>
+
+<h2 id="发布网站">发布网站</h2>
+
+<p>经过上面折腾后，网站已经可以在自己的电脑上浏览了，不过只有将网站发布到互联网后，别人才能浏览。可以将网站发布到 GitHub ，也可以发布到自己的服务器上。当然对于大多数人而言发布到 GitHub 是首选，因为它是免费的而且操作也很简单。利用 Github 搭建网站，参见<a href="https://pages.github.com/" title="Github Pages">官网介绍</a>。简单来说，就是要在 Github 上注册账号，并创建一个代码仓库。</p>
+
+<h3 id="发布到github">发布到GitHub</h3>
+
+<p>在发布网站之前，还需要做些配置工作，假设你 Github 的用户名是 <code>github-username</code> ，Github 上创建的仓库名是 <code>your-repo-name</code>，那么在最终发布网站之后，所有人都可以通过网址 ：<a href="http://github-username.github.io/your-repo-name">http://github-username.github.io/your-repo-name</a> 来访问你的网站了，不过在发布之前，我们需要把这个信息写到网站的配置文件中，将配置文件中的 <code>baseURL = &quot;http://example.org/&quot;</code> 改为 <code>baseURL = &quot;http://github-username.github.io/your-repo-name&quot;</code> ，然后就可以继续发布网站了。</p>
+
+<p>首次发布到 GitHub，运行以下命令：</p>
+
+<pre><code class="language-shell"># 首先你需要在 GitHub 上创建一个仓库，具体方法参见 GitHub 官网
+# 在网站根目录中运行以下命令
+$ hugo
+$ cd public
+$ git init
+$ git remote add origin git@github.com:&lt;github-username&gt;/your-repo-name.git
+$ git checkout -b gh-pages
+$ git add --all
+$ git commit -m &quot;message about this commit&quot;
+$ git push -f origin gh-pages
+</code></pre>
+
+<p>然后就可以通过网址： 来访问发布的网站了，注意要将 <code>github-username</code> 替换为自己的 Github 用户名，<code>your-repo-name</code> 替换为在 Github 上创建的仓库名。</p>
+
+<p>以后网站内容要更新时，需要再次进行发布，后续发布运行以下命令：</p>
+
+<pre><code class="language-shell"># 网站根目录下运行以下命令
+$ hugo
+$ cd public
+$ git add --all
+$ git commit -m &quot;message about this commit&quot;
+$ git push -f origin gh-pages
+</code></pre>
+
+<h3 id="发布到自己的服务器">发布到自己的服务器</h3>
+
+<p>Hugo 程序使用 Go 语言编写，天生具有多线程的优势，可以在自己的服务器上使用 Hugo 来作为静态网站的 Web Server，当然也可以选择其它 Web Server 来托管自己的静态网站。要使 Hugo 作为 Web Server，需要运行以下命令：</p>
+
+<pre><code class="language-shell">$ hugo server --baseURL=http://yoursite.org/ \
+              --port=80 \
+              --appendPort=false \
+              --bind=87.245.198.50
+</code></pre>
+
+<p>其中 <code>--bind</code> 指定监听服务器上哪块网卡，<code>0.0.0.0</code> 表示监听所有网卡；运行上述命令后Hugo 会实时监测文档内容改变并根据文档内容来响应请求，为了优化性能，可以通过传递参数 <code>--disableLiveReload=true</code> 来关闭该功能。</p>
+
+<h2 id="更新网站">更新网站</h2>
+
+<p>后续对网站的更新流程大概是这样的：</p>
+
+<ul>
+<li>编辑内容文档</li>
+<li>本地预览效果</li>
+<li>生成并发布网站</li>
+</ul>
+
+      </section>
+      
+
+  
+  
+  
+  
+  
+
+
+    </article>
+    <div class="ph3 mt2 mt6-ns">
+      
+
+
+
+
+
+
+
+
+    </div>
+  </div>
+
+    </main>
+    <footer class="bg-near-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://wikty.github.io/" >
+    &copy; 2017 Wikty
+  </a>
+  
+
+
+
+
+
+
+
+  <a href="https://github.com/wikty" class="link-transition github link dib z-999 pt3 pt0-l mr2" title="Github link">
+    <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+  </a>
+
+
+  </div>
+</footer>
+
+    <script src="http://wikty.github.io/dist/app.bundle.js" async></script>
+
+  </body>
+</html>

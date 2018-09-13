@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Wikty</title>
+    <link>http://wikty.github.io/post/</link>
+    <description>Recent content in Posts on Wikty</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 17 Aug 2017 10:58:08 -0400</lastBuildDate>
+    
+	<atom:link href="http://wikty.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hugo 起步</title>
+      <link>http://wikty.github.io/post/hugo/quick_start/</link>
+      <pubDate>Thu, 17 Aug 2017 10:58:08 -0400</pubDate>
+      
+      <guid>http://wikty.github.io/post/hugo/quick_start/</guid>
+      <description>简介 Hugo 是一款静态网站生成工具。如果你之前使用过 Jekyll ，那么一定不会对这类工具感到陌生。简单来说静态网站生成工具允许你以不同于传统博客系统（比如：</description>
+    </item>
+    
+  </channel>
+</rss>
