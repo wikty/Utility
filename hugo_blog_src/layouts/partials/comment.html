@@ -1,0 +1,7 @@
+{{ if and (ne .Site.Params.comment false) (ne .Params.comment false) }}
+  {{ if eq .Site.Params.country "cn" }}
+    {{ partial "duoshuo.html" . }}
+  {{else}}
+    {{ partial "disqus.html" . }}
+  {{ end }}
+{{ end }}

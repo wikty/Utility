@@ -1,0 +1,47 @@
+blackfriday:
+  # GitHub-style automatic task/TODO list generation(default true)
+  taskLists: true
+  # enable smart punctuation substitutions including smart quotes, smart dashes, smart fractions(default true), etc.
+  # it may be fine-tuned with the angledQuotes, fractions, smartDashes and latexDashes flags
+  smartypants: true
+  # enables smart, angled double quotes(default false)
+  # "Hugo" render to  «Hugo» instead of “Hugo”
+  angledQuotes: false
+  # enables smart fractions(default true)
+  # 5/12 render to <sup>5</sup>&frasl;<sub>12</sub>
+  fractions: true
+  # enables smart dashes(default true), convert multiple hyphens into en dash or em dash
+  #  If true, its behavior can be modified with the latexDashes flag
+  smartDashes: true
+  # LaTeX-style smart dashes and selects(default true)
+  # if true, -- is translated into –(&ndash;), --- is translated into —(&mdash;)
+  # if false, -- is translated into –(&mdash;), "June - 3 July" is translated into "June &ndash; 3 July"
+  latexDashes: true
+  # opens external links in a new window or tab(default false)
+  hrefTargetBlank: false
+  # renders any header and footnote IDs without the document ID(default true)
+  # renders #my-header instead of #my-header:bec3ed8ba720b9073ab75abcf3ba5d97
+  plainIDAnchors: true
+  # Disable one or more of Blackfriday's Markdown extensions
+  extensionsmask: []
+  # Enable one or more of Blackfriday's Markdown extensions(default [])
+  extensions:
+    - hardLineBreak
+
+# EXTENSION_HARD_LINE_BREAK ----> hardLineBreak
+# EXTENSION_NO_INTRA_EMPHASIS          = 1 << iota // ignore emphasis markers inside words
+# EXTENSION_TABLES                                 // render tables
+# EXTENSION_FENCED_CODE                            // render fenced code blocks
+# EXTENSION_AUTOLINK                               // detect embedded URLs that are not explicitly marked
+# EXTENSION_STRIKETHROUGH                          // strikethrough text using ~~test~~
+# EXTENSION_LAX_HTML_BLOCKS                        // loosen up HTML block parsing rules
+# EXTENSION_SPACE_HEADERS                          // be strict about prefix header rules
+# EXTENSION_HARD_LINE_BREAK                        // translate newlines into line breaks
+# EXTENSION_TAB_SIZE_EIGHT                         // expand tabs to eight spaces instead of four
+# EXTENSION_FOOTNOTES                              // Pandoc-style footnotes
+# EXTENSION_NO_EMPTY_LINE_BEFORE_BLOCK             // No need to insert an empty line to start a (code, quote, ordered list, unordered list) block
+# EXTENSION_HEADER_IDS                             // specify header IDs  with {#id}
+# EXTENSION_TITLEBLOCK                             // Titleblock ala pandoc
+# EXTENSION_AUTO_HEADER_IDS                        // Create the header ID from the text
+# EXTENSION_BACKSLASH_LINE_BREAK                   // translate trailing backslashes into line breaks
+# EXTENSION_DEFINITION_LISTS // render definition lists

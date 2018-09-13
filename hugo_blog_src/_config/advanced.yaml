@@ -1,0 +1,38 @@
+disableLiveReload:          false
+# Do not build RSS files
+disableRSS:                 false
+# Do not build Sitemap file
+disableSitemap:             false
+# Build robots.txt file
+enableRobotsTXT:            false
+# Do not render 404 page
+disable404:                 false
+# Do not inject generator meta tag on homepage
+disableHugoGeneratorInject: false
+# Enable Emoji emoticons support for page content.
+# See www.emoji-cheat-sheet.com
+enableEmoji:                false
+footnoteAnchorPrefix:       ""
+footnoteReturnLinkContents: ""
+# google analytics tracking id
+googleAnalytics:            ""
+# Enable Logging
+log:                        false
+# Log File path (if set, logging enabled automatically)
+logFile:                    ""
+# enables syntax guessing for code fences without specified language
+pygmentsCodeFencesGuessSyntax: false
+# color-codes for highlighting derived from this style
+pygmentsStyle:              "monokai"
+# true: use pygments-css or false: color-codes directly
+pygmentsUseClasses:         false
+# maximum number of items in the RSS feed
+rssLimit:                   15
+# default sitemap configuration map
+sitemap:
+uglyURLs:                   false
+# Do not make the url/path to lowercase
+disablePathToLower:         false
+watch:                      true
+# specify document markup format: "rst", "mmark", "md" etc.
+markup: "rst"
