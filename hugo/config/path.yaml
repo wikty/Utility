@@ -1,0 +1,37 @@
+# Hugo-defined variables and default values
+archetypeDir:               "archetypes"
+# config file (default is path/config.yaml|json|toml)
+config:                     "config.toml"
+contentDir:                 "content"
+dataDir:                    "data"
+defaultExtension:           "html"
+defaultLayout:              "post"
+layoutDir:                  "layouts"
+# filesystem path to write files to
+publishDir:                 "public"
+# filesystem path to read files relative from
+source:                     ""
+staticDir:                  "static"
+# theme to use (located by default in /themes/THEMENAME/)
+themesDir:                  "themes"
+paginatePath:               "page"
+paginate:                   10
+# include content marked as draft
+buildDrafts:                false
+# include content with publishdate in the future
+buildFuture:                false
+# include content already expired
+buildExpired:               false
+# enable this to make all relative URLs relative to content root. Note that this does not affect absolute URLs.
+relativeURLs:               false
+canonifyURLs:               false
+# Do not inject generator meta tag on homepage
+disableHugoGeneratorInject: false
+footnoteAnchorPrefix:       ""
+footnoteReturnLinkContents: ""
+# Don't sync permission mode of files
+noChmod:                    false
+# Don't sync modification time of files
+noTimes:                    false
+# Do not make the url/path to lowercase
+disablePathToLower:         false

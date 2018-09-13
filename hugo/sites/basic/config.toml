@@ -1,0 +1,24 @@
+title = "less is more"
+languageCode = "zh-cn"
+# hostname (and path) to the root, e.g. http://example.com/blog/
+# if deploy on github pages, maybe is http://your-username.github.io/repo-name
+baseURL = ""
+# frontmatter format: "toml", "yaml", "json"
+metaDataFormat = "yaml"
+# theme for this site
+theme = "hugo_theme_robust"
+# auto-detect Chinese/Japanese/Korean Languages in the content. (.Summary and .WordCount can work properly in CJKLanguage)
+hasCJKLanguage = true
+# regular expressions list, ingnore those files when hugo rendering
+#ignoreFiles = []
+
+[Params]
+  Author = "WhoAreYou"
+  DateForm = "2006/01/02"
+  comment = true
+  share = true
+  mathjax = true
+  # cn or us
+  country = "cn"
+  disqusShortname = "your-disqus-shortname"
+  duoshuoShortname = "your-duoshuo-shortname"

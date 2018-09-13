@@ -1,0 +1,14 @@
+# hostname (and path) to the root, e.g. http://spf13.com/
+baseURL:                    ""
+languageCode:               ""
+theme:                      ""
+title:                      ""
+# "yaml", "toml", "json"
+metaDataFormat:             "yaml"
+# if true, auto-detect Chinese/Japanese/Korean Languages in the content. (.Summary and .WordCount can work properly in CJKLanguage)
+hasCJKLanguage:             true
+# regular expressions list, ingnore those files when hugo rendering
+ignoreFiles: [""]
+
+Params:
+  Author: "author-name"
