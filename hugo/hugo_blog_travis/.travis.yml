@@ -1,0 +1,28 @@
+language: go
+
+go:
+  - master # This uses automatically the latest version of go
+
+addons:
+  apt:
+    packages:
+      - pandoc
+
+install:
+  - go get github.com/spf13/hugo # This provides the latest version of Hugo to Travis CI
+
+before_script:
+  - rm -rf src/public
+
+script:
+  - hugo --source=src # Build from Hugo source dir
+
+deploy:
+  local_dir: src/public # Directory to push to GitHub Pages/Hugo static site output dir
+  repo: wikty/wikty.github.io # Travis CI push static to repo:target_branch
+  target_branch: master # Depends on github pages' type, this is master or gh-pages
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+  on:
+    branch: master # Travis CI clone project from current-repo:master
