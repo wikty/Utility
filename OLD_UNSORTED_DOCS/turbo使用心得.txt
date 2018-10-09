@@ -1,0 +1,22 @@
+文件名规则：
+turbo可以识别的文件名或者目录名貌似
+到6位后就截断了，例如MYSOURCES在turbo
+中的表示应该是MYSOUR~1，知道这点很重要
+因为在设置turbo的include，lib等路径时
+要注意了
+
+turbo设置路径
+在Options菜单下的Directories中必须设置的
+三项内容是Include Directory, Lib Directory
+和 Output Directory目录，注意设置目录是遵循
+文件名规则
+
+
+错误Unable to create output
+当我编译时出现该错误，即使是简单的helloworld
+也会出错，出错的原因有：
+1，没有正确设置include, lib, output目录
+   这里的没有正确设置不仅仅是说路径有误
+   文件名规则没有遵循也会出错
+2，路径虽然设置正确了，但是相应的目录中
+   缺少必要的头文件或库文件

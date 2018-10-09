@@ -1,0 +1,363 @@
+﻿1，Linux
+	unix环境高级编程（第二版）史蒂文斯著
+	深入理解linux内核（第三版）
+	人月神话
+2，jQuery
+	visualjquery.com是jquery实战作者之一维护的jquery介绍网站
+	plugins.jquery.com是jquery的官方插件库
+3，论坛开源引擎phpBB
+	www.phpbb.com
+4，IDE三大社区
+	www.eclipse.org, www.netbeans.com, www.jetbrains.com
+5，javascript的领导者们
+	Brendon Eich brendaneich.com
+	Dougals Crockford crockford.com
+	John Resig ejohn.org
+	Dean Edwards dean.edwards.name
+	Paul Irish paulirish.com
+	Alex Sexton alexsexton.com
+	Remy Sharp remysharp.com
+	Chirstian Heilmann chirstianheilmann.com
+	Thomas Fuchs mir.aculo.us
+6，微格式（解决特殊数据类型在网页中的表现形式，很多知名网站使用）
+	microformats.org
+	我搞错了，微格式不是用于解决特定类型数据的在网页中的表现形式的，而是通过一些html属性（常常是class）对数据进行标记，用以
+	说明数据内容的用途，例如class='vcard'使用来表面该内容是一张名片，微格式因为被很多人使用所以这样有助于数据交换和对特定类型内
+	容的理解
+7，web游戏设计
+	Gabe Zichermann和Christopher Cunningham合著的书Gamification by Design(O'Reilly)
+8，css背景图片实现圆角
+	www.456bereastreet.com/archive/200505/transparent_custom_corners_and_borders，即456Berea Street的Roger Johansson写的js操纵
+	dom添加圆角
+	有一种技术叫做mountaintop corner，使用蒙版的圆角图片可以实现任意颜色和大小的圆角应用
+9，跨浏览器实现的js选择器函数（IE6可用）
+	Simon Willison编写的getElementBySelector参见simonvillison.net/2003/mar/25/getelementbyselector
+10，css下拉列表技术
+	Patrick Griggiths开发的sucherfish技术www.alistapart.com/articles/dropdowns这里还提供了不支持:hover是的js解决方案
+	js实现下拉
+htmldog.com这里是一个不错的网站，有html，css，js简单问题的解决方案
+11，web字体的使用
+	CSS FONTS http://dev.w3.org/csswg/css3-fonts基于新的css方案
+	IFR和sIFR技术：通过flash和js可以使得用户计算机上没有安装的字体可以通过flash显示出相似的效果
+	www.mikeindustries.com/blog/sifr
+	cufon可以看成是sIFR到@font-face过渡阶段的替代方案，通过js实现
+	wiki.github.com/sorccu/cufon/脚本下载地址，之后将自己的字体文件上传生成另一个脚本，将这两个脚本添加到自己的页面中，这个脚本
+	甚至可以利用jquery等框架
+	可以在web中引用的@font-face字体库
+	typekit.com ,一个不错的字体Museo Sans 500
+	google font api是类似于typekit的东西
+	备注：字体样式转换器，www.fontsquirrel.com/fontface/generator
+12，Geolocation
+	基于js的地理定位API http://dev.w3.org/geo/api/spec-source.html
+13，SVG矢量图形技术
+	www.w3.org/tr/svg
+	SVG在现在的浏览器上普及不广泛，如果打算使用SVG的话，建议使用Raphael库http://raphaeljs.com
+14，客户端储存技术Web Storage（超cookie技术）
+	dev.w3.org/html5/webstorage
+15，客户端大量负责计算Web Workers
+	whatwg.org/specs/web-workers/current-work/
+16，双向web通行技术WebSocket
+	dev.w3.org/html5/websockets
+	一个实例：http://rawkets.com
+17，几本html5的经典图书
+	Introducing HTML5 作者：Bruce Lawson和Remy Sharp http://introducinghtml5.com
+	HTML 5 Doctor http://html5doctor.com
+	Dive Into HTML5 作者：Mark Pilgrim http://diveintohtml5.org
+18，一个html5的工作组WHATWG HTML5
+	www.whatwg.org
+19，判断页面DOM加载时机（jquery内部也是基于此实现的）
+	创建者Dean Edwards http://dean.edwards.name/weblog/2006/06/again
+20，解决IE8对Canvas的支持障碍
+	http://code.google.com/p/exploercanvas
+21，Adobe Illustrator的canvas插件可以将绘制好的矢量图形转换为canvas代码
+22，利用dl列表进行页面分组
+	http:24days.org/2007/my-other-chirstmas-present-is-adefinition-list
+23，解决IE9之前IE浏览器不能够对html5应用样式的js脚本
+	http://code.google.com/p/html5shiv/
+24，web游戏设计
+	<<Flash ActionScript 3.0 动画高级教程>>作者Keith Peters
+25，web键盘按键码
+	www.quirksmode.org主要是应用于发布浏览器兼容特性的，涵盖了js，css，html等很多内容
+	www.quirksmode.org/js/keys.html
+26，免费的音频
+	www.freesound.org
+27，canvas优秀的编辑器
+	Radi http://radiapp.com或者一个adobe的插件ai2canvas
+28，js代码性能测试
+	http://jsperf.com
+29，web游戏设计库
+	https://github.com/bebraw/jswiki/wiki/game-engines
+	http://impactjs.com
+	http://easeljs.com
+30，canvas三维
+	这是基于webgl的技术现在普及率不高，建议使用three.js库https://github.com/mrdoob/three.js
+31，web与外设的交互
+	查看这个组织的工作进程：http://www.w3.org/2009/dap
+	一个前沿是Mozilla浏览器的Rainbow项目，可以通过摄像头交互
+32，优秀的html5游戏
+	http://sketch-out.appspot.com
+	http://www.phoboslab.org/ztype/
+	http://sinuousgame.com
+33，检测浏览器是否支持html5特性
+	www.caniuse.com列出了不同浏览器对各种html5特性的支持情况
+	www.html5test.com通过浏览器访问该网站可以知道浏览器对html5的支持情况
+	一个库Modernizr可以实现对html5和css3的高级检测，推荐使用
+34，JSON
+	现代浏览器内建了对json的支持，可以使用window.JSON.parse() window.JSON.stringify()
+	如果是老的浏览器，要下载json库http://json.org
+35，svg的web编辑器
+	开源的编辑器，可以在自己的项目中引用svg-edit
+36，矢量图形编辑
+	adobe Illustrator和Inkscape
+37，vim学习书籍
+		Vim - Vi Improved - 作者∶Steve Oualline
+38，css注释的标准词汇集
+	http://cssdoc.net
+39，删除css中的注释以及不必要的空白
+	www.cssoptimiser.com
+40，apache的gzip压缩的替代方案
+	tinyurl.com
+41，有一种东西称之为css框架
+	例如：yui grids，960，blueprint，不推荐使用框架
+42，专业的css编辑器
+	SKEdit和css Edit
+43，css在线验证
+	jigsaw.w3.org/css-validator
+44，css的reset
+	作者：Eric Meyer，meyerweb.com/eric/tools/css/reset/
+45，流式布局相关技术
+	themaninblue.com/writing/perspective/2006/01/19/
+	unstoppablerobotninja.com/entry/fluid-images/
+46，布局中使用的网格技术
+	www.thegridsystem.org
+	www.smashingmagazine.com
+47，css社区
+	www.css-discuss.org
+	webstandardsgroup.org
+	stackoverflow.com
+48，css的浏览器探嗅
+	tantek.com/css/examples/
+49，对于不支持html5新的Geolocation的浏览器定位的解决方案
+	Google Gears可以实现定位功能，其实Google Gears库可以实现的功能还有很多，网络应用程序可以在离线状态下运行，并在联网是同步数据
+	现在随着html5的发展，google已经停止对Gears的维护更新了
+	一个涵盖所有定位api（包括所有老式的浏览器和手机）的接口geo-location-javascript
+50，将文本文件进行编码使得只对拥有者可读
+	ZendGuard
+	ionCudePHPEncoder
+52，后台处理是显示的图片
+	http://www.ajaxload.info
+53，优秀的html5和css3支持检测工具Modernizr
+	www.modernizr.com
+54，如果浏览器不支持css3怎么办？
+	使用jquery可以实现大多数css3选择器，但是有更为优秀的库可以利用，Keith 
+	Clark写的IE-CSS3可以使得IE可用Css3，www.keithclark.co.uk/labs/ie-css3
+	并且有一个对伪类支持良好的库可以利用DOMAssistant
+55，media查询jquery插件 MediaQueries
+	分列jquery插件 columnize
+	颜色选择器jquery插件 simpleColor
+	圆角jquery插件 corners
+	jquery插件address
+56，老IE使用canvas的方案ExplorerCanvas
+	code.google.com/p/explorercanvas
+57，关于canvas的图形库
+	RGraph
+58，如果要用apache传送一些不常见的MIME类型文件就要在资源目录下的.htaccess文件中写入MIME的信息，研究htaccess文件
+	还是关于htaccess文件的，禁用浏览器缓存ExpiresActive On 换行 ExpiresDefault "access"
+59，html5的音频和视频支持有限，所以需要一个flash充当替代方案，为了解析flash需要一个flash解析器
+	Flowplayer  flowplayer.org
+60，cookie的一个库
+	Quirksmode  www.quirksmode.org/js/cookies.html
+61，实现web应用程序离线的一种特别文件
+	*.manifest
+62，一些新功能实在没有替代方案在IE上实现
+	提示用户安装chrome frame插件
+	<script src='插件url'></script>
+	<script>window.attachEvent('onload',function(){
+	CFInstall.check({mode:'inline',node:'prompt'});
+	});
+63，websocket的替代方案
+	使用基于flash的套接字，js库：web-socket-js  github.com/gimite/web-socket-js
+64，视频可访问性标准
+	WebVT即WebSRT，该标准致力于解决听障人士对视频的可访问性
+65，老IE对png图片的透明效果不支持解决技术是
+	IE PNG fix技术，www.twinhelix.com/css/iepngifx
+66，图像替换技术
+	IFR：使用flash和js实现文本替换  www.shauninman.com/plete/2004/04/ifr-revistied-and-revised
+	sIFR：是对IFR技术的扩展 novemberborn.net/sifr3
+67，老IE特效都可以通过DirectX实现
+68，Gears是一套浏览器先进特性回退工具包，一般能够想到html5的新特性这里都会有替代方案，不过google已经不再开发gears了
+69，Doloto是微软开发的用于将js代码分组的软件，js代码分组有利于页面的快速载入
+70，comet技术是什么？
+71，跨域
+	forever-iframe永久帧可以实现跨子域
+	xhr的abe fetting方案也可以实现跨子域
+	jsonp这是常用的方案跨域解决方案
+72，图片优化工具
+		优化png的工具：pngcrush，pngout，optipng，pngoptimizer，pngslim
+		优化jpeg的工具:jpegtran，exiftool
+		将非动画gif转换为png8：imagemagick之后将用工具优化一次png8
+		优化动画的gif：gifsicle
+		在线工具smush.it
+73，favicon.ico你知道这是什么吗？
+	据说这个图片放在网站的根目录上后会显示浏览器的地址栏上
+74，据说css的选择符是从右向左的，而不是从左向右，你信吗？
+75，内容管理系统
+	wordpress  drupal  joomla
+76，虚拟主机
+	foundationphp.com/tutorials/vhosts_mamp.php
+77，用js判断图片何时载入有什么巧妙的方法？
+78，修改pc机的网络设置
+	C:\Windows\System32\drivers\etc
+79，xForms根据xml schema设计一个一套复杂的form解决方案，功能很强大，这可惜没有插件的话浏览器不支持
+80，事件模型交互实例http://ie.microsoft.com/testdrive/html5/comparingeventmodels
+81，GNU日期语法：主要用于英语国家，使用人类友好可读字串表示日期（php中的strtotime使用）
+82，HTMLDoc 用于将网站的html网页转换为pdf，chm文档
+83，查一下php常用的常量有哪些？
+84，windows支持perl的话需要安装ActiveState
+85，基于git的图形工具
+	gitk 使用tcl/tk开发的轻量级图形工具
+	gitg 基于gdk+的linux开源程序
+	qgit 基于qt的linux开源程序
+86，__proto__ Super.js
+	github.com/maccman/super.js
+87，赠添es5不支持的特性
+	github.com/kriskowal/es5-shim
+88，js类支持库
+	hjs   plugins.jquery.com/project/hjs
+	spine  github.com/maccman/spine
+	prototype  prototypejs.org很多类库的思想都是来源于prototype库的
+	经典js类讲解文章goo.gl/09l0v
+89，怪异模式支持的js事件类型   goo.gl/l7zqk
+90，通过委托减少事件监听数，sproutcore  www.sproutcore.com
+91，订阅发布式jquery插件
+	benalman.com
+92，js名称空间的文章  goo.gl/fonpl
+93，js原型继承文章  Douglas Crockford的文章goo.gl/olqhp
+94，跨域
+	jsonp实现：参见文章goo.gl/cqdt6，以及jsonp的官网
+	ajax实现：跨域资源请求XMLHttpRequest 2.0版本实现以及微软的XDomainRequest技术
+95，检测hash变化的jquery插件goo.gl/sf4ip
+96，对于js生成的动态内容搜索引擎没有办法收集，但是这种状况正在改变，如果爬虫能够运行js的话抓取动态生成内容就不是难题了，此外
+	还有别的方案以供搜素引擎检索动态内容：goo.gl/rhnr9
+97，js视图模板库
+	jQuery.tmpl//基于jquery的模板
+	Mustache mustache.github.com//有很多语言的模板实现
+98，js依赖管理解决方案
+	服务器端
+		SpiderMonkey  www.mozilla.org/js/spidermonkey的load函数
+		Rhino         www.mozilla.org/rhino的load函数
+		node.js       的require函数
+		commnoJS模块管理标准方案  www.commonjs.org
+	以上都是服务端的js模块管理，至于客户端的js模块需要通过格式转换commonJS来实现goo.gl/vdlvd
+	客户端
+		客户端模块加载一个小教程 github.com/jayli/sandbox
+		Yabble github.com/jbrantly/yabble
+		RequireJS requirejs.org 遵循AMD（asynchronous module definition）规范
+	模块整合：在服务器端根据依赖关系计算合并压缩文件后返回给浏览器，这样可以显著减少http请求次数
+		rack-modulr goo.gl/0ycfk
+		transporter goo.gl/exkpm
+		flyscript  www.flyscript.org 基于php的模块整合器
+		stitch     githun.com/sstephenson/stitch 集成在node.js中的模块整合器
+	按需加载
+		Sprockets  getsprockets.org
+	最为简单的加载工具：LABjs  www.labjs.com
+99，基于js的文件系统实现goo.gl/cbdnt
+100，websocket的替换方案github.com/gimite/web-socket-js基于falsh实现的
+101，websocket的使用需要服务器端的支持
+	php解决方案：github.com/nicokaiser/php-websocket
+	node.js的库socket.io实现了websocket
+	基于订阅/发布模式的websocket实现github.com/maccman/juggernaut
+	虚拟主机websocket支持pusherapp.com
+102，javascript测试类库
+	Qunit  是随jquery项目而建立的测试类库
+	Jasmine 不依赖任何第三方的测试类库
+	Selenium  集成多浏览器特性的驱动测试方案，支持多种语言
+	Rhino+env.js  实现了命令行模式下测试dom脚本，Rhino是firefox的引擎，www.envjs.com
+	Zombie.js  为node.js而生的测试框架
+	vows.js 异步测试框架
+	Ichabod 使用了webkit引擎的测试框架
+	TestSwarm 分布式测试
+103，js，css文件压缩工具（要部署网站时压缩文件减少文件大小）
+	对于含有中文的js文件，要注意先将unicode转码后才能minnifier，不知道utf8是否要转码
+	YUI Compressor
+	JSMin
+	Tpacker批量压缩工具github.com/jayli/tpacker
+104，js组件(widget)库
+	Cappuccino cappuccino.org
+	SproutCore sproutcore.com
+105，Zepto.js貌似可以跟jquery相提并论的一个库，很厉害的样子
+106，深入学习spine.js                 MVC
+107，深入学习backbone.js              MVC
+108，深入学习underscore.js            很多js实用函数
+109，REST表征状态转移
+	post =>  create
+	put  =>  update
+	get  =>  read
+	delete  => delete
+110，基于jquery的强大MVC框架javascriptmvc
+	javscriptmvc.com
+111，库Modernizr可以实现对html5和css3的高级检测，推荐使用
+112，让IE有一颗Chrome的心Google Chrome Frame
+113，script.aculo.us
+114，mootools
+115，wwww.quitksmode.org关于html，js，css一个异常难以解决的问题请到这里
+116，js在线分析压缩工具：www.jslint.com,www.jshint.com后者是前者的兄弟项目
+117，js基于代码生成文档
+	JSDoc Toolkit code.google.com/p/jsdoc-toolkit
+	YUIDoc yuilibrary.com/projects/yuidoc
+118，使用代理模式合并多个http请求的样例
+	www.jspatterns.com/book/7/proxy.html
+119，一个利用中介者模式实现的小游戏
+	www.jspatterns.com/book/7/mediator.html
+	该游戏用观察者模式的实现
+	www.jspatterns.com/book/7/observer-game.html
+120，使用jsonp技术的小游戏
+	www.jspatterns.com/book/8/ttt.html
+121，使用iframe处理远程js脚本
+122，使用new Image().src='';想服务器发出请求的技术
+123，预加载技术，加载后续页面要用到的脚本文件但不对其进行解析
+     IE new Image().src; 非IE documnet.createElement('object').data;
+124，开源的个人信息管理系统conjoon.org采用了extjs
+125，客户端js实现的模板jquery tmpl，据说最为强大的是handlebarsjs.com
+126，将java properites file（一种配置文件）转换为json文件github.com/nzakas/props2js
+127，对html5以及es5打补丁的行为叫做polyfills或者shim
+128，ant好像是基于java的构建工具，但是js最为常用的构建工具也是它，此外github.com/nzakas/builder是一个基于ant的开源项目
+129，一些构建工具
+	buildy  github.com/.mosen/buildy
+	Gmake www.gun.org/s/make
+	Grant github.com/cowbody/grunt
+	jammit documentcloud.github.com/jammit
+	jasy github.com/.zynga/jasy
+	Rake rake.rubyforge.org
+	Sprockets getsprockets.org
+130，文档生成工具
+	Docco jashkenas.github.com/cocco
+	Dojo Document tool dojotoolkit.org
+	JoDoc github.com/azkus/joodoc-js
+	JSDoc Toolkit code.google.com/p/jsdoc-toolkit
+	Natural Docs www.naturaldocs.org
+	NDoc github.com/modeca/ndoc
+	PDoc pdoc.org
+	YUI Doc yuilibrary.com/projects/yuidoc
+131，代码检查
+	JSLint jslint.com
+	JShint  jshint.com
+132，压缩工具
+	Closure Compiler code.google.com/clourse/compiler
+	UglifyJS github.com/mishoo/Uglifyjs
+	YUI Compressor yuilibrary.com/projects/yuicompressor
+133，测试工具
+	Jasmine pivotal.github.com/jasmine
+	JsTestDriver code.google.com/p/js-test-dirver
+	PhantomJS www.phantomjs.org
+	QUint docs.jquery.com/quint
+	Selenium seleniumhq.com
+	Yeti yuilibrary.com/projects/yeti
+	YUI Test yuilibrary.com/projects/yuitest
+134，CI系统
+	Jenkins下载jenkins.war
+	Continuum  continuum.apache.com
+	BuildBot tarc.buildbot.net
+	Cruise Control cruisecontrol.sourceforge.net
+	Gradle www.gradle.org
+	

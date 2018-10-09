@@ -1,0 +1,1851 @@
+安装django：
+	下载django压缩包，解压
+	包中的setup.py文件是安装django的文件
+	python setup.py install
+	安装后原来压缩包下的build就是生成的django
+	安装过程已经自动将build/script写入PATH（其中有脚本django-admin.py
+	该脚本是用来构建django程序经常用到的）
+
+
+编写一个project时用到的command：
+	（根据项目的编写进度列出）
+	django-admin.py startproject example
+		生成一个project
+	python manage.py startapp appname
+		这会在manage.py的同级目录下创建目录appname，
+		配置app，并且编写models.py模型对象
+	python manage.py validate
+		validate 命令检查你的模型的语法和逻辑是否正确
+	python manage.py sqlall appname
+		输出模型对应的sql语句（会根据settings中配置的数据库对语法调整输出）
+	python manage.py syncdb
+		模型与数据库表同步
+	python manage.py dbshell
+		进入数据库交互查看刚刚生成的表
+	python manage.py runserver
+		运行server
+	python manage.py shell
+		shell交互模式进入project
+	python manage.py createcachetable [cachetable_name]
+		如果要使用数据库缓存功能，就用该命令创建缓存表
+	python manage.py inspectdb
+		从数据表生成model
+
+
+开始一个项目：
+	选择一个非web根目录（这只是相对apache类型应用而言）
+	django-admin.py startproject example
+	在当前目录下生成
+	example
+		|---manage.py 	命令行工具，用于管理项目
+		|---example
+			|---__init__.py 	在python中如果文件下有__init__.py的话，就将当前目录看成一个包
+			|---settings.py 	项目的配置文件
+			|---urls.py 		项目的ulr配置
+			|---wsgi.py
+运行project：
+	python manage.py runserver
+	这回启动python内建的服务器接收http请求，同时该服务器还可以监视你代码的变化进行重新载入，
+	当在生产环境时不要使用内建服务器了，因为同一时间，该服务器只能可靠地处理一次单个请求，
+	并且没有进行任何类型的安全审计。
+	默认端口8000，可以指定端口
+	python manage.py runserver 3000
+	如果与别人合作可以使用内网
+	python manage.py runserver 192.128.29.0:3000
+交互启动project：
+	python manage.py shell
+	这时python自动获取当前项目的settings文件，然后进入python交互模式
+
+
+Django系统以及其子系统必须要有settings.py文件才能工作
+	如果以python manage.py runserver运行在django-admin.py startproject mysite目录的话，自动
+		搜索settings.py文件
+	如果在python交互模式运行django时，要手动设置settings
+		from django.conf import settings; settings.configure()
+	如果以python manage.py shell运行在django-admin.py startproject mysite目录的话，相当于使用
+		项目settings.py打开python交互模式
+	如果查找不到setttings.py文件的话，从DJANGO_SETTINGS_MODULE环境变量以搜索settings.	
+		py文件的位置（.bash_profile中手动添加 DJANGO_SETTINGS_MODULE这个环境变量）
+
+
+Django中的app和project：
+	一个project包含很多个Django app以及对它们的配置。
+	技术上，project的作用是提供配置文件，比方说哪里定义数据库连接信息, 安装的app列表， 
+	TEMPLATE_DIRS ，等等。
+	一个app是一套Django功能的集合，通常包括模型和视图，按Python的包结构的方式存在。
+	例如，Django本身内建有一些app，例如注释系统和自动管理界面。 app的一个关键点是它们是很容易移植到其他project和被多个project复用。
+	总之，app是可重用的开发站点的功能性组件而project则是一个具体的站点项目，如果你只是建造一
+	个简单的Web站点，那么可能你只需要一个app就可以了； 但如果是一个包含许多不相关的模块的复
+	杂的网站，例如电子商务和社区之类的站点，那么你可能需要把这些模块划分成不同的app，以便以
+	后复用，Django系统对app有一个约定： 如果你使用了Django的数据库层（模型），你 
+	必须创建一个Django app。 模型必须存放在apps中。
+
+
+django的工作原理：
+	python manage.py runserver	运行server监听http请求，同时载入settings.py
+	settings.py中设置了很多项目的关键参数，其中设置的ROOT_CONFURL用于指定url=>handler
+	当http请求到来时，server根据url规则调用相应的handler（传入参数request对象，匹配url项）
+	handler函数处理请求，return一个response对象，用户得到了显示结果
+
+
+调试页面：
+	在php中可以通过echo和pirnt等调试，在python可以巧用django的错误页面进行调试，
+	如果想要调试只要在页面中添加assert False语句引发错误即可，错误页面对显示变量
+	，位置等很多context信息
+
+
+配置URL：
+	django将url中请求路径开头的/移除，比如：localhost:8000/home/对应是home/而不是/home/
+	django对url尾部/的处理，如果localhost:8000/home不匹配任何定义的url的话，将会自动试图匹配
+		localhost:8000/home/，这种默认处理合settings.py中的APPEND_SLASH（强制只匹配尾
+		部含有/的url）有关
+	允许使用的正则表达式语法：
+	. + * ? \d [A-Za-z] [^a-zA-Z] .{1,3} ^$匹配网站根url 其实url正则支持你平时用的大多数正则表达式规则
+
+	先写url配置还是先写视图handler函数
+	如果你是喜欢从总体上来把握事物类型的人，你应该会想在项目开始的时候就写下所有的URL配置。
+	如果你从更像是一个自底向上的开发者，你可能更喜欢先写视图， 然后把它们挂接到URL上。 这同样是可以的。
+
+	不要依赖于url规则中对数据的过滤
+	如果handler需要从url提取整数，url规则已经进行了\d过滤，但是handler函数自己应该仍进行参数
+	检测，不应该依赖于url规则对数据的过滤，因为handler函数之后可能会被重用，再者不应该将路由
+	和handler进行紧耦合
+
+
+模板：
+	（要注意的是django的模板在python是一个库，同样可以在任何非django环境中使用）
+	插入变量值
+		{{name}}					普通变量
+		{{ship_date|date:"F j, Y"}} 值|管道处理
+		点访问：（以下顺序代表优先顺序）
+		{{person.name.first_name}}	字典.键名
+		{{name.first_name}}			对象实例.属性名
+		{{name.upper}}				值.方法 	调用方法没有()，不能传递参数
+		{{my_list.5}} 				列表.索引号	 索引不能是负数
+	模板引擎进行逻辑处理template tag：
+	{% for item in name_list %}
+	{% endfor %}
+
+	关于方法调用：
+	1，在方法查找过程中，如果某方法抛出一个异常，除非该异常有 silent_variable_failure 
+	属性并且值为 True，否则的话它将被传播（此时模板解析失败）。如果方法有
+	silent_variable_failure的话，异常不被传播但是对应调用该方法的位置为空串。
+	2，方法调用有时会有危险，如果在不知情的情况下调用了可以修改对象数据的方法就危险了，
+	为了避免这种情况的发生，可以给方法添加属性my_method.alters_data=True这样的话，在
+	模板中调用该方法只会静默退出
+	默认情况下，如果一个变量不存在，模板系统会把它展示为空字符串，不做任何事情来表示失败
+
+	模板tag：
+	#在python和django中假为：empty dict,tuple,list,'',0,False,None
+	#注：你也可以在自定义的对象里定义他们的布尔值属性
+	{% if some_var %} 
+	{% endif %}
+		if中可以使用and or not关键字
+		if中不能同时使用or和and关键字，如果要实现复杂组合，请在python代码外部判断或者在
+			模板中使用嵌套的if-else
+		模板中没有elif标签，请使用if-else嵌套
+		每个if必须要用一个endif结束
+
+	{% for name in name_list %}
+	<li>{{name}}</li>
+	{% empty %}
+	<li>none</li>
+	{% endfor %}
+		每一次循环中，模板系统会渲染在 {% for %} 和 {% endfor %} 之间的所有内容
+		反向迭代，添加关键字reversed{% for name in name_list reversed %}
+		可以嵌套使用for
+		在循环之前，先用if测试一下会更好，如果你觉得测试繁琐，for有empty子句简化
+		模板不支持退出循环，如果我们想退出循环，可以削减正在迭代的变量使得退出循环
+		模板不支持continue
+		每个循环都有forloop变量，提供循环进度信息：
+			forloop.counter 从1开始的循环计数器
+			forloop.counter0 从0开始的循环计数器
+			forloop.first 如果是迭代的第一次为True
+			forloop.last 如果是最后一次迭代为True，常常用于在项间插入逗号等符号
+			forloop.revcounter 循环剩余项
+			forloop.revcounter0 循环剩余项
+			forloop.parentloop 在嵌套循环中对上级循环中forloop的引用
+		循环中的命名冲突，循环中形成了局部名称空间，如果有冲突的变量可以通过
+			forloop.parentloop.thatvar访问
+
+	{% ifequal var1 var2 %}
+	do-something
+	{% else %}
+	do-anotherthing
+	{% endifequal %}
+		var1,var2只能是字符串，整数和小数
+		字符串可以使用单引号或双引号包含起来
+		该标签是用于比较两个值是否相等的，不要同分支if混淆
+		标签ifnotequal可用
+
+	{# this is a comment #}
+		注释的内容不会在模板渲染时输出
+		用这种语法的注释不能跨越多行。 这个限制是为了提高模板解析的性能。 
+		注释标签实现多行标签，{% comment %}this is multi-line comment {% endcomment %}
+
+	过滤器：
+	使用管道命令对输出内容进行修饰
+	{{name|upper}}
+	{{name|first|upper}}
+	{{article|truncatewords:"200"}}
+	{{value|length}}对于列表，这个参数将返回列表元素的个数。 
+		对于字符串，这个参数将返回字符串中字符的个数。 你可以对列表或者字符串，或者任何知
+		道怎么测定长度的Python 对象使用这个方法（也就是说，有 __len__() 方法的对象）
+	{{value|addslashes}}相当于php函数addslash的功能
+	{{publish_date|date:"F j,Y"}}按指定的格式字符串参数格式化 date 或者 datetime 对象
+
+	Django模板设计哲学思想：
+	1，业务逻辑应该和表现逻辑相对分开 。我们将模板系统视为控制表现及表现相关
+	逻辑的工具，仅此而已。 模板系统不应提供超出此基本目标的功能。
+	2，语法不应受到 HTML/XML 的束缚 。尽管 Django 模板系统主要用于生成 
+	HTML，它还是被有意地设计为可生成非 HTML 格式，如纯文本。
+	3，假定设计师精通 HTML 编码 ，由设计师决定html布局
+	4，假定设计师不是 Python 程序员 。模板系统开发人员认为：模板通常由设计师而非程序员来
+	编写，因此不应被假定拥有Python开发知识，系统同样也特意地提供了对那些 由 Python 
+	程序员进行模板制作的小型团队的支持。 它提供了一种工作模式，允许通过编写原生 Python 
+	代码进行系统语法拓展
+	5，目标并不是要发明一种编程语言 。目标是恰到好处地提供如分支和循环这一类编程式功能，
+	这是进行与表现相关判断的基础。
+
+	模板使用方法
+	在Python代码中使用Django模板的最基本步骤如下：
+	1，可以用原始的模板代码字符串创建一个 Template 对象， 
+		Django同样支持用指定模板文件路径的方式来创建 Template 对象;
+	2，调用模板对象的render方法，并且传入一套变量context。它将返回一个基于模板的展现字符串，
+		模板中的变量和标签会被context值替换
+	在python交互模式下测试时：
+	from django.conf import settings
+	settings.configure()
+	#注意：template系统使用前要设置settings
+	from django import template
+	t = template.Template('my name is {{name}}')
+	c = template.Context({'name':'wikty'})
+	t.render(c)返回渲染后的字符串
+
+
+
+	视图和模板的集成
+	最次的方案：你可以选择在views文件中使用template语法渲染生成html代码，但是显然将模板独立	
+				出来更好
+				缺点：模板跟视图紧耦合
+	稍次的方案：模板独立出来为单独的文件，在views中open文件进行渲染
+				缺点：硬编码模板文件路径，频繁处理文件打开异常
+	好的方案：
+	步骤：
+		1，配置模板目录
+		settings.py中TEMPLATE_DIRS = (
+		# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates"
+	    # Always use forward slashes, even on Windows.
+	    # Don't forget to use absolute paths, *not* relative paths.
+	    # 如果只写一个目录，记得后面添加逗号，因为这是一个tuple
+		)
+		常见的情况，如果你在manage.py所在目录下的templates目录中存放模板文件
+		windows下： os.path.join(os.path.dirname(__file__), 'templates').replace('\\','/')
+		2，在views中导入模板进行渲染
+		t = django.template.loader.get_template('templateFileName')
+		html = t.render(django.template.Context({'name':'wity'}))
+		return django.http.HttpResponse(html)
+			更好的改进：上面导入渲染返回是重复的过程为此可以简化上面三行代码
+		return django.shortcuts.render_to_response('templateFileName',{'name':'wikty'})
+		无论使用get_template或者render_to_response都允许使用模板子目录径，示例：
+		'profile/usernameFilename'这样可以按照视图区域将模板进行分组
+
+	模板片段管理
+	{% include value %}
+	标签的参数是所要包含的模板名称，可以是一个变量，也可以是用单/双引号硬编码的字符串。 每当在多个模板中出现相同的代码时，就应该考虑是否要使用 {% include %} 来减少重复。
+	注：对模板的文件名进行判断时会在所调取的模板名称之前加上来自 TEMPLATE_DIRS 的模板目录。
+	注：包含进的模板片段继承了当前模板片段的context
+
+	模板继承：用于解决各个页面中形同部分（页头，页脚）的重复
+	当然你可以通过在每个页面中include来解决此类问题，但是模板继承是更为优雅的解决方案,
+	模板继承采用了逆向思维方式，不是父模板不是包含不变的部分而是包含会改变的部分，之后
+	由继承它的子模板进行重写可变的这部分。
+	{% block somename %}{% endblock %}
+	每个{% block %}标签所要做的是告诉模板引擎，该模板下的这一块内容将有可能被子模板覆
+	别的模板中进行继承{% extends value %}可以是一个变量，也可以是用单/双引号硬编码的字符串
+	要重写哪部分父模板的块区域就在子模板中重复相应的block即可
+	继承并不会影响到模板的上下文。 换句话说，任何处在继承树上的模板都可以
+	访问到你传到模板中的每一个模板变量
+
+	模板继承的常用方法
+	base.html定义站点主要外观，这些代码很少变动
+	继承自base.html的base_SECTION.html定义站点特定区域的外观
+	具体页面继承自相应的区域模板，重载特定页面特定部分
+
+	模板继承tricks&tips
+	1，如果在模板中使用 {% extends %} ，必须保证其为模板中的第一个模板标记。 
+	否则，模板继承将不起作用
+	2，一般来说，基础模板中的 {% block %} 标签越多越好。 记住，子模板不必定义父模板中所有的
+	代码块，因此你可以用合理的缺省值对一些代码块进行填充，然后只对子模板所需的代码块进行（重
+	）定义。 俗话说，钩子越多越好。
+	3，如果发觉自己在多个模板之间拷贝代码，你应该考虑将该代码段放置到父模板的某个 {% block 
+	%} 中
+	4，如果你需要访问父模板中的块的内容，使用 {{ block.super }}这个标签吧，
+	这一个魔法变量将会表现出父模板中的内容。 
+	如果只想在上级代码块基础上添加内容，而不是全部重载，该变量就显得非常有用了。
+	5，不允许在同一个模板中定义多个同名的 {% block %} 。 存在这样的限制是因为block 
+	标签的工作方式是双向的。 也就是说，block 标签不仅挖了一个要填的坑，也定义了在父模板中这
+	个坑所填充的内容。如果模板中出现了两个相同名称的 {% block %} 
+	标签，父模板将无从得知要使用哪个块的内容。
+	6，{% extends %} 对所传入模板名称使用的加载方法和 get_template() 相同。 
+	也就是说，会将模板名称被添加到 TEMPLATE_DIRS 设置之后。
+	7，多数情况下， {% extends %} 
+	的参数应该是字符串，但是如果直到运行时方能确定父模板名，这个参数也可以是个变量。 
+
+
+Django中的MVC架构
+	M 数据处理部分有django数据库层处理， 该层处理与数据相关的所有事务： 如何存取、如何验证有
+	效性、包含哪些行为以及数据之间的关系等。
+	V 显示哪些东西以及如何显示，视图和模板
+	C django中的URLConf已经解决的路由控制
+	由于 C 由框架自行处理，而 Django 里更关注的是模型（Model）、模板(Template)
+	和视图（Views）
+	模板，即表现层。 该层处理与表现相关的决定： 如何在页面或其他类型文档中进行显示。
+	视图，即业务逻辑层。 该层包含存取模型及调取恰当模板的相关逻辑。 
+
+
+数据库配置：
+	将变量写入settings.py文件
+	DATABASES = {
+	    'default': {
+	        'ENGINE': 'django.db.backends.sqlite3',
+
+	        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+	        #经过实验对于在当前目录的sqlite3还是直接写db.sqlite3即可，因为上面的写法
+	        #我出错了
+	    }
+	}
+	ENGINE   指定使用哪个数据库本地连接，前缀django.db.backends+postgresql,
+	         postgresql_psycopg2,mysql,sqlite3,oracle
+	NAME = ''		指定数据库名，注意：sqlite要指定数据存储文件位置而非数据库名
+	USER = ''		注意:postgresql默认的用户名是postgres而不是root
+	PASSWORD = ''
+	HOST = ''		数据库在本地或者用sqlite留空即可，在*nix上的mysql特殊
+	PORT = ''
+
+
+项目中创建一个app：
+	python manage.py startapp appname
+	这会在manage.py的同级目录下创建目录appname
+	appname
+		|---__init__.py
+		|---models.py
+		|---views.py
+		|---admin.py
+		|---tests.py
+	在项目中激活app
+	settings.py中的INSTALLED_APPS（tuple型）告诉Django，项目哪些 app 处于激活状态，
+	添加'mysite.appname'
+
+	在app中创建模型
+	在app目录下的models.py中创建模型，每个模型都是继承自django.db.models.Model的，
+	from django.db import models
+	class Author(models.Model):
+		first_name = models.CharField(max_length=30) 设定字符串长度
+		last_name = models.CharField(max_length=40)
+		email = models.EmailField(blank=True) 设定字段为可选字段，默认均为必填
+		borth_date = models.DateField(blank=True, null=True)默认django对每个字段都设置为NOT 
+									NULL，这样是出于空值一致性的考虑，使得空值只能为''，
+									而不能是NULL，但是日期型、时间型
+									和数字型字段不接受空字符串，在这种情况下，NULL是
+									唯一指定空值的方法，可以通过
+		email = models.EmailField(verbose_name='e-mail')默认情况在管理页面字段对应的标签名
+												是用空格替换下划线；首字母大写。例如：Book模
+												块中publication_date的标签是Publication date
+												，如果想要自定义标签名使用verbose_name，这样
+												标签名就是首字母自动大写的verbose_name内容，
+												其实除了ManyToManyField和ForeginKey外其它字
+												段期待的第一个参数就是verbose_name，所以你可
+												以这样models.EmailField('e-mail',blank=True)
+
+	验证模型
+	python manage.py validate
+	validate 命令检查你的模型的语法和逻辑是否正确
+
+	输出模型对应的sql语句（会根据settings中配置的数据库对语法调整输出）
+	python manage.py sqlall appname
+
+	模型与数据库表同步
+	python manage.py syncdb
+	syncdb 命令是同步你的模型到数据库的一个简单方法。 它会根据 INSTALLED_APPS 
+	里设置的app来检查数据库， 如果表不存在，它就会创建它。 需要注意的是， syncdb 并不能将模
+	型的修改或删除同步到数据库；如果你修改或删除了一个模型，并想把它提交到数据库，syncdb并不
+	会做出任何处理，如果你创建表之后修改了数据表要想你要通过数据库shell来实现修改的提交，
+	syncdb命令是不行的，不过好像我现在的版本是可以的
+
+
+Django中的model与数据库的联系：
+	其实django中的model对应就是数据库中的数据表，只不过model提供了更高层级的抽象，提供了
+	数据库不具备的高级数据处理方法，并且在变换底层数据库是高层次的model几乎不用改变，django
+	提供了数据库到django的model的映射建立，也就是说你完全可以通过model操纵数据库而不需要知道
+	数据库底层做了什么，而且你拥有model提供的很多便利的数据操纵方法
+	每个模型相当于单个数据库表，每个属性也是这个表中的一个字段。 
+	属性名就是字段名，它的类型（例如 CharField ）相当于数据库的字段类型 （例如 varchar ）
+	“每个数据库表对应一个类”这条规则的例外情况是多对多关系。 在我们的范例模型中， Book 
+	有一个 多对多字段 叫做 authors 。 该字段表明一本书籍有一个或多个作者，但 Book 
+	数据库表却并没有 authors 字段。 
+	相反，Django创建了一个额外的表（多对多连接表）来处理书籍和作者之间的映射关系。
+	我们并没有显式地为这些模型定义任何主键。 除非你单独指明，否则Django会自动为每个模型生成
+	一个自增长的整数主键字段每个Django模型都要求有单独的主键。id
+
+
+模型到数据库的读写：
+写入数据库：
+	方式一，
+	p1 = Person(name='wiktky', age=24) 创建实例并没有写入数据库
+	p1.save() 写入数据库中，不仅仅第一次写入数据库时调用save()，如果你对
+		p1进行了修改p1.name='mouse'后调用p1.save()会更新数据库，注意，并不是只更新修改
+		过的那个字段，所有的字段都会被更新。 这个操作有可能引起竞态条件，
+	方式二，
+	p1 = Person.objects.create(name='wikty', age=24)创建实例并同时将数据写入数据库中
+读出数据：
+	所有数据取回： Publisher.objects.all()将会返回一个包含了该模型所有实例的仿真列表，
+		其实是一个QuerySet对象
+		Django在选择所有数据时并没有使用 SELECT* ，而是显式列出了所有字段。 
+		设计的时候就是这样： SELECT* 会更慢，而且最重要的是列出所有字段遵循了Python 
+		界的一个信条： 明言胜于暗示
+	过滤数据取回结果集：
+		精确相等匹配：Publisher.objects.filter(address='hangzhou',name='wikty')
+		特殊条件匹配：Publisher.objects.filter(address__contains='hang')
+			这里使用了双下划线语法，contains是关键字，还有icontains,startswith,endswith,
+			range等很多可以使用的特殊匹配映射到sql的各种条件过滤
+	取回单个对象：Publisher.objects.get(name='wikty')
+		注：如果匹配成功多个对象或者没有匹配到对象都会抛出异常（可以捕获except Publisher.
+		DoesNotExist）
+
+	排序结果集（order_by不仅仅排序结果集，还会返回结果集）
+	Publisher.objects.order_by('name') 普通排序
+	Publisher.objects.order_by('name', 'address') 多字段排序
+	Publisher.objects.order_by('-name') 逆序排序
+	如果你觉得在操作数据时指定排序麻烦的话，你可以在模型定义时就指定依据排序的字段
+	在模型生成时就指定依据排序的字段
+	在模型类的定义中嵌套定义子类Meta
+	class Meta:
+		ordering = ['name']
+	你可以在任意一个 模型 类中使用 Meta 类，来设置一些与特定模型相关的选项，这里仅仅展示了
+	设置排序，其实通过Meta可以设置很多跟模型有关的options
+
+	查询模型允许链式语法
+	Publisher.objects.filter(name='wikty').order_by('-name')
+
+	分页
+	Publisher.objects.filter(name='wikty')[0] 等价于LIMIT1
+	Publisher.objects.filter(name='wikty')[0:2] 等价于LIMIT 0,2
+	注：不允许使用负索引
+
+	更新数据
+	p1.name='wikty'
+	p1.save()这样会更新模型的所有列，而不仅仅是name字段
+	单列更新：Publisher.objects.filter(name='wikty').update(country='CN')返回更新行数
+
+	删除数据
+	删除单个
+	Publisher.objects.get(id=1).delete()
+	删除整个结果集
+	Publisher.objects.all().delete()
+	注：为了预防误删除掉某一个表内的所有数据，Django要求在删除表内所有数据时显示使用all()
+		也就是说Publisher.objects.delete()也会报错的
+
+
+模型实例串化：
+	在交互中你看到的模型实例只是普通类样式的标识，如果你想将你的模型串化，在模型中添加
+	方法__unicode__（返回u"string"），该方法会在实例需要串化时自动调用，这不只是为了交
+	互时方便，也是因为 Django会在其他一些地方用 __unicode__() 来显示对象。
+
+
+Django与unicode编码：
+	Django 在其内部的各个方面都使用到了 Unicode 对象。 模型 
+	对象中，检索匹配方面的操作使用的是 Unicode 对象，视图 函数之间的交互使用的是 Unicode 
+	对象，模板的渲染也是用的 Unicode 对象。 
+	通常，我们不必担心编码是否正确，后台会处理的很好。
+
+
+
+汇总使用模型的过程：
+	1，在settings.py写入关于数据库的相关配置信息（只需填写数据库的名称即可，表可在后续步骤创建）
+	2，依照django的惯例如果用到model的话最好独立为一个app（当然这不是强制的，你在项目的views.py
+		中也可连接数据库取回或写入数据）
+		生成app：python manage.py startapp appname（这会在manage.py同级目录生成appname目录）
+	3，定义模型model，在appnanme/models.py中用类来定义model
+	4，激活模型，在settings.py中的INSTALLED_APPS中添加'appname'
+	5，验证app的数据模型，python manage.py validate
+	6，导出生成模型所用的sql语句，python manage.py sqlall appname
+	7，你可以将6中的sql收集起来（复制或管道命令）用以创建表，但是有更好的方法，
+		python manage.py syncdb
+		如果模型存在但是数据库没有相应的表就会创建那个表
+	8，进入dbshell查看刚刚生成的表，python manage.py dbshell
+	9，生成模型实例，操纵实例方法将数据保存至数据库中
+	10，稍后你可以修改模型实例，之后再通过save()将修改进行保存
+	11，可以通过模型实例取回表中的部分或所有数据
+	12，update()和delete()方法对应了更新数据和删除数据的方法
+
+
+
+强大的django.contrib包：
+	django.contrib是一套庞大的功能集，它是Django基本代码的组成部分，Django框架就是由众多包含
+	附加组件(add-on)的基本代码构成的。 你可以把djangocontrib看作是可选的Python标准库
+	或普遍模式的实际实现。 它们与Django捆绑在一起，这样你在开发中就不用“重复发明轮子”了。
+	例如：
+	django.contrib.admin 	站点管理
+	django.contrib.auth 	用户授权
+	django.contrib.sessions 	会话管理
+	django.contrib.comments 	用户评论系统
+	等很多各种各样你在web开发时要用到的功能组件都可以在这里找到
+
+
+Django站点管理：
+	创建管理界面通常是千篇一律的。 你必须认证用户，显示并管理表格，验证输入有效性诸如此类，
+	django为你开发了站点管理功能模块
+	1，配置好settings.py中的INSTALLED_APPS和MIDDLEWARE_CLASSES中关于站点管理的条目
+		django.contrib.admin, django.contrib.auth, django.contrib.sessions, django.contrib.
+		contenttypes和django.middleware.common.CommonMiddleware, django.contrib.sessions.
+		middleware.AuthenticationMiddleware等
+	2，python manage.py syncdb 以确保站点管理相关的数据表创建
+		如果创建了站点管理表，则交互时会要求你创建一个管理员用户
+		注：如果你想要创建一个管理员用户python manage.py createsuperuser（请确保
+		apps中包含了django.contrib.auth）
+	3，访问localhost/admin/就可以进入管理员登录入口
+	4，默认是英文显示的管理界面，如果要使用中文的话，可以设置settings.py中的
+		LANGUAGE_CODE = 'zh-cn'，或者在MIDDLEWARE_CLASSES中的django.sessions.middle.
+		SessionMiddleware项目后面添加django.middleware.locale.LocaleMiddleware
+	5，将数据model引入站点管理中，在app目录中的admin.py文件中对各个model进行注册
+		例如：
+		from django.contrib import admin
+		from models import Book, Author, Publisher 
+		#这里的models即admin.py同目录下定义模型的models.py文件
+		admin.site.register(Book)
+		admin.site.register(Author)
+		admin.site.register(Publisher)
+		通过这样就将数据模型的管理添加到了管理页面中了
+	6，对模型数据的字段的管理
+		可以为空串： email = models.EmailField(blank=True)
+		可以为NULL： publication_date = models.DateField(blank=True, null=True)
+		定义字段的标签名：models.EmailField(verbose_name='e-mail')管理页面中的标签名是E-mail
+		我们做的blank=True、null=True和verbose_name修改其实是模块级别，而不是管理级别的。 也
+		就是说，这些修改实质上是构成模块的一部分，并且正好被管理工具使用，而不是专门针对管理
+		工具的
+	7，自定义管理工具之工具显示添加
+		比如数据管理默认显示数据项时，只是简单的通过调用模型实例的__unicode__得到的字符串
+		显示每行数据记录的，为了让每行数据按照其自身有的字段分列显示可以这样做
+		在app/admin.py中
+		class AuthorAdmin(django.contrib.admin.ModelAdmin):
+			list_display = ('first_name', 'last_name', 'email')
+		django.contrib.admin.site.register(Author, AuthorAdmin)
+		这样就实现了根据字段分列显示
+		进一步为其添加一个查询栏
+		class AuthorAdmin(django.contrib.admin.ModelAdmin):
+			list_display = ('first_name', 'last_name', 'email')
+			search_fields = ('first_name', 'last_name')
+		进一步添加过滤器（用于过滤数据的工具，只要值有两种以上可能就可以用）
+			list_filter = ('publication_date',)
+		根据日期数据分页
+			date_hierarchy = 'publication_date' #对的正如你看到的这不是tuple
+		改变数据排序方式（默认依据模型中的Meta定义排序的）
+			ordering = ('-publication_date') #也支持-逆序语法
+	8，自定义管理工具之编辑表单自定义
+		自定义表单字段顺序，默认情况下表单字段顺序和模型一致
+		class BookAdmin(admin.ModelAdmin):
+			fields = ('title', 'authors', 'publisher', 'publication_date')
+		这个不仅仅可以定义表单中字段的显示顺序，而且没有写入其中的字段将不会显示在管理员的
+		页面中，在某些时候也许出于数据保护的目的这很重要的。
+		对于多对多的字段，默认使用select进行选择，但更方便的方法控件
+		class BookAdmin(admin.ModelAdmin):
+			filter_horizontal = ('authors',)
+		同理filter_vertical也是上面的道理
+		对于外键在管理页面中的通过select实现，更好的方法是
+			raw_id_fields = ('publisher',)
+	9，管理工具有一个用户权限系统，通过它你可以根据用户的需要来指定他们的权限，从而
+		达到部分访问系统的目的
+		你用超级帐户登录的所以你现在可以访问系统中的所有数据。
+		每个用户都有：staff status, superuser status, active三个boolean控制用户权限
+		superuser覆盖任何别的设置，active可以使得已存在用户激活，staff用户指定是否
+		是管理用户
+		普通的活跃，非超级用户的管理用户可以根据一套设定好的许可进入。 
+		管理界面中每种可编辑的对象都有三种权限： 创建 许可， 编辑 许可和 删除 
+		许可。 给一个用户授权许可也就表明该用户可以进行许可描述的操作。
+		注意，这些权限是定义在模块级别上，而不是对象级别上的，对于设置对象级别的权限
+		请参见django手册
+		你也可以给组中分配用户。 一个 组 简化了给组中所有成员应用一套许可的动作。 
+		组在给大量用户特定权限的时候很有用。
+
+
+HttpRequest对象：
+	django.http.HttpRequest对象
+	HttpRequest.parse_file_upload()
+	HttpRequest.get_signed_cookie()
+	HttpRequest.read
+	HttpRequest.readline
+	HttpRequest.readlines
+	HttpRequest.xreadlines
+	HttpRequest.upload_handlers
+	HttpRequest.__hash__
+	HttpRequest.__sizeof__
+	HttpRequest.body
+	HttpRequest.build_absolute_uri
+	HttpRequest.encoding()
+	HttpRequest.path             请求路径，例如 /users/admin
+	HttpRequest.get_full_path()   请求全路径，包含query string
+	HttpRequest.get_host()         返回请求的域名（主机名）
+	HttpRequest.is_ajax() 			是否指ajax请求
+	HttpRequest.is_secure()        是否是https访问
+	HttpRequest.META 是一个含有请求头数据的字典类型对象，因为不同浏览器发送的
+					请求头不一定一样，所以mydict.get('HTTP_USER_AGENT')更好
+	HttpRequest.method 是post或get等字符串
+	HttpRequest.GET 是一个包含了用户用get方法提交的所有数据的类似的字典对象
+	HttpRequest.POST 是一个包含了用户用post方法提交的所有数据的类似的字典对象
+	注意：上面提到的类似字典的对象，之所以这样讲是因为你可以使用dict中的get(),
+		keys(),values(),for-in等方式访问它，同时它提供了一些dict没有的方法
+
+
+django中的表单类：
+	定义表单
+	from django import forms
+	自定义的表单均是继承自forms.Form的类
+	例：
+	class ContactForm(forms.Form):
+		subject = forms.CharField()
+		email = forms.EmailField(required=False)
+		message = forms.CharField(widget=forms.Textarea)
+
+		def clean_message(self): # 自定义检验数据的方法将于默认检验完成后自动进行
+		 # 因为是自动进行的所以对于方法的命名规范要有约定，clean_*，*是对应要检验的字段名
+		 # 通过raise forms.ValidationError 将出错信息传递出去
+		 # 返回的值为经过检验后的值
+			message = self.cleaned_data['message']
+			if len(message.split()) < 4:
+				raise forms.ValidationError('not enough words')
+			return message
+
+	查看表单对应的html代码
+	这样定义之后python会自动的生成相应的表单的html代码，你可以查看
+	f = ContactForm()
+	print(f)	# 默认使用table布局表单
+	print(f.as_ul()) # 使用ul布局表单
+	print(f.as_p()) # 使用p布局表单
+	print(f['email']) # 仅显示一个表单项
+	注：生成的代码中没有table和ul标签，自动生成了相应的label
+
+	表单的数据验证
+	f = ContactForm({'subject':'hello','email':'no@163.com','message':'noop'})
+	通过上面给对象赋值，使得对应的html代码中的value有了值，也就是说表单对象被绑定了
+	f.is_bound 		为True
+	f.is_valid() 	用于验证绑定到表单对象的值是否均有效，有效返回True
+	验证信息
+	f['subject'].errors列表和f.errors字典都有验证返回的信息
+	经过验证后如果数据均合法（如果可选数据不合法会被舍去），则合法数据转换为了
+	相应的python对象并储存在f.cleaned_data字典中
+
+	结合在视图中使用的过程是：
+	if request.method  is 'post':
+		f = MyForm(request.post)
+		if f.is_valid():
+			cleaned_data = f.cleaned_data
+				//use cleaned_data to do something
+				//redirect
+	else:
+		f = MyForm(initial={'subject':'this is subject initial value'})
+	return render_to_response('some.html', {'form':f})
+
+
+URLConf的高级技巧：
+	使用一个字符串映射到handler
+	urlpatterns = patterns('',
+	    url(r'^contact/$', 'mysite.views.contact'),
+	    url(r'^contact/thanks/$', 'mysite.views.contact_thanks')
+	)
+	直接导入视图
+	import views
+	urlpatterns = patterns('',
+		url(r'^contact/$', views.contact),
+		url(r'^contact/thanks/$', views.contact_thanks)
+	)
+	使用视图前缀
+	urlpatterns = patterns('mysite.views',
+		url(r'^contact/$', 'contact'),
+		url(r'^contact/thanks/$', 'contact_thanks')
+	)
+	甚至如果你的hanlder在不同的视图名称空间下时
+	urlpatterns = patterns('mysite.views',
+		url(r'^contact/$', 'contact'),
+		url(r'^contact/thanks/$', 'contact_thanks')
+	)
+	urlpatterns += patterns('web.views',
+		url(r'^webhome/$', 'homehandler')
+	)
+	根据调试模式添加urlconf
+	if settings.DEBUG:
+	    urlpatterns += patterns('',
+	        (r'^debuginfo/$', views.debug),
+	    )
+	url子模式匹配：(?P<name>pattern)
+	默认情况下像'^article/(\d{4})/(\d{2})/$'，会将匹配的子模式顺序传递给试图函数，
+	高级用法提供了通过关键字参数传入的方式，用法是'^article/(?P<year>\d{4})/(?P<month>\d{2})
+	/$'这样的话视图函数将会接受到关键字传入的参数，例如：show_article(req, year, month)视图
+	函数将会被准确的传入参数，使用命名方式传入参数的好处在于，当更改匹配url子模式前后顺序时
+	不必修改视图函数参数，同时使得url的匹配更加清晰易读
+	注意：在一个urlpatterns中不要同时使用命名子模式匹配和未命名子模式匹配，你会得到惊讶的结果
+
+	向视图函数传递参数
+	urlpatterns = patterns('',
+		url(r'^hello/$', 'mysite.views.say_hello', {'template_name': 'temp1.html'})
+	)
+	每个url中都可以写入第三个参数，用以传递到视图函数中，注意需要是字典类型的数据，会以
+	关键字参数的形式传入视图函数中
+	利用这个特性有时可以使用已有视图函数，其实它的道理就是通过url子模式或者通过第三个参数传入的
+	参数都是关键字形式的，对于视图函数来说没有任何的区别
+
+	传入第三个参数和url命名子模式匹配都是以关键字方式传入视图函数中的，当二者中使用了相同的关键字
+	时，第三个参数中的值会被优先使用，在实际应用中当然不会出现这种状况，这样的话url中匹配的模式是
+	没有任何意义的，所以要注意了不要做这样的傻事
+
+	视图函数参数添加默认值
+	urlpatterns = patterns('',
+		url(r'^blog/$', 'mysite.view.page'),
+		url(r'^blog/page(?P<num>\d+)/$', 'mysite.view.page')
+	)
+	#views.py
+	def page(req, num = '1'):
+		pass
+	这样当匹配blog时使用默认值'1'
+
+	url的解析顺序
+	urlpatterns是从前到后顺序解析的，所以要将具体特殊的url放在前面，将通过模糊的url放在后面
+
+	url匹配模式传入视图函数的数据类型
+	虽然我们在子模式中指定了\d说明匹配数字，但是这只是说明在url匹配时只会匹配数字，传入视图函数
+	中的参数总是字符串类型的，所以注意如果你要使用别的类型记得手动进行转换
+
+	url匹配与GET，POST无关
+	虽然GET，POST数据有可能在url中，但是url匹配和这些东西没有关系，其实仔细想想这很合理，因为
+	url匹配的责任是将处理任务交给相应的视图函数，至于GET，POST则是视图函数内部要对其进行处理
+	时使用的数据
+
+	总的来说url匹配决定了视图函数，之后视图函数通过判断请求方法，再派遣不同的函数进行处理，看
+	一个例子：
+	#views.py
+	def method_splitter(request, *args, **kwargs):
+	这样是为了在收集url匹配子模式参数和第三传入的关键字参数，不与要传入的'GET'，'POST'冲突
+	    get_view = kwargs.pop('GET', None)
+	    post_view = kwargs.pop('POST', None)
+	    if request.method == 'GET' and get_view is not None:
+	        return get_view(request, *args, **kwargs)
+	    elif request.method == 'POST' and post_view is not None:
+	        return post_view(request, *args, **kwargs)
+	    raise Http404
+
+	def some_page_get(request):
+	    assert request.method == 'GET'
+	    do_something_for_get()
+	    return render_to_response('page.html')
+
+	def some_page_post(request):
+	    assert request.method == 'POST'
+	    do_something_for_post()
+	    return HttpResponseRedirect('/someurl/')
+
+	# urls.py
+	import mysite.views as views
+	urlpatterns = patterns('',
+	    (r'^somepage/$', views.method_splitter, {'GET': views.some_page_get, 'POST': 
+	    views.some_page_post})
+	    注意：请求分支处理的函数在这里就已经指定了，实现处理和视图的松散耦合
+	)
+
+	视图包装，抽取出视图函数中重复的代码添加到需要该代码的视图函数中
+	（要使用这个功能，首先要明白python中函数可以作为参数传递，返回，同时函数可以在另一个函数
+	中定义，并且有闭包，可以说python中的函数和javascript中的函数一样强大）
+	例子：很多的视图函数都要根据用户是否登录进行不同的处理，我们要做的就是将判断用户登录的
+	部分抽取出来添加到需要验证用户登录的视图函数中
+	#views.py
+	def requires_login(view):
+		def new_view(req, *args, **kwargs):
+			if not req.user.is_authenticated():
+				return HttpResponseRedirect('/account/login')
+			return view(req, *args, **kwargs)
+		return new_view
+
+	def view1(req):
+		pass
+	def view2(req):
+		pass
+	#url.py
+	from mysite.views import requires_login, view1, view2
+	urlpatterns = patterns('',
+		url(r'view1/$', requires_login(view1)),
+		url(r'view2/$', requires_longin(view2))
+	)
+	这样就将用户验证功能加入了view1和view2视图处理函数了
+
+	如果你的url匹配很负责或者你想要将其分成几个明显的业务模块时
+	# mysite urls.py
+	urlpatterns = patterns('',
+		url('^blog/', include('mysite.blog.urls'))
+	)
+	这里的'^blog/'注意没有$结尾，因为该url匹配的重心在后面的mysite.blog.urls中，这样
+	就会清晰很多了，不会将很多的url匹配项目放入mysite.urls中，在mysite.blog.urls中的内
+	容也是变量urlpatterns该变量用于匹配url中blog/之后的东西，但是仍然使用^和$
+	同样可以使用url子模式匹配或者第三参数关键字传入参数给include的urls中的每一个视图函数
+
+
+模板的高级用法：
+	提取重复的模板变量：
+	先看一个例子：
+	#views.py
+	from django.template import loader, Context
+
+	def view1(req):
+		t = loader.get_template('temp.html')
+		c = Context({
+			'app': 'MyAPP',
+			'user': req.user,
+			'ip_address': req.META['REMOTE_ADDR'],
+			'message': 'say hello!'
+		})
+		return t.render(c)
+	def view2(req):
+		t = loader.get_template('temp1.html')
+		c = Context({
+			'app': 'MyAPP',
+			'user': req.user,
+			'ip_address': req.META['REMOTE_ADDR'],
+			'message': 'Goodbye!'
+		})
+		return t.render(c)
+	从上面可以看到不同的视图函数调用模板时会传入相同的变量，我们要做的就是将这些相同的变量
+	提取出来，这样就可以实现重用了。这就要用到RequestContext了
+	将上面的例子改写后如下：
+	from django.template import loader, RequestContext
+	def custom_proc(req):
+		return {
+			'app': 'MyAPP',
+			'user': req.user,
+			'ip_address': req.META['REMOTE_ADDR']
+		}
+	def view1(req):
+		t = loader.get_template('temp.html')
+		c = RequestContext(req, {'message': 'this is view1.'}, processors=[custom_proc])
+		return t.render(c)
+	def view2(req):
+		t= loader.get_template('temp2.html')
+		c = RequestContext(req, {'message': 'this is view2.'}, processors=[custom_proc])
+		return t.render(c)
+	从上面可以看到，我们通过使用RequestContext和一个自定义用于返回重复数据的函数来实现重复
+	数据的提取的
+	如果你使用的是render_to_response
+	render_to_response('temp.html', {'message': 'this is view1.'},
+	context_instance=RequestContext(req, processors=[custom_proc]))
+	从上面你可以看到响应用于请求时都要调用RequestContext(processors=[])来指定如何获取重复的数据
+	传递到模板中，这样不免繁琐，django提供了全局context的概念，这样的话这要一次指定全局context
+	后面就不需要在调用的时候指定了，你需要配置TEMPLATE_CONTEXT_RROCESSORS = ()变量
+	TEMPLATE_CONTEXT_PROCESSORS = (
+	    'django.core.context_processors.auth',
+	    'django.core.context_processors.debug',
+	    'django.core.context_processors.i18n',
+	    'django.core.context_processors.media',
+	)
+	注：指定的每个函数接收一个request对象作为参数，返回一个包含重复数据项的字典
+
+
+	模板加载：
+	模板加载函数
+		django.template.loader.get_template(template_name)
+		django.template.loader.select_template(template_name_list)
+		后者跟前者的区别在于，后者可以使用模板名称list作为参数，返回第一个存在的模板
+	模板加载器（模板加载时的规则不同）
+	通过配置变量TEMPLATE_LOADERS = ('string', 'string')来激活相应的模板加载器
+	'django.template.loaders.filesystem.load_template_source'这是默认激活并被使用的加载器，
+	该加载器根据配置的TEMPLATE_DIRS加载模板
+	'django.template.loaders.app_directories.load_template_source'默认也被激活了，对INSTALLED_
+	APPS中的app目录下的templates目录进行搜索
+	'django.template.loaders.eggs.load_template_source'没有被激活，从python eggs中加载模板，
+
+
+	扩展模板系统：
+	可以说django给了你定制模板系统*一切*的能力，你可以定义filter，tag，loader等很多东西
+	自定义tag和filter
+	文件组织形式：
+	tag和filter需要放在一个app目录下面，不管是以存在的app还是你专门用来放置tag&filter的app
+	都可以的，同时记得将app添加到INSTALLED_APPS中，app目录下面要有templatetags目录，同时
+	templatetags目录下面要有__init__.py文件，此外templatetags中的文件就是你用于自定义tag，
+	filter的文件了，文件名用于引用自定义
+	引用自定义： 
+	{% load yourtempatetagfilterfile %}，搜索INSTALLED_APPS的各个tampltetags
+	中的文件有没有对应的文件
+	自定义文件的编写：
+	from django import template
+	register = template.Library() # Library实例包含所有已经注册过的tag&filter
+
+	# 自定义filter
+	# cut filter process function
+	# 使用示例：{{somevar |cut:'0'}}
+	def cut(value, arg):
+		return value.replace(arg, '')
+	# lower filter process function
+	# 使用示例：{{somevar |lower}}
+	def lower(value):
+		return value.lower()
+	# 注册filter
+	register.filter('cut', cut) #第一个参数指定使用filter的名称
+	register.filter('lower', lower) #第二个参数指定filter processor
+	如果你觉得上面的写法有点繁琐，你可以使用python的@语法
+	@register.filter(name='cut')
+	def cut(value, arg):
+	    return value.replace(arg, '')
+	@register.filter
+	def lower(value):
+	    return value.lower()
+
+	# 自定义tag
+	先来了解一下tag是如何工作的，模板解析器将一个模板文件中的每个tag解析为一个
+	django.template.Node实例，当你调用模板实例的render方法时，每个Node实例的
+	render方法会被自动调用
+	所以自定义tag要做的事情就是：
+	1，将tag转换成Node实例
+	2，编写Node实例的render方法
+	# 使用示例：{{ current_time "%Y-%m-%d %I:%M:%p" %}}
+	# 定义Node子类
+	class CurrentTimeNode(template.Node):# 名称没有强制规定，但是CurrentTimeNode可读性强
+		def __init__(self, format_string):
+			self.format_string = format_string
+		def render(self, context):
+			now = datetime.datetime.now()
+			return now.strfttime(self.format_string)
+	# 定义tag处理函数
+	def do_current_time(parser, token): #名称并不强制，只是do_*具有更好的可读性
+		# parser 解析器分析对象
+		# token可以看成是对标签对象的引用，token.contents是标签的完整字符串
+		try:
+			tag_name, format_string = token.split_contents() #这里没有token.contents.split()
+			#是因为token.split_contents()函数不会分割引号中的字符串，对的，它是智能的
+		except ValueError:
+			msg = '%r tag requires a single arguemnt' % token.contents[0]
+			raise template.TemplateSyntaxError(msg)
+		return CurrentTimeNode(format_string[1:-1])
+	# 注册tag
+	register.tag('current_time', do_current_time) #与filter一样可以使用python@语法
+	改进，上面的Node实例的render(self, context)，参数context用于设置模板context var
+	比如上面的例子
+		def render(self, context):
+			now = datetime.datetime.now()
+			context['current_time'] = now.strfttime(self.format_string)	
+			return '' # 返回空串是必须的
+	这样的话标签相应的位置不是返回内容而是在模板context生成一个变量current_time
+	改进，上面的current_time变量名称硬编码的，如果你想要更多地自控权利的话，看下面
+		使用实例：{{ current_time "%Y-%m-%d %I:%M:%p" as nownow %}}
+		tag processor：解析出nownow并传入Node子类中
+		Node子类：__init__保留nownow，render中context[self.varname] = value
+		这样就可以实现自定义标签生成变量名称
+
+	# 自定义块标签
+	上面介绍的标签只是最为简单的标签，你可以自定义类似于内置的if-endif，for-endfor
+	等块标签
+	示例：一个用于注释的块标签
+	{{% comment %}}
+	this content will be commented
+	{{ % endcomment %}}
+	class CommentNode(temlate.Node):
+		def render(self, context):
+			return ''
+	def do_comment(parser, token):
+		nodelist = parser.parse(('endcomment',)) # 返回nodelist实例，就是块内的所有node实例
+												 # 不包括{% comment %}和{% endcomment %}
+		parser.delete_first_token() #用于清除{% endcomment %}节点
+		return ComentNode() # 因为方法render只是返回空串所以忽略掉了块标签内的内容
+	register.tag('comment', do_commnet)
+	示例：转换成小写
+	{{% upper %}}
+	{{username}} CAME Here
+	{{% endupper %}}
+	class UpperNode(template.Node):
+		def __init__(self):
+			self.nodelist = nodelist
+		def render(self, context):
+			output = self.nodelist.render(context) # nodelist实例的render只是简单的调用各个node
+												   # 实例的render方法
+			return output.upper()
+	def do_upper(parser, token):
+		nodelist = parser.parse(('endupper',))
+		parser.delete_first_token()
+		return UpperNode(nodelist)
+	register.tag('upper', do_upper)
+	如果你定义的tag是很简单的，模板提供了一种快捷方式定义tag
+	注意：这种快捷方式的限制就是，processor只能接受一个参数，同时参数两边的引号已经移除
+	def current_time(format_string):
+		return datetime.datetime.now().strfttime(format_string)
+	django.template.Library.simple_tag(current_time)
+
+	自定义模板加载器
+	示例：这是一个从zip文件中加载模板的示例
+	import zipfile
+	from django.conf import settings
+	from django.template import TemplateDoesNotExist
+
+	def load_template_source(template_name, template_dirs=None):
+	    """Template loader that loads templates from a ZIP file."""
+
+	    template_zipfiles = getattr(settings, "TEMPLATE_ZIP_FILES", [])
+
+	    # Try each ZIP file in TEMPLATE_ZIP_FILES.
+	    for fname in template_zipfiles:
+	        try:
+	            z = zipfile.ZipFile(fname)
+	            source = z.read(template_name)
+	        except (IOError, KeyError):
+	            continue
+	        z.close()
+	        # We found a template, so return the source.
+	        template_path = "%s:%s" % (fname, template_name)
+	        return (source, template_path)
+
+	    # If we reach here, the template couldn't be loaded
+	    raise TemplateDoesNotExist(template_name)
+
+	# This loader is always usable (since zipfile is included with Python)
+	load_template_source.is_usable = True
+	我们要想使用它，还差最后一步，就是把它加入到 TEMPLATE_LOADERS 
+
+
+Response非html内容：
+	比如说图片，pdf文件等，其实原理很简单，之前web的模式都是用户请求发生，根据url配置
+	由合适的view进行处理，返回HttpResponse实例进行响应用户，要返回非html的内容其关键在
+	于返回合适的HttpResponse，具体的要点是配置HttpResponse实例的mimetype为相应的文件类型
+	关于CVS的示例：
+	import csv
+	from django.http import HttpResponse
+
+	# Number of unruly passengers each year 1995 - 2005. In a real application
+	# this would likely come from a database or some other back-end data store.
+	UNRULY_PASSENGERS = [146,184,235,200,226,251,299,273,281,304,203]
+
+	def unruly_passengers_csv(request):
+	    # Create the HttpResponse object with the appropriate CSV header.
+	    response = HttpResponse(mimetype='text/csv') #声明返回的文件类型
+	    response['Content-Disposition'] = 'attachment; filename=unruly.csv' #该项用于
+	    # 提示用户进行另存为，同时指定另存为的预留文件名
+	    # Create the CSV writer using the HttpResponse as the "file"
+	    writer = csv.writer(response) #内容将会写入response对象
+	    writer.writerow(['Year', 'Unruly Airline Passengers'])
+	    for (year, num) in zip(range(1995, 2006), UNRULY_PASSENGERS):
+	        writer.writerow([year, num])
+	    return response
+	关于pdf的示例：
+	from reportlab.pdfgen import canvas #reportlab是一个用于pdf文件生成的库
+	from django.http import HttpResponse
+
+	def hello_pdf(request):
+	    # Create the HttpResponse object with the appropriate PDF headers.
+	    response = HttpResponse(mimetype='application/pdf')
+	    response['Content-Disposition'] = 'attachment; filename=hello.pdf'
+
+	    # Create the PDF object, using the response object as its "file."
+	    p = canvas.Canvas(response) #将response当成写入对象
+
+	    # Draw things on the PDF. Here's where the PDF generation happens.
+	    # See the ReportLab documentation for the full list of functionality.
+	    p.drawString(100, 100, "Hello world.")
+
+	    # Close the PDF object cleanly, and we're done.
+	    p.showPage()
+	    p.save()
+	    return response
+	使用cStringIO重写的pdf示例：
+	from cStringIO import StringIO
+	from reportlab.pdfgen import canvas
+	from django.http import HttpResponse
+
+	def hello_pdf(request):
+	    # Create the HttpResponse object with the appropriate PDF headers.
+	    response = HttpResponse(mimetype='application/pdf')
+	    response['Content-Disposition'] = 'attachment; filename=hello.pdf'
+
+	    temp = StringIO()
+
+	    # Create the PDF object, using the StringIO object as its "file."
+	    p = canvas.Canvas(temp)
+
+	    # Draw things on the PDF. Here's where the PDF generation happens.
+	    # See the ReportLab documentation for the full list of functionality.
+	    p.drawString(100, 100, "Hello world.")
+
+	    # Close the PDF object cleanly.
+	    p.showPage()
+	    p.save()
+
+	    # Get the value of the StringIO buffer and write it to the response.
+	    response.write(temp.getvalue())
+	    return response
+	还有很多很多各种文件库都可以和django集成在一起
+
+
+django支持RSS和Atom等内容聚合的处理：
+	RSS和Atom都是基于XML的格式，你可以用它来提供有关你站点内容的自动更新的feed，
+	当然你也可以为用户提供邮件订阅的服务，例如你的博客开启了这个功能后，你只要将
+	你发布文章的格式转换成邮件的形式即可让用户订阅
+
+
+Django的sitemap框架：
+	sitemap 是你服务器上的一个XML文件，它告诉搜索引擎你的页面的更新频率和某些页面相对
+	于其它页面的重要性。这个信息会帮助搜索引擎索引你的网站
+	Django sitemap 框架允许你用 Python 代码来表述这些信息，从而自动创建这个XML文件。
+	要创建一个 sitemap，你只需要写一个 Sitemap 类然后配置你的URLconf指向它
+	关于详情请看chapter11
+
+
+维持http状态：cookie，session以及封装底层工具后的高层方法
+	cookie：
+	读取：req.COOKIES['name']
+	写入：
+	response = django.http.HttpResponse('some content will be back')
+	response.set_cookie('name', value)
+	同时接受参数：max_age, expires, path, domain, secure
+
+	session:
+	配置：
+	MIDDLEWARE_CLASSES添加django.contrib.sessions.middleware.SessionMiddleware
+	INSTALLED_APPS添加django.contrib.sessions
+	session功能依赖于数据库，所以如果有必要运行python manage.py syncdb
+	req.session是存储了会话信息的字典对象
+	get: req.session['name']
+	set: req.session['name'] = value
+	delete: del req.session['name']
+	test: 'name' in req.session
+
+	因为session默认使用依赖cookie的方式工作，所以测试cookie是否正常可用很有必要
+	相关的方法：
+	req.session.set_test_cookie() # 该方法用于设置test cookie，要在test_cookie_worked方法之前的
+								  # 请求中调用，因为浏览器cookie设置成功后只有再次请求服务器才
+								  # 能知道
+	req.session.test_cookie_worked()
+	req.session.delete_test_cookie()
+	一个典型的登录例子：
+	def login(req):
+		if req.method == 'POST':
+			if req.session.test_cookie_worked():
+				# you should delete the test cookie
+				req.session.delete_test_cookie()
+
+				# In practice, we'd need some logic to check username/password
+				# here, but since this is an explame
+				return HttpResponse("You're logged in.")
+			else:
+				# The test cookie failed, so display an error message, If
+				# this was a real site we'd want to display a friendly message
+				return HttpResponse('Please enable cookies and try again.')
+		req.session.set_test_cookie()
+		return render_to_response('login_form.html')
+
+	django中的session都被储存在了数据库中，所以可以通过普通的model方法访问session
+	from django.contrib.sessions.models import Session
+	s = Session.objects.get(pk='2b1189a188b44ad18c35e113ac6ceead')
+	s.expire_date
+	s.session_data返回的数据，但是是经过编码的数据
+	s.get_decoded()返回解码后的数据，是一个dict对象
+
+	session的相关设置：
+	session数据更新到数据库
+	默认情况下只有session数据发生了变化时数据才会自动同步到数据库中，如果你想要每次请求
+	时都同步到数据库中的话，你要配置SESSION_SAVE_EVERY_REQUEST = True，这样的话不仅每次
+	请求时会同步会话数据到数据库中同时每次请求都会传送session的cookie并更新其expires值
+
+	session的cookie的时效
+	默认情况下expires是SESSION_COOKIE_AGE = 1209600（即两周时间）
+	如果你想要关闭浏览器cookie失效就要配置SESSION_EXPIRE_AT_BROWSRE_CLOSE = True
+
+	session的cookie的其他设置
+	SESSION_COOKIE_DOMAIN
+	SESSION_COOKIE_NAME
+	SESSION_COOKIE_SECURE
+
+	用户认证系统：Authentication
+	session和cookie提供维持http状态的底层工具，常见的要维持的状态是用户的登录状态以及与用户相
+	关的一些数据，为此django提供了专门的Auth模块实现用户认证
+	Auth系统的组成：
+	用户验证 ：查询数据库中是否有匹配的用户名和密码
+	权限授予 : 用于标识用户是否拥有某种操作的二进制(yes/no)标志
+	组 : 一种可以将标记和权限应用于多个用户的常用方法，方便用户管理
+	Messages : 向用户显示队列式的系统消息的常用方法
+	Profiles : 通过自定义字段扩展用户对象的机制
+
+	使用Auth的配置
+	INSTALLED_APPS中 'django.contrib.auth'（有必要的话，同步数据库python manage.py syncdb）
+	MIDDLEWARE_CLASSES中 'django.contrib.auth.middleware.AuthenticationMiddleware'（一定要放在
+	SessionMiddleware后面）
+
+	django代表用户的是什么？
+	req.user代表当前的用户，如果用户登录就是登录用户，否则就是匿名用户
+	req.user的属性：
+	req.user.username
+	req.user.first_name
+	req.user.last_name
+	req.user.email
+	req.user.password
+	req.user.is_staff  是否拥有网站的管理权限
+	req.user.is_active 通过设置为False可以禁用用户
+	req.user.is_supperuser 用户是否拥有最高权限
+	req.user.last_login 用户最后的登录时间
+	req.user.date_joined 用户创建时间
+	req.user的方法：
+	req.user.is_authenticated() 用户是否通过认证，通过认证并不表示用户具有权限，也不表示用户
+								处于激活状态
+	req.user.is_anoymous() 用户是否是匿名用户
+	req.user.get_full_name() 返回用户全名（即first_name + ' ' + last_name)
+	req.user.set_password(newpassword) 设置用户密码
+	req.user.check_password(password) 验证密码
+	req.user.get_group_permissions() 返回用户所属组的权限列表
+	req.user.get_all_permissions() 返回用户所属组以及用户自身的权限列表
+	req.user.has_perm(perm) 用户是否具有某个指定的权限
+	req.user.has_perms(perm_list) 用户是否具有指定的一些权限
+	req.user.has_module_perms(app_label) 用户是否具有某个app的权限
+	req.user.get_and_delete_messages() 返回用户Message对象列表并移除消息
+	req.user.email_user(sub, msg, [from_mail='']) 给用户发邮件，默认发件人DEFAULT_FROM_EMAIL
+	req.user.get_profile() 返回用户的profile信息
+	User对象含有连个many-to-many的属性：
+		myuser.groups
+		# set a user's groups
+		myuser.groups = group_list
+		# add a user to a some group
+		myuser.groups.add(group1, group2...)
+		# remove a user from some group
+		myuser.groups.remove(group1, group2...)
+		# remove a user from all groups
+		myuser.groups.clear()
+		
+		myuser.user_permissions
+		myuser.user_permissions = permissions_list
+		myuser.user_permissions.add(per1, per2...)
+		myuser.user_permissions.remove(per1, per2...)
+		myuser.user_permissions.clear()
+	验证用户信息是否有效：
+		from django.contrib import auth
+		# 如果信息无效（数据库中匹配）返回None，否则返回User对象
+		user = auth.authenticate(username='jack', password='adls')
+		if user is not None:
+			print('correct')
+		else:
+			print('invalid password')
+	手动用户登录/登出处理：
+		验证用户信息，并且在通过验证后使用session保存用户id
+		from django.contrib import auth
+
+		def login_view(req):
+			username = req.POST.get('username', '')
+			password = req.POST.get('password', '')
+			user = auth.authenticate(username=username, password=password)
+			if user is not None and user.is_active:
+				# 如果用户信息有效，并且用户状态已激活，则登录
+				auth.login(req, user)
+				return HttpResponseRedirect('/account/loggedin')
+			else:
+				return HttpResponseRedirect('/account/invalid')
+		def logout_view(req):
+			auth.logout(req)
+			return HttpResponseRedirect('/account/loggedout')
+	使用系统自带的登录/登出处理：
+		from django.contrib.auth.views import logout, login
+		urlpatterns = pattern('',
+			url(r'^accounts/login/$', login),
+			url(r'^accounts/logout/$', logout),
+		)
+		当请求登录时，默认会渲染registration/login.html页面，可以通过给urlConf传递第三个参数
+			dict(template_name="log/login.html")来改变登录渲染页面
+		登录模板页面的要求，一定要有input[name='username']和input[name='password']，如果使用了
+			会话的话一定要有{% csrf_token %}，请求页面时url中的query-string的next参数可以在
+			模板中通过{{next}}访问，常常是通过将上一跳url写入表单（或者用url的queryString）
+			<input type="hidden" name="next" value="{{next|escape}}" />这样可以可以在登录完成
+			后跳转到next了
+		登录完成默认重定向到/accounts/profile，如果要改变跳转就在登录提交的数据中含有next参数
+		当退出时，默认会渲染registration/logged_out.html页面，如果在rulConf中传递第三个参数
+			dict(next_page="/thanks")就可以在退出后重定向到那个页面
+	处理未登录用户：
+		from django.http import HttpResponseRedirect
+		def my_view(req):
+			if not req.user.is_authenticated():
+				return HttpResponseRedirect('/accounts/login/?next=%s' % req.path)
+		或者
+		def my_view(req):
+			if not req.user.is_authenticated():
+			return render_to_response('login_error.html')
+		或者
+		from django.contrib.auth.decorators import login_required
+		@login_required
+		def my_view(req):
+			pass
+			如果用户未登录重定向到'/accounts/login/?next=%s' % req.path，如果用户登录
+			正常调用my_view即可
+	限制已登录用户：
+		基于某种权限对用户进行限制
+		def vote(req):
+			if req.user.is_authenticated() and req.user.has_perm('polls.can_vote')
+				# vote here
+			else:
+				return HttpResponse("you can't vote in this poll")
+		通过自定义decorator实现权限验证
+			def user_can_vote(user):
+				return user.is_authenticated() and user.has_perm('pollos.can_vote')
+			@user_passes_test(user_can_vote, login_url="/accounts/login")
+			def vote():
+				pass
+		使用权限decorator：
+			from django.contrib.auth.decorators import permission_required
+			@permission_required('polls.can_vote', login_url="/accounts/login")
+			def vote():
+				pass
+	通用视图限制访问：
+		from django.contrib.auth.decorators import login_required
+		from django.views.generic.date_based import object_detail
+		@login_required
+		def limited_object_detail(*args, **kwargs):
+			return object_detail(*args, **kwargs)
+
+	用户，组，权限，消息管理：
+		通常使用django提供的admin就可以管理用户，组，权限了，但是有时可能会用到底层
+		的API来管理
+		创建用户：
+			from django.contrib.auth.models import User
+			user = User.objects.create_user(username='jack', email='s@133.com', password='dd')
+			user.save()
+		修改密码：
+			user = User.objects.get(username='jack')
+			user.set_password('sldls') # 注意密码是slat加密的所以不要通过user.password修改
+			user.save()
+			user.password的格式：hashType$slat$passwordHash，hashType可以是sha1或md5等加密算法名
+		其实这里的user对象和req.user对象是一样的对象，所以你可以通过访问很多关于用户的信息，
+		这里的User就是django内部定义的用户数据模型，映射到了数据库中
+		权限：
+			这里的权限是指用户对于模型（数据表）的权限，用户对模型具有三种权限：add, change,
+			delete。权限是针对一个类型的模型而不是模型实例对象，并且将数据操作的权限写入到了
+			数据库的auth_permission表中，也就是说权限是针对模型数据的，与此同时权限本身也是
+			一种数据模型，django.contrib.auth.models.Permission
+		组：
+			组的意义就在于方便用于的管理，隶属于一个组的用户具有某个方面的一致性，其实
+			一个组的所有用户均具有该组的权限
+			django.contrib.auth.models.Group
+		消息：
+			消息为了给用户反馈
+				user.message_set.create(message='message-content')
+				user.get_and_delete_messages()
+				模板中也可访问用户的消息{{ messages }}是一个list
+	注册：
+		from django import forms
+		from django.contrib.auth.forms import UserCreationForm
+		from django.http import HttpResponseRedirect
+		from django.shortcuts import redner_to_response
+
+		def register(req):
+			if req.method == 'post':
+				form = UserCreationForm(req.POST)
+				if form.is_valid():
+					new_user = form.save()
+					return HttpResponseRedirect('/books/')
+			else:
+				form = UserCreationForm()
+			return render_to_response('registration/register.html')
+		模板中，<form action="" method="post">{{ form.as_ul }}<input type="submit"/></form>
+
+	模板中访问用户信息：
+			只有使用RequestContext并且在TEMPLATE_CONTEXT_PROCESSORS中包含了
+			django.core.context_processors.auth时才能在模板中访问用户信息
+			{{ user }}一个user对象
+			{{ user.is_authenticated }} {{ user.username }}等信息
+			{{ perms }}用户权限对象
+			{{ perms.polls }} {{ perms.polls.can_vote }}均是bool值
+
+
+缓存机制：
+	为了避免对相同结果的重复计算可以使用django的缓存机制
+	缓存配置：
+		缓存类型：
+			内存缓存：
+				CACHE_BACKEND = 'memcached://127.0.0.1:11209/'
+				配置为使用memcache利用内存进行缓存，这是提供缓存最高性能的方式了，
+				你需要安装一个python包对memcache支持，memcache支持分布式缓存，如果启用
+				在加入所有ip地址（用逗号分隔）
+			数据库缓存：
+				首先，创建缓存表python manage.py createcachetable [cachetable_name]
+				CACHE_BACKEND = 'db://cachetable_name'
+			文件系统缓存：
+				CACHE_BACKEND = 'file:///var/tmp/django_cache'
+				CACHE_BACKEND = 'file://c:/foo/bar'
+				设置的路径是绝对路径，要确定服务器对该目录可读写
+			本地缓存：
+				适用于开发使用
+				CACHE_BACKEND = 'locmem:///'
+			假缓存：
+				仅仅提供了一个缓存的接口并没有实现缓存的效果，开发时使用
+				CACHE_BACKEND = 'dummy:///'
+			自定义缓存：
+				没有特殊情况建议使用django自己的缓存
+		缓存参数：
+			在CACHE_BACKEND缓存类型后面以queryString的形式给出缓存参数，接受的参数：
+			timeout: 缓存的时间
+			max_entries: 缓存的最多条目数
+			cull_percentage: 超过max_entries时删除旧缓存的比例1/cull_percentage，设置为0
+							表示超过时将缓存条目全部移除
+			其他的非法参数自动被忽略
+			CACHE_BACKEND = 'locmem:///?timeout=30&max_entries=4000'
+	站点级缓存：
+		MIDDLEWARE_CLASSES = (
+			'django.middleware.cache.UpdateCacheMiddleware',
+			'django.middleware.common.CommonMiddleware',
+			'django.middleware.cache.FetchFromCacheMiddleware',
+		)
+		CACHE_MIDDLEWARE_SECONDS = 800 # 每个页面被缓存的秒数
+		CACHE_MIDDLEWARE_KEY_PREFIX 为了避免与别的缓存冲突，可以为空串
+		CACHE_MIDDLEWARE_ANONYMOUS = True 仅缓存与匿名用户有关的页面
+		与此同时middleware会自动设置last-modified,expires,cache-control给浏览器
+	视图级缓存：
+		即对单个视图的输出进行缓存
+		使用decorator:
+			from django.views.decorators.cache import cache_page
+			@cache_page(60*15)
+			def my_view(req):
+				pass
+		在urlConf中指定缓存：
+			上面使用decorator的方法，使得缓存和视图耦合，所以并不是最好的办法
+			from django.views.decorators.cache import cache_page
+			urlpatterns = (
+				url(r'foo/(\d{3})', cache_page(my_view))
+			)
+	模板缓存：
+		相关的指令{% load cache %},{% cache timeout blockName %}{% endcache %}
+	API级的缓存：
+		当你视图访问的数据变化比较频繁时，显然缓存视图是没有意义的，但是如果你却
+		想要缓存其中变化不频繁的部分，这时就用到了api缓存（底层使用pickle可以对
+		所有对象进行缓存）
+		django.core.cache.cache对象是根据设置的不同缓存类型创建的缓存对象
+		from django.core.cache import cache
+		cache.set(key, value[, timeout_seconds])
+		# timeout_seconds默认为CACHE_BACKEND提供的timeout
+		cache.get(key[, default_value])
+		cache.add(key, value[, timeout_seconds]) # 不会更新已有key
+		cache.get_many([key1, key2, key3...])返回请求中未超时的{key:value}
+		cache.delete(key)
+		cache.incr(key)如果key不存在引发ValueError异常
+		cache.decr(key)
+	下游缓存：
+		上面提到的都是自己对自己主机上的页面或内容进行缓存，其实在用户和网站主机之间
+		还有若干缓存。网站主机对自己的缓存 -- 代理服务器的缓存 -- ISP服务商的缓存 --
+		用户浏览器的缓存
+	关于缓存的HTTP头部：
+		Vary：根据某些http头部的不同值，缓存不同的页面版本
+			默认django根据请求路径来缓存不同页面，并不会考虑请求中的cookie，user-agent
+			等http头部
+			from django.views.decorators.vary import vary_on_headers
+			@vary_on_headers('User-Agent','Cookie')
+			def my_view(req)
+				pass
+			这样就会根据不同的user-agent和cookie缓存不同的页面版本
+			因为根据cookie缓存不同版本较常见所以
+			from django.views.decorators.vary import vary_on_cookie
+			@vary_on_cookie
+			def my_view(req):
+				pass
+			修改vary header：
+			from django.utils.cache import patch_vary_headers
+			def my_view(req):
+				response = render_to_response('test.html')
+				# 不区分大小写
+				patch_vary_headers(response, ['Cookie','User-Agent'])
+				retur response
+		浏览器缓存的其他：
+			from django.views.decorators.cache import cache_control
+			@cache_control(private=True) #指定缓存是私有的
+			def my_view(req):
+				pass
+			@cache_control可用的参数还有：
+				public=True, no_cache=True, no_transform=True, must_revalidate=True
+				proxy_revalidate=True, max_age=num_seconds, s_maxage=num_seconds
+		禁用缓存：
+			from django.views.decorators.cache import never_cache
+			@never_cache
+			def my_view(req):
+				pass
+		django.middleware.http.ConditionalGetMiddleware基于Etag和Last-Modified
+		django.middleware.gzip.GZipMiddleware 使用gzip压缩
+
+
+多站点支持：
+	同一主机，同一数据库，同一django支持运行多个网站
+	不同站点使用同一数据库，可以避免数据冗余，不同站点使用Site对象的name和domain区分
+	使用多站点:
+		'django.contrib.sites'加入INSTALLED_APPS
+		python manage.py syncdb将数据表django_site写入数据库中，与此同时创建了
+			默认Site对象（含有name和domain属性），域名为example.com
+		将默认Site对象的domain修改成自己站点的域名，同时通过admin或者API来创建
+			多个Site对象，分别指向不同的站点
+		每个站点的settings.py文件中定义SITE_ID = 与该站点对应的数据库id
+	范例：
+		多站点重用数据
+		from django.db import models
+		from django.contrib.sites.models import Site
+		class Article(models.Model):
+			headline = models.CharField(max_length=200)
+			#...
+			# article和site是多对多的关系
+			sites = models.ManyToMany(Site)
+			# 如果换成sites = models.ForeignKey(Site)就只将article与一个站点关联
+		多站点重用视图
+		from django.conf import settings
+		from django.shortcuts import get_object_or_404
+		from mysite.articles.models import Article
+		def article_detail(req, article_id):
+			# 因为SITE_ID中指定了站点对应的数据库id
+			# 所以可以通过数据库id切换不同站点的数据，实现视图在不同站点间的重用
+			a = get_object_or_404(Article, id=article_id, sites__id=settings.SITE_ID)
+		视图根据站点不同进行不同处理
+		from django.conf import settings
+		from django.contrib.sites.models import Site
+		def my_view(req):
+			current_site = Site.objects.get(id=settings.SITE_ID)
+			# 或者使用更加简洁的方法current_site = Site.objects.get_current()
+			if current_site == 'example.com':
+				# do-something
+			elif current_site == 'foo.com':
+				# do-otherthing
+	简单的站点关联：
+		from django.contrib.sites.models import Site
+		from django.contrib.sites.managers import CurrentSiteManager
+
+		class Photo(models.Model):
+			photo = models.FileField(upload_to='/homt/photos')
+			photographer_name = models.CharField(max_length=80)
+			pub_date = models.DateField()
+			site = models.ForeignKey(Site)
+			objects = models.Manager()
+			on_site = CurrentSiteManager()
+		返回数据库中所有photo数据
+			Photo.objects.all()
+		返回和该站点关联的photo数据
+			Photo.on_site.all() # equal to Photo.object.filter(site=settings.SITE_ID)
+		如果记录站点信息的字段名不是site的话
+		publish_on = models.ForeginKey(Site)
+		objects = models.Manager()
+		on_site = CurrentSiteManager('publish_on')
+	django内部对多站点的支持：
+		建议即便支持一个站点也使用SITE_ID，这样便于以后扩展
+		重定向时使用多站点
+		注册登录使用多站点
+		flatpages框架
+		syndication框架
+		权限框架
+
+
+django包含的子框架：
+	django的标准库：
+		django.contrib，其中还有很多有用的附加功能包，即便你将django.contrib移除也不会
+		影响到django的基础功能
+		django.contrib.admin 自动化管理站点工具
+		django.contrib.admindocs 为admin提供文档说明
+		django.contrib.auth 用户验证框架
+		django.contrib.comments 评论框架
+		django.contrib.contenttypes 面向django的高级开发者
+		django.contrib.csrf 预防跨站点请求伪造
+		django.contrib.databrowse 数据浏览
+		django.contrib.flatpages 数据库中管理html内容
+		django.contrib.formtools 表单处理的高级工具
+		django.contrib.gis 提供GIS（geographic information system）的扩展，处理地理数据
+		django.contrib.humanize 增加数据的人类可读性
+		django.contrib.localflavor 不同国家的本地化支持，比如可以验证美国邮编和社保号
+		django.contrib.markup 模板过滤器，标记语言
+		django.contrib.redirects 用于重定向
+		django.contrib.sessions 用于管理会话
+		django.contrib.sitemaps 用于生成站点地图XML
+		django.contrib.sites 多个网站支持
+		django.contrib.syndication 用于ATOM和RSS
+		django.contrib.webdesign 对设计师很有用
+
+
+静态页面框架：
+	django.contrib.flatpages
+	管理站点中的静态页面（例如：关于页面），使用django模型对象来存取这些页面，同时还支持
+	django模板语法
+	配置：
+		django.contrib.sites和django.contrib.flatpages添加到INSTALLED_APPS
+		django.contrib.flatpages.middleware.FlatpageFallbackMiddleware添加到
+			MIDDLEWARE_CLASSES
+		python manage.py syncdb生成与flatpages相关的数据库表
+	定义数据模型：
+		在django/contrib/flatpages/models.py中定义
+		from django.db import models
+		from django.contrib.sites.models import Site
+		class FlatPage(models.Model):
+			# /about/contact/
+			url = models.CharField(max_length=100, db_index=True)
+			# 这些东西要可以通过模板处理
+			title = models.CharField(max_legnth=200)
+			content = models.TextField(blank=True)
+			enable_comments == models.BooleanField()
+			# 用来指定解析该页面的模板，如果没有则使用flatpages/default.html
+			# 模板内通过对象flatpage访问页面数据
+			template_name = models.CharField(max_length=70, blank=True)
+			# 是否只有注册用户才可以查看该页面
+			registration_required = models.BooleanField()
+			# 该页面对应的站点
+			sites = models.ManyToManyField(Site)
+	静态页面被自动显示：
+		这些是由FlatpageFallbackMiddleware自动完成的，每当引发404错误时，该middleware
+		根据url和site_id自动从数据库中取回静态页面
+	管理静态页面数据：
+		admin管理
+		API管理：
+			from django.contrib.flatpages.models import FlatPage
+			from django.contrib.sites.models import Site
+			fp = FlatePage.objects.create(
+				url='/about/contact/',
+				title='About',
+				content='<p>About this site..</p>',
+				enable_comments=False,
+				template_name='',
+				registration_required=False
+			)
+			# for manytomanyfield
+			fp.sites.add(Site.objects.get(id=1))
+			FlatPage.object.get(url='/about/')
+
+
+重定向框架：
+	django.contrib.redirects
+	配置：
+		django.contrib.redirects => INSTALLED_APPS
+		django.contrib.redirects.middleware.RedirectFallbackMiddleware => MIDDLEWARE_CLASSES
+		python manage.py syncdb => django_redirect: site_id, old_path, new_path
+	原理：
+		RedirectFallbackMiddleware自动完成处理，当引发404错误时，会自动到数据库中
+		进行匹配查找，如果找到且new_path不为空则重定向到new_path，new_path为空则
+		返回401和空内容，没有匹配则照常处理
+		注：应该将该中间件放在最好，因为这是对于404的终极处理手段
+	管理：
+		admin管理
+		API管理：
+			from django.contrib.redirects.models import Redirect
+			from django.contrib.siteds.models import Site
+			rd = Redirect.objects.create(
+				site=Site.objects.get(id=1),
+				old_path='/muisc/',
+				new_path=/arts/muisc/',
+			)
+			Redirect.objects.get(old_path='/muisc/')
+
+
+防御请求伪造框架：
+	django.contrib.csrf
+	配置：
+		django.contrib.csrf.middleware.CsrfMiddleware添加到MIDDLEWARE_CLASSES
+		注：该项必须在SessionMiddleware后，并且必须在GZipMiddleware之前
+	工作原理：
+		自动在每个post请求的表单添加input[type='hidden'][name='csrfmiddlewaretoken'][
+			value=当前会话id相关的散列值]（当然前提是，你要再表单中{% csrf_token %}）
+		服务器受到请求后检测csrfmiddlewaretoken值是否正确，如果错误引发403错误
+
+数据人类可读框架：
+	django.contrib.humanize
+	过滤数据，是其更加人类可读
+	配置：
+		django.contrib.hunmanize添加到INSTALLED_APPS
+	用法：
+		在模板中通过{% load humanize %}引入下面的过滤器
+		apnumber 1-9的数据返回美式拼写，1 -> one
+		intcomma 为整数每三个数字添加逗号，100000 -> 100,000
+		intword 将大整数转换为单词，10000000 -> 1.0 million
+		ordinal 将整数转换为序数词，3 -> 3rd
+
+标记过滤框架：
+	django.contrib.markup
+	配置：
+		添加django.conrib.markup到INSTALLED_APPS中
+	使用：
+		模板中使用{% load markup %}引入下面的过滤器
+		textile 实现了Textile风格的过滤
+		markdown 实现了Markdown风格的过滤
+		restructuredtext 实现了ReStructured Text风格的过滤
+
+
+中间件：
+	可以理解为是插入到request/response流程之间的钩子，通过中间件很容易修改
+	django的输入输出
+	例子：
+		对于大流量的网站，django部署在负载均衡proxy之后，此时req.META['REMOTE_IP']的值
+		代表的是proxy的地址而不是客户端的地址，客户端的地址被存放在了
+		req.META['HTTP_X-FORWARDED-FOR']中，为了可以一致（无论是否有proxy）的读取客户端ip
+		class SetRemoteAddrFromForwardedFor(object):
+			def process_request(self, req):
+				try:
+					client_ip = req.META['HTTP_X-FORWARDED-FOR']
+				except KeyError:
+					pass
+				else:
+					# x-forwarded-for can be a comma-separated list of ip
+					client_ip = client_ip.split(',')[0]
+					req.META['REMOTE_ADDR'] = client_ip
+		只要添加这个中间件的话，无论是否有负载均衡proxy都可以从remote-addr中读取到
+		客户端ip，其实django对这个功能提供了中间件djang.middle.http中
+	配置：
+		将中间夹完整的类名路径以字符串添加到MIDDLEWARE_CLASSES中
+		注意，中间件的顺序很重要，在request和view阶段从前往后应用中间件，在response
+		阶段从后往前应用中间件
+	定义中间件（类）：
+		__init__(self)
+			出于性能考虑每个中间件的__init__只在服务器启动时调用一次，通常用于检查
+			自身的必要性
+		process_request(self, request)
+			request的预处理方法，会在django收到request但是没有解析url以确定调用哪个
+			view调用之前调用，也就是说这是请求来后第一个调用的函数
+			返回None，django继续进行正常的处理流程
+			返回HttpResponse，不再执行任何中间件和view，立即返回该HttpResponse
+		process_view(self, request, view, args, kwargs)
+			已经确定调用哪个view函数，但是view函数执行之前被调用
+			参数view是将要被用于处理请求的view函数
+			args，kwargs都是要传递给view函数的参数（其中没有request参数）
+			返回None，django继续进行正常的处理流程
+			返回HttpResponse，不再执行view函数，立即返回该HttpResponse
+		process_response(self, request, response)
+			调用view函数已经生成response对象之后，因此可以在此修改response内容，
+			一个常见的应用是压缩response内容
+			response是view函数执行后返回的HttpResponse对象
+			必须返回一个HttpResponse对象
+		process_exception(self, request, exception)
+			在request处理过程中，也就是说在相应的view函数调用时如果引发一个未
+			捕获的异常就调用该函数，该函数常常用来发送错误信息，将相关信息保存
+			到日志文件中，甚至从错误中恢复
+			返回None，将异常留给django内置的异常处理框架处理
+			返回HttpResponse，用该对象响应并且不执行内置异常框架处理
+	内置中间件：
+		认证，django.contrib.auth.middleware.AuthenticationMiddleware
+			为每个request对象添加request.user属性
+		通用，django.middleware.common.CommonMiddleware
+			拒绝某类浏览器访问
+				根据DISALLOWED_USER_AGENTS列表的设置拒绝某些浏览器的访问
+				（item是re.compile()，该中间件根据http头user-agent匹配情况
+				  来决定是否拒绝访问）
+			url尾部添加slash
+				根据APPEND_SLASH = True设置，将目录路径的url尾部添加slash
+				（其实这是在process_request其间发生的重定向）
+			url添加www
+				根据PERPEND_WWW = True设置，为没有www的url添加
+			对etag的处理
+				如果设置USE_ETAG = True，则django会根据Etag来处理资源文件的缓存
+		压缩，django.middleware.gzip.GZipMiddleware
+			带宽 vs 处理时间（其实时间很少的）
+		条件化GET，django.middleware.http.ConditionalGetMiddleware
+			检查request头的If-None-Match或If-Modified—Since，与response头的
+			Last-Modified或ETag是否相同，如果相同将以生成的response丢弃，用
+			304响应替代
+		反向代理，django.middleware.http.SetRemoteAddrFromForwardedFor
+			不论服务器是否部署均衡负载proxy后面，均可以通过req.META["REMOTE_ADDR"]
+			访问客户端的ip
+			注意：
+				这里的REMOTE_ADDR来自于X-Forwarded-For，该中间件不对值作合法性验证。
+			千万注意：
+				如果proxy没有启用x-forwarded-for反向代理的话，不要使用该功能，因为
+				x-forwarded-for是很容易伪造的（这样就相当于伪造ip地址），不要信任直接
+				来自客户端的x-forwarded-for
+		会话，django.contrib.sessions.middleware.SessionMiddleware
+		缓存，django.middleware.cache.UpdateCacheMiddleware
+			  django.middleware.cache.FetchFromCacheMiddleware
+		事务，django.middleware.transaction.TransactionMiddleware
+			将数据库的commit，rollback和请求/响应关联起来
+
+部署django
+	关闭Debug模式
+		DEBUG = False
+	关闭模板Debug模式
+		TEMPLATE_DEBUG = True
+	定义404模板页面
+		如果Debug开启时django会在404发生时使用内置的404页面，所以现在要定义自己的404
+		页面，默认假设是位于模板目录的404.html
+		你可以使用模板的继承特性来生成该页面
+	定义500模板页面
+		同样关闭Debug后django也不会使用内置的500页面了（500代笔服务器内部出错，
+		比如发生了未捕获的异常时），默认假设是位于模板目录的500.html
+		因为你不能确定在什么情况下这个页面将会显示，所以建议使用简单的html页面就好了
+	异常发送给管理员
+		填写所有管理员的信息
+			ADMINS =(
+				('xiaowenbin', 'xiaowenbin@163.com'),
+			)
+		配置邮件发送功能
+			EMAIL_HOST 邮件服务器地址（默认localhost）
+			EMAIL_HOST_USER 邮件服务器用户名
+			EMAIL_HOST_PASSWORD 邮件服务器用户的密码
+			EMAIL_PORT 邮件服务器端口
+			EMAIL_USE_TLS 是否tls到邮件服务器
+			EMAIL_SUBJECT_PERFIX 默认[django]
+	连接中断发送给管理员
+		所谓连接中断是指当用户浏览非空链接时却返回404
+		首先这个功能依赖于django.middleware.common.CommonMiddleware
+		设置，
+			SEND_BROKEN_LINK_EMAILS = True
+			MANAGERS =(
+				('xiaowenbin', 'xiaowenbin@163.com'),
+			)
+	多个settings.py
+		该文件用于定义django的一些基础设置，所以如果你需要不同django环境（开发，产品）
+		的话，使用多个settings.py是合理的，django支持多个配置文件
+		常见的情况是根据开发/产品环境进行不同的配置
+			使用两个完全不同个的settings.py文件：
+				配置简单，但是数据冗余
+			使用一个基本的配置文件，第二个配置文件导入基本配置文件，重写某些设置：
+				消除了数据冗余，只要在另一个文件中重写某些配置项即可
+			只用一个配置文件，其中通过检测环境进行不同的设置：
+				常见的方法是，
+							import socket;
+							if socket.gethostname() == 'my-laptop':
+								DEBUG = TEMPLATE_DEBUG = True
+							else:
+								DEBUG = TEMPLATE_DEBUG = False
+				通过检测主机名进行不同的设置
+		配置文件可以任意命名，只要你设置
+			"DJANGO_SETTINGS_MODULE"（默认"mysite.settings"）
+	apache和django
+		在开发阶段你可以使用django内建服务器测试，但是要生产部署的话就要用apache了
+		这里有三种方式使用apache
+			apache + handle.py 作为CGI 不推荐
+			apache + mod_python 不推荐
+			apache + mod_wsgi 推荐的方式
+
+
+集成已有数据库和应用：
+	数据库整合
+		django使用模型自动生成数据库表，但是遗留的数据库却不一定符合django对
+		数据库表约定，为此django提供了一个可以从数据表生成模型的功能
+			python manage.py inspectdb
+		根据settings.py配置的数据库，将其中所有的表读取生成model并输出到stdout
+		你可以输出到models.py文件中
+		要注意的是该功能没办法完美的处理manytomany，此外还有很多事情要你处理
+		该功能只是能生成符合django模型的大致代码，你还需要自己清理其中无用
+		以及错误的部分
+	认证系统整合
+		认证后台列表
+			AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
+			上面是django默认使用的数据库认证系统，你可以在该列表中填入其他认证系统，
+			django依次遍历直到认证可用
+		编写认证后台
+			实现了get_user(id), authenticate(**credentials)方法的类
+			get_user(id)
+				id是用于识别一个用户的值，函数返回User对象
+			authenticate(**credentials)
+				接受各种各样的认证参数，认证成功返回User对象，否则None
+	应用整合
+		django可以很好的和apache，php等很多不同的应用进行整合
+
+
+国际化
+	配置
+		USE_I18N = True
+		django.core.context_processors.i18n添加到TEMPLATE_CONTEXT_PROCESSORS
+	用法
+		在模板中指出待翻译的字符串
+			from django.utils.translation import ugettext as _
+			def my_view(req):
+				# output = _(varname)
+				# output = _(';'.join(['xiao','wen']))
+				# output = _('%(username)s is a %(age)s') % {'username':'wikty','age':33}
+				output = _('welcome to my site')
+				return HttpResponse(output)
+		标记不需要立即翻译的字符串
+			比如数据库中的字符串以原始形式储存，之后翻译
+			django.utils.translation.gettext_noop()
+		惰性翻译标记
+			只有被访问时才翻译
+			django.utils.translation.ugettext_lazy()
+		

@@ -1,0 +1,323 @@
+﻿mysql安全：
+及时给服务器的os打补丁
+禁用服务器os上的不必要用户，防止其修改数据库目录
+禁用服务器上不必要的系统服务
+禁用服务器上不必要的端口号
+为mysql的root设置密码
+
+mysql用户，权限管理命令：
+CREATE USER  username IDENTIFIED BY [PASSWORD] password,.....;
+DROP USER  username;
+drop不能打断用户当前会话，注销后才可删除user
+RENAME  USER  oldname TO newname;
+GRANT REVOKE更倾向与权限设置方面，功能很强大。
+设置权限后，只是重写了权限表，还得通过刷新该表才能被服务器知道新的权限，方法
+flush privileges;(只有管理员才能这么干)
+
+设置用户的密码：(password()是个加密函数）
+mysqladmin -u username -p oldpss newpss
+root用户修改别的用户密码set  password for'username'@'%'=password('newpsd');
+别的用户修改自己密码set password=password('newpsd');
+grant
+insert   update  修改表user（记得使用加密函数）
+
+关于表user：
+不能将这个表的权限授予非管理员
+
+使用insert into时
+可以不去插入的列：指定可以为null的列（默认），或者虽然不能为空但是指定了默认值
+插入时，语句给的字段顺序与表定义时字段顺序无关，但是如果想要给整个表插入值得话，也就意味着可以省略对字段的制定，这时顺序必须与表相同
+插入语句中指定的字段数，与值得个数不匹配会出现错误，含有就是该是字串的没有加引号，也会出错，错误提示为:column count doesn't match value count
+
+mysql中标记字符串的界
+建议使用  '   如果字符本身含有单引号，则转义方法有\'或者''。
+因为mysql语句今后会涉及到与php混搭，所以建议使用单引号
+
+不等于
+<>
+
+大小于运算符也可以用在字符串上，它会从首字母开始逐个比较
+
+between and 等价于<=  >=
+
+当你使用update和delete时，如果你不能很肯定你要更新，删除什么东西，就先用select使用相同的where子句来查看一下
+
+更新数据
+方案delete后insert，显然这是个笨办法，不过insert似乎可以指定插入位置
+当你这是要修改一下个别列时就用语句update，update更新多个列的方法
+update user_info set user_name="xiao",age="23" where id=1;
+
+表的设计原则
+表是设计用来使用的，所以表结构的设计会取决于表的用途，但是表设计的指导原则是不变的，即构建易于查询的表，并且不要光为了查询的简便而添加重复的数据。
+步骤
+列举出你想要记录的事物的所有信息，对信息分类，建表。
+数据的原子性
+根据具体的使用情况，同一个信息到达不可分割的地步或者说不必要继续分割该信息。
+在应用时，一列常常是原子性的，也就是说我想要查询的内容最精确的单位度量是一列
+衡量表是否是原子性的
+数据结合太紧密：一列内容包含了目标信息
+数据结合太松散：本该一列能够包含的内容分成了几列
+标志每条记录的唯一性
+为每行数据添加键值列
+
+关于show
+show create database mydb;
+show create table mytb;
+show columns from mytb from mydb;
+show index from mytb from mydb;
+show warnings;
+
+在创建表时，列名没有加引号，如果列名使用的是sql的保留字的话则必须加上引号，不过使用保留字来当作列名可不是个好主意
+
+关于auto_increment
+如果没有为auto_increment列指定值，或者指定了null值都将会导致该列值为最大的auto_increment值大一的值，如果指定的值已经在表中了，那么插入记录的操作失败。
+
+关于alter
+alter table mytb rename to myliketb;
+alter table auto_increment=1;
+alter table engine="myisam";
+alter table add column my_col int not first|last|after myanothercol;
+alter table change oldcolname newcolname newtype;
+alter table add primary key(mycol);
+alter table change oldcolname newcolname newtype,add primary key(mycol);
+alter table modified mycol newtype;
+alter table drop column mycol;
+alter table drop primary key;
+alter table drop index index_name;
+关于列的顺序问题
+modified 和 change在有的数据库中可以调整已经存在的列的位置顺序，可是这是一个比较复杂的过程，将输入缓存起来，删除原有列，插入缓存列，所以对于列的顺序最好在创建表或者插入新列时就规划好，不过对于列的位置不必太认真，因为select不会在意这些的，列的位置只会与储存有关。
+first last second third...  after 都可以定位列的顺序。
+
+字符串函数
+right(mystr,num);//字符串右侧的num个字符
+left(mystr,num);
+sunstring_index(mystr,substr,num);//返回第num次匹配到substr时，mystr之前的全部内容
+trim(mystr);
+ltrim(mystr);
+rtrim(mystr);
+substring(mystr,start,length);
+upper(mystr);
+lower(mystr);
+reverse(mystr);
+所有字符串函数都不会改变数据原值，只是返回处理后的值。
+
+case的使用
+update mytb
+set mycol=
+case
+when myanother="" then "data"
+when myanother="" then "data0"
+else "datadefalut"
+end;
+
+order by name, age desc|asc(asc default)
+
+多张表
+当一张表的某列不足以包含数据内容时，这列内容扩展为一个表，扩展出来的表就是该表的子表，这样父表中那个列就可以使用外键来引用子表的记录。
+
+数据表的项的关系
+一对一
+一般不需要为一对一关系新建一个表，除非该列是不常访问的数据，该列有null不想破坏主表的无null完整性，该列有blob大量数据，抽出该列有利于快速访问。
+一对多
+多的这个表可以增加一列值（外键）用来表明与另一个表的哪条记录连接
+多对多
+通过建一个中间表来转化为一对多的关系，具体的实现是，这张创建的中间表包含对两个表的主键的引用，也就是说有两个外键。将多对多的关系简化为一对多是必须的，因为这样可以避免数据的重复，有利于连接，建立的连接表相当于一个中间层，有利数据隔离维护。
+
+备份
+dos下mysqldump -uroot -p123 db_test>d:xiao.sql
+
+管理mysql
+dos 下mysqladmin -uroot -p123 shutdown
+
+从文本文件中加载数据
+load data local infile "path/test.txt" into table mytable lines terminated by '\r\n';
+该语句还可以指定别的列值分割符和行结束符。
+文本文件的编写，每一行对应的是要插入的一条记录，列值的顺序与创建表时相同，使用tab隔开列值，如果列值为空则在文本文件中记为\N
+
+执行脚本
+在打开mysql时
+mysql db_name < filename  或 mysql >filename  后者表示filename中的第一句是(use db_name;)
+已经进入mysql时
+source filename 或 \. filename
+如果打算将脚本执行的结果放入文件中，则在filename后添加 >mysql.out
+
+关于mysql中的set enum两种数据类型的用法，待查
+
+
+外键：一个表中的列引用到另一个表的主键则称这一列是外键。也可以说外键是连接表的结合点。主表通过外键将信息转移到了另一个表。
+外键的值必须是已经存在于主表中的主键的值，这样的引用才是有意义的，而且sql提供了这种约束机制，用于加强表的连接关系，这样当你想要在主表中删除的主键值已经被外键引用时，你必须先删除对应的外键。
+实例：
+myforeginkey int null,
+foreign key(myforeignkey),
+references sourcetable(sourcefield);
+注意外键只有innodb可以定义，否则视为无效。
+
+第一范式
+数据列具有原子性
+数据不能是重复的
+也就是说每一列都清晰的代表一个属性，不多不少，不与别的列相耦合。
+当属性值是一个集合时，显然堆积在一个列中或是拆分成几个列都是不好的模式，这时将该列的属性扩充为一个有外键的表。
+
+
+组合主键
+有时候的情况是虽然用一个列不能唯一标志一条记录，但是可以使用多个列来唯一标识一条记录。
+列值的依赖关系
+有时候一个列的值会跟随另一个列的值而变化，比如名字跟名字的缩写。
+将非键列对部分组合键的依赖叫做部分依赖
+将非键列与非键列之间的依赖叫做传递依赖
+第二范式
+表中没有部分依赖关系，可以有传递依赖关系
+第三范式
+表中没有传递依赖的关系
+下面来说如何可以将依赖关系解除，先假想有这样的一个案例，你要记录一个人的信息，包括这个人的姓名，职业，爱好，住址，邮编等，一个人的职业肯定跟这个人的姓名有关系，所以你要将职业抽出来，取而代之的一个id。
+
+将已有表中的数据导入到新的表中
+表school中有profession，我想在要新建一个mypro来装载有所的专业，
+方案一
+create table mypro
+( id int not null auto_increment,
+profession varchar(40)
+);
+insert into mypro(profession)
+select profession from schoool  group by profession order by profession;
+方案二
+create table mypro
+as
+select profession from school group by profession order by profession;
+alter table mypro
+add column id int not null auto_increment,
+add primary key(id);
+方案三
+create table mypro
+(id int not null auto_increment,
+profession varchar(40)
+)
+as
+select profession from school group by profession order by profession;
+
+别名
+列名和表名都可以设定别名，在第一次列表名出现时，紧跟着 as 别名，或者没有as也可以。别名可以在定义之前使用。
+
+
+笛卡尔连接
+是默认的连接方式，可以使用cross join 显示指定，或者直接连接不同的表都会得到笛卡尔连接的结果。
+
+内连接
+通过查询条件将笛卡尔连接的结果剔除一部分所得到的。
+tb1 inner join tb2 on tb1.id = tb2.my_qq
+tb1 inner join tb2 on tb1.id <> tb2.my_qq
+tb1 natural join tb2;只有在tb1和tb2有相同的列名时起作用。
+
+子查询
+通常返回一个值，但是也可以返回多个值，这时用not in 或in ,子查询可以放到where  
+甚至是列的位置来充当一个列名。
+
+当列名中有非法字符时，要使用重音符包含起来，并且注意，不要使用关键字命名列名
+
+不要在count等mysql内置函数名与括号之间留有空白，因为空白在这里用于指定别名
+
+有一点很重要，也是我经常犯的一个错误，mysql中的字符串（包括日期）一定要加引号，尤其是在使用字符串变量是容易忘记这一点，还有一点
+就是LIKE后面的内容一定是要加引号的即便是数字也是如此
+
+like binary 'someting';指定不区分大小写的匹配查询
+
+mysql连接时用的host，不仅仅开发网站时为localhost，只要数据库与网页浏览器安装在同一机器上就是localhost，所以在发布网站是，不要
+以为指定host为localhost是弄错了，那说明数据库服务器在同一台机器上
+
+关于php与mysql通信的三种方式
+mysql方式已经不推荐使用了，如果仍在使用mysql的传统连接只能说明你是个二流的web开发者
+mysqli连接方式是连接mysql最建议的方式，因为该方法针对mysql进行了优化，相较于pdo来说更能发挥mysql的优势
+pdo连接，如果不能很确定网站将来一定在mysql上部署的话，就推荐使用pdo连接方式，因为pdo连接方式迁移到别的数据库时你只需要微调sql
+语句既可以了，比myqli的迁移性好
+至于pdo和mysqli连接mysql来说，也许二者最大的区别，就在于pdo更为面向对象，一个显著的特点是，当pdo进行连接数据库失败是抛出一个异常
+将连接信息打印到屏幕上，这个可是个恼人的坏毛病，其实无需奇怪，因为pdo是完全面向对象的，所以使用pdo是要trycatch语法使用，而其是连
+接数据库是，这一点要注意了。
+接下来会对二者的一些语法差异做出罗列
+连接数据库
+mysqli: $con=new mysqli($host,$user,$pwd,$dbname);
+pdo: 
+	try
+	{
+		$con= new PDO('mysql:host=localhost;dbname=phpsols',$user,$pwd);
+		//$con= new PDO('mysql:host=localhost;port=3307;dbname=phpsols',$user,$pwd);指定端口号
+	}
+	catch(PDOException $e)
+	{
+		//echo $e->getMessage();
+		//header("Location:error.php?connect_status=failed");
+	}
+普通查询和错误捕捉
+mysqli: $results=$con->query($sql) or die(mysqli_error())//$con->error
+pdo: $retults=$con->query($sql); 
+	$error=$con->errorInfo();
+	if(isset($error[2]) die($error[2]);
+结果行数
+mysqli: $num_rows=$results->num_rows
+pdo:
+	方案一：$num_rows=$results->rowCount();
+	//该方案还是不要使用，因为方法rowCount只能在mysql上有效的查询select返回的行数，在别的数据库上该函数只能返回delet update
+	insert的影响行数
+	方案二： $sql='select count(id) from my_tb';
+			$results=$con->query($sql); $error=$results->errorInfo(); if(isset($error[2])) die($error[2]);
+			$num_rows=$results->fetchColumn(); $results->closeCursor();
+	//这里通过对表主键使用函数count统计来返回整个表的行数，但是如果要返回指定查询的结果的行数则意味着需要额外count(主键)来进行
+	一次查询，这个方案好像也不理想
+结果行取回
+mysqli: $results->fetch_row() || fetch_array() || fetch_object() || fetch_assoc()
+pdo: $results->fetch()//返回值是关联数组
+	不过pdo还有一个奇怪的语法，返回结果行，foreach($con->query($sql) as $row){echo $row['caption']; }
+	注意了是foreach循环才可以使用，明显这个特性虽然方便却有点让人困惑，query一会返回一条记录一会返回整个结果集，唉
+释放结果集
+mysqli: $results->free_result();
+pdo: $results->closeCursor();			
+
+magic_quote被禁止使用的理由
+首先要明白为什么要使用它，它用来干什么的
+开启php的此项功能后，将对来源数据进行自动转义，给数据中出现\ ' " NULL的地方进行转义，这可以使得程序员安全防范的负担减轻了
+但是，这里的问题是，有的数据并不需要转义而进行了转义，这样使得性能下降，php中有一个等效功能的函数addslashes及对应的stripslashes
+函数，既然这样就应该将此项任务留给程序员来完成，而不应该依赖于magic_quote功能的开启，此外因为并不是每个服务器都会开启magic，所
+以代码的可移植性较差，所以没有任何理由在使用magic_quote
+
+防止sql注入的核心思想是：不要相信你的用户输入，对用户输入的一切值要进行过滤转义或者清除
+常见方法：
+	1，用户输入的值一般是字符串的，如果你期望用户输入的值是一个纯数字字符串的话，不要假设，你要做的是去检测该值是否是合法数值
+		(int)，is_numeric(),abs()等几个函数可以达到此目的
+	2，在数据库储存之前对，输入进行实体转义，以前php有一个magic_quote的特性，这里使用的方法比magic_quote要高级
+		针对mysqli的是$con->real_escape_string，pdo的是quote（但是不推荐使用quote方法，建议用预处理方法替代）
+	3，这个方法是未来的趋势，使用占位符结合预处理语句，php内将会自动处理有害数据
+	4，上面这些方法并没有解决一个问题，那就是用户输入是字段名或者关键字时的情况，解决方案是，预定一个数组储存能够接受的字段列名‘
+		检测输入时看是否符合该数组的要求
+
+为什么不应该在数据库中储存图片视频资源而只是储存资源的信息？
+原因即便储存了资源也要储存资源的信息，这样来看直接储存了资源并不会使得要储存的信息量有所减少，此外数据表要进行频繁的数据操作，
+在表中放入这种没有检索价值的资源只会拖慢数据库查询的效率，既然这样我们通常就将资源放在网站的特定目录下，而只在数据库中储存资源
+的位置以及特征信息
+
+mysql数据库对表中的第一个timestamp字段每次进行数据操作时自动更新，这样的好处是，如果有记录信息更新时间的需求将会很方便
+
+有时候程序员处于习惯为了编程是方便会将表单name跟数据库字段名一致，这样做会带来安全风险
+
+mysql的时间处理，mysql直接受的时间顺序为为y m d h m s并且是24小时制，可以在时间之间插入任意分割符，但顺序不能变
+但是在日常生活中我们要处理的日期格式是各式各样的，mysql提供了函数date_format(fieldname,format)实现日期的格式化，以及提供了
+基于日期的计算函数date_add()adddate()sub_date()datesub()具体参见mysql手册，此外格式化显示时间主要交给php来完成吧，毕竟php有
+很强的处理时间显示的函数和类。要向mysql插入时间值就需要格式化为mysql可接受的格式为此可以有几种解决方案，js控件实现提取标准时间
+，或者将y m d为分成不同表单字段填写，但无论怎样都要进行仔细的php端验证值是存在是否为数字以及是否是合适的日期php中的
+checkdate这个函数很厉害了
+
+设置帐户密码
+set password for root@localhost=password('mypassword');
+
+UNSIGNED属性
+常常我们会对主键使用unsigned属性，因为unsigned表示非负数范围，对主键或者明明知道是非负数的列显然严格限制为unsigned是没有错误
+的，但是如果不小心在unsigned进行运算且结果应该是一个负数时，问题就会出现了，对于如何用unsigned类型来表示一个负数不同的平台方式
+不同，但是可以肯定你得不到你想要的结果。如果你硬要unsigned运算一个负数结果：
+set sql_mode='no_unsigned_subtraction'或者set session sql_mode='no_unsigned_subtraction'
+ZEROFILL属性
+对数值列输出时进行用0填充为固定位数（其本身储存不变只是输出时进行了填充处理）
+设置sql_mode
+用于控制数值处理，合法性约束等mysql行为。
+可以在配置文件my.ini（全局）或者客户端设置（当前会话）
+查看：select @@global.sql_mode;和 select @@session.sql_mode;
+
+
+

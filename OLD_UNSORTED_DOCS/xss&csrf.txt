@@ -1,0 +1,22 @@
+xss
+	cross site scripting，跨站点脚本攻击
+	将恶意代码注入到网页中，使得其他用户浏览网页时受到影响
+	例如：论坛，博客等评论注入javascript脚本，提取用户信息（一般是保存在cookie中的）
+			发送到第三方网站
+	预防措施很简单，只要将html，javascript等code过滤成为普通text即可，也就是说
+	从来不要信任用户提交的内容，对用户提交的内容到要进行过滤
+csrf
+	cross site request forgery，跨站点请求伪造
+	首先要明白对任意web资源的请求，都会发送该域下的cookie，恶意网站
+	插入<img src="htttp://yoursite.com/logout"/>，在你浏览时就可以实现get攻击，
+	如果yoursite的操作是通过post进行的话，恶意网站可以伪造提交表单并用js
+	自动提交，
+	解决方案：
+		不要使用get方法更数据，这是最基本的条件
+		使用post时，在使用图片验证码，token，Referer头部
+		图片验证码：每次提交表单输入验证码，较差的用户体验
+		Referer头部：当前请求头的Referer是上一次请求的地址，所以
+					可以通过检测Referer来确定请求是否来自指定的域
+		token：主流做法，form中嵌入一个hidden
+
+

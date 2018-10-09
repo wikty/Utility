@@ -1,0 +1,46 @@
+1, something site:www.stackoverflow.com; something only from the site或者是特定类型的
+	站点，site:edu
+2, "something"; excatly match something
+3, search engine -baidu; no related baidu info
+4, something OR anthoer;
+5, search engine AND optimization
+6, ~somthing; anthoer tong yi ci同义词搜索
+7, define:IP; explain IP查询缩略词的定义
+8, something 2000..2003其实不仅仅可以限定纯数字的范围，甚至是￥200..￥300也行，还可以支持
+	不用上界或者下界
+9, something author:wikty
+10, somthing filetype:pdf
+11, fy computer;
+12, inurl:something; website's url should include something
+13, inanchor:something; website's page should include the anchor
+14, intitle:something; website's title should include the title
+15, alintitle:something other-something; <=> intitle:something intitle:other-something
+16, alinurl:url other-url; <=> inurl:url inurl:other-url
+google官网上给出的搜索技巧
+1，你在google搜索的历史和日志（当然你要登陆你的google账户，google才会给你采集搜索历史）
+2，简单的关键字空格分隔代替长句子
+3，自动纠错功能（就是常见的推荐显示那个）可以使得你输入的关键字不必准确
+4，双引号语法，保证了精确匹配双引号中内容的词序
+5，无需担心大小写问题
+6，搜索引擎会忽略标点符号
+7，不想漏掉的常见词，请用双引号标注
+8，查询相关内容的网页，related:www.wikihow.com则会查找与wikihow相似的网页内容
+9，单位换算，输入数字和度量单位，即可进行任意度量单位换算
+10，查看世界各地时间，要查看世界各地的当前时间，只需搜索“时间”和城市名或国家/地区名即可。
+11，货币换算，搜索“[币种 1] 兑换 [币种 2]”，即可了解当前汇率，或者 500美元 =? 人民币
+12，天气，只需搜索“天气”和相应的邮政编码或全球任意城市名称，即可查询当地的当前天气和天气
+	预报。单独输入“天气”，即可获取您当前所在地的天气报告
+13，股票，只需在搜索框中输入任意股票代码，即可在搜索结果中获取即时更新的实时股票报价
+14，快递跟踪，直接在搜索框中输入相应的 UPS、联邦快递或 USPS 快递单号，即可跟踪您的包裹
+15，可以进行任意数学运算，您只需在搜索框中输入任意数学公式，我们就会帮您计算出相应的结果
+	甚至会显示一个计算器用于你的计算
+16，按地点搜索，在任何地点查询（如“烧烤店”）后添加邮政编码，即可获取最近的几家烧烤店及其
+	电话号码、地图，甚至还有评论
+17，电影，搜索电影名称或只搜索“电影”，即可查看您所在地区的影院位置和电影放映时间。
+18，强大的分类搜索，google的分类功能很好用，比如使用图书搜索python竟然会有免费的正版电子
+	书可以看
+19，航班，要查看飞往特定地点或从该处起飞的航班时刻表，请输入“航班飞离”或“航班飞往”和您感
+	兴趣的城市或机场的名称。您还可以使用“出发地”或“目的地”添加其他地点
+20，健康，要了解某个常见疾病或病症，请在搜索框中输入相应字词，系统将返回相关专业文章的开
+	头内容
+21，

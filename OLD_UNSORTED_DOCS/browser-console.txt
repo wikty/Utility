@@ -1,0 +1,24 @@
+页面中用于调试
+  console.log('log');
+  console.warn('warn');
+  console.error('error');
+  console.trace('trace');当前堆栈
+  debugger;使得脚本暂停到当前位置，相当于设置断点
+  console.profile();
+     code segment
+  console.profileEnd();用于测试中间代码的性能，会在profiles面板中生成一个报表
+  console.time('name')
+  	code segment
+  console.timeEnd('name');用于测试代码运行时间，会在console中显示运行时间,
+  		name用于对应开始结束
+控制台中调试
+$0,$1,$2,$3当前选中元素引用。这样就可以在console中动态修改元素了
+$(id)根据id返回元素
+$$()根据选择器返回元素
+$x()根据xpath表达式返回元素
+clear()清空控制台
+dir(obj)输出对象的所有属性
+inspect(some)可以查看各种信息，会自动跳转到相应的面板
+keys(obj)返回对象的属性名
+values(obj)返回对象的属性值
+在脚本面板sources的行号上单击可以设置断点

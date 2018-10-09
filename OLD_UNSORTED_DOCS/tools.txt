@@ -1,0 +1,55 @@
+文件比较工具> Name: WinMerge, Addr:winmerge.org, Free;
+
+PHP编写工具> Name:Zend studio, Addr:www.zend.com/products/studio;
+	    > Name:PhpEd, Addr:www.nusphere.com;
+	    > Name:PHP Development Tools(PDT), Addr:www.eclipse.org/pdt/, Free, BaseON:eclipse;
+	    > Name:Komodo Edit, Addr:www.activestate.com/komodo-edit, Free;
+	    > Name:Komodo IDE
+
+html表单可视化编辑工具> Name:bluefish, Addr:bluefish.openoffice.nl, Free, Plat:linux;
+					  > Name:SciTE, Addr:www.scintilla.org, Free
+
+forum引擎> Name:phpBB, Addr:www.phpbb.com, Free
+
+源码文档生成工具> Name:phpDocumentor, Addr:www.phpdoc.org, Free
+
+html有效性验证> OnLine:http://validator.w3.org
+
+白名单禁用js> OnLine:http://noscript.net
+
+版本控制>Name:Git, Addr:git-scm.com
+	    >Name:Subversion, Addr:subversion.apache.org
+
+文本编辑器>Name:Komodo Edit, Addr:www.activestate.com/komodo-edit,Free
+		   Name:Emacs, Addr:www.gnu.org/software/emacs/emacs.html, Free
+		   Name:Vim, Addr:www.vim.org, Free
+
+Web开发IED>Name:Aptana Studio, Addr:www.aptana.com, Free, BaseOn:eclipse
+
+测试html外观>Addr:browsershots.org, Free
+			>Addr:browserlab.adobe.com, Bus
+
+模拟各种浏览器效果>Addr:www.spoon.net, Free
+
+调试js代码>Addr:www.jsbin.com
+		  >Addr:www.jsfiddle.net
+
+windows下的cd命令，如果想要换盘符的话cd d：，你会发现出错了，因为cd本来就是用来切换当前分区下的目录的并不支持分区的跳转，cmd中
+提供了简单的盘符跳转方式，直接d：即可
+
+在cygwin中使用cmd命令，我本来以为cmd命令如同linux命令一样会保存在某个文件夹，这样的话，我只要将文件夹的路径加入到cygwin的PATH变量中
+即可使用cmd命令了，可是我发现，也许这些个命令只是存在于cmd.exe中，根本没有所对应的命令文件，所以我的方法也只能是将cmd.exe所在的文件
+路径引入PATH中（/cygdrive/c/windows/system32）
+
+WindowsVista/Windows7自带了创建硬连接和符号连接的命令：mklink
+	这样就可以创建linux系统中的硬连接和软连接文件了
+    mklink linkfile targetfile 创建软连接
+	mklink /H linkfilehard targetfile 创建硬连接
+	注：这里的软连接跟windows的快捷方式不一样的，快捷方式创建的文件为*.lnk
+
+Debugger
+Immunity：
+	Immunity Debugger is a straightforward application worth having when you need to write 
+	exploits, analyze malware and reverse engineer Win32 binaries
+	Because Immunity Debugger comes with a fully integrated Python scripting engine, you 
+	are allowed to easily paint variable sizes and track variable usage.

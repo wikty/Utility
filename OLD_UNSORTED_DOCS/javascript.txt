@@ -1,0 +1,3383 @@
+﻿JavaScript使用<script>...</script>来标识，而Java使用<applet> ... </applet> 来标识，引用的外部文件中没有<script>...</script>
+
+不是注释：
+<!--
+    document.write("Hello World!!!");
+-->
+
+javascript中调用函数的一种方法（单击链接触发事件）：
+<a href="JavaScript:alert('Hello World!!!')">请单击</a>
+
+<a href="#" onclick="alert('Hello World!!!')">请单击</a>
+
+<a href="JavaScript://" onclick="alert('Hello World!!!')">请单击</a> 
+此外还有的调用方法，放在body中的script标签中被顺序执行脚本时调用和响应事件
+两个重定向的方法：
+window.location.href="http://www.newsite.com"
+window.open("http://www.newsite.com");
+关于<a>的一个style属性：
+你可以在style中像指定链接的颜色一样指定，鼠标悬浮在链接上时要发生的事件（其实就是改变该链接的style属性，当鼠标移开时复原）
+例：a:active{color:Blue;}指定访问链接时的颜色
+       a:hover{color:Yellow;}指定鼠标悬浮时的颜色
+此外a的另一个属性title实在是可爱，我又想提一下它了。
+
+转义字符：
+\b 退格（Backspace） 
+\f 换页（Form feed） 
+\n 换行（New line） 
+\r 返回（Carriage return） 
+\t 制表符（Tab） 
+\' 单引号（'） 
+\" 双引号（"） 
+\\ 反斜线（\） 
+如果你想实现在字符串中实现换行的话，
+这样可以：document.write("<pre>密码不对\n请重新输入！</pre>");
+这是不行的：document.write("密码不对\n请重新输入！");   	\n被丢弃
+
+全局变量：
+省略var，或在函数外声明，引用时直接引用即可，无需说明
+
+相等：---？？？
+===（值且类型相等则true）　　!==（值或者类型不相等）
+这里有点问题，我验证过了，即使用=='a'和97也不会相等，困惑解除，例：'5'== 5则为true，javascript中相等关系比较的是字面上看到的东西而不是ascii码
+
+with语法：
+with(object) {
+    method();
+}//equal object.method 当调用很多方法时，就可以省下写很多的object名了
+
+关于write:
+传给该函数的参数中的html标签可以被解析，可以传给该函数任意个参数（用逗号间隔），该函数如果在页面关闭后使用会导致页面的重写，但是事先通过script标签包含在body中的write并不会重写页面
+
+访问文档中的控件：
+方式比较多id，name，刚发现了一个document.forms[0].sex[0].checked或者变形的例子document.getElementById('select').options[0]等之类的。
+
+this：
+目前遇到在两个地方很有用，一个是响应事件时可以将当前元素传入事件处理函数中，
+另一个是在构造对象的构造函数中使用，为要构造的对象添加属性，方法。
+
+&&  ||:
+这两个东西和c语言里有很大的不同，&&如果第一个为假，返回第一个，如果第一个为真返回第二个，|| 如果第一个为真返回第一个，否则返回第二个，理解起来可能有些困难，其实就是这个意思，如果第一个是的运算符不必再计算下去了，那就返回第一个
+
+ input和radio的值访问：
+脚本中分别用，element.value和element.checked
+
+微软推出免费IE推动了互联网的发展，这句话是否可信？
+
+关于javascript的全局函数（全局的意思是它们可以在所有对象内使用）：
+decodeURI() 为加密的URI进行解码
+decodeURIComponent() 为加密的URI组件解码
+encodeURI() 将字符串加密为URI
+encodeURIComponent() 将字符串加密为URI组件
+escape(string) 加密一个字符串
+unescape() 使用escape()对一个字符串进行解码
+eval(string) 判断一个字符串并将其以脚本代码的形式执行
+isFinite(number) 检测一个值是否为一个有限数字,无限数字或不能转换为数字的字符串均返回false
+isNaN(string) 检测一个值是否是一个非法数字-NaN或非数字的字符串, NaN不能用==  ===来检测也就是说NaN==NaN返回的值为false，该函数常用来对parse函数结果检测
+parseFloat(string) 将一个字符串解析为一个浮点数字
+parseInt(string) 将一个字符串解析为一个整数,不是四舍五入操作,而是切尾
+以上两个函数，参数中首尾含有空格不会出错
+Number(object) 将一个对象的值转换为一个数字
+String(object) 将一个对象值转换为一个字符串
+全局属性：
+Infinity表示无限数字
+NaN表示非法数字
+undefined 表示变量未定义或未赋值，注意的是检测是否为undefined时用===，不要用==，因为==不限制类型，这时undefined会转换为null，false之类的。
+全局对象：
+在客户端全局对象就是window，全局对象根据环境不同有所变化，全局对象可以引用所有全局的属性和方法。
+
+事件添加的方法：
+1，在html标签中添加,例：<div id='here' onmouseout='getData()'>
+      给整个文档添加事件的话，写在body中
+2，因为可以自定义对象，自然也可以为对象添加事件，	
+     方式：<script language='javascript'  for='objectname'  	 
+    event='eventname'></script>
+     该方法不常用，可能是偏向ie的原因
+      例：<script language='javascript'  for='window'  	 
+    event='onload>getData();</script>
+3, 获取元素后为其添加事件，方式：target.onclick=eventprocess;
+    这里要注意的是，获取元素一般是通过id，name等实现的，也就是说获取元素的行       为要出现在id，name已经生成之后，方案有两种，要么直接在想要添加事件的元素      后面使用<script>封装添加事件的代码，要么将添加事件的代码放到id，name出现       之前，然后必须有一个东西来触发添加事件这个函数的执行，这样好像多走了触发这      一步，所以一般用第一种方法，直接写到要添加事件的元素后面即可。给整个文档添   加事件的话，直接使用document对象就可以了
+
+冒泡问题：
+先对事件冒泡问题来一个陈述：父元素，子元素都定义了某个事件，
+在子元素响应后还会将这一事件传给父元素让其响应，但常常你只想让父元素下面的某个子元素响应之后就结束了该事件，解决之道，子元素在响应事件时，设置event.cancleBubble=true (ie)	event.stopPropagation();(fox),这样就可以阻断被子元素处理过的事件再被父元素处理，当然你也不是非禁掉不可，得分情况来看。
+
+阻止浏览器的默认行为：
+event.preventDefault(); fox,   event.returnValue=false; ie
+或者 处理器return false; 通用的
+
+内置对象：
+内置已编译对象，和对象模板两类，后者需要使用new创建才能使用，前者直接可以使用。
+
+for-in:
+遍历访问对象的属性，例：var obj={name:'xiao',sex:'m',age:12}	for(var temp in obj){	alert(obj[temp];	}
+temp是返回的属性字符串，也就是说定义的对象支持，这样访问属性的形式：obj['name']
+
+script：
+若干属性，language是type属性的前身现在正在被type取代，src指明引用的外部脚本地址，我曾遇到的问题是，在引用脚本中的script中又写了函数，结果函数不能被调用了（fox给出的错误是：not define），引用外部脚本的会就别在这里再定义函数了，属性defer的作用是，显示声明该属性的话，脚本会在页面完全载入后才执行（先不载入脚本），这样的话对于页面载入速度有提升，与body上定义的onload属性异曲同工
+
+执行顺序：
+javascript的执行顺序是自前往后的，除非代码用function封装或defer注明加载之后再执行，这些方法可以打乱代码执行顺序和代码页面位置的关系，可以提供事件响应。
+
+大小写：
+html大小写不敏感，而javascript是大小写敏感的，例如onclick事件名，在html中的话随便写，而javascript中只能是小写的，若在javascript写错了，哼哼，不好意思了，javascript直接忽略掉了该事件。
+
+分号：
+每条语句结束后可有可无，但是好的习惯是写上这个分号。
+
+常量：
+听说使用const可以在javascript中定义常量，方法还不知道。
+
+全局变量：
+定义在所有函数之外的变量就是全局变量了，定义在父函数之中的变量可以被其子函数访问，不过可以叫做半全局变量，顺便提一下，嵌套函数定义是javascript不同于c语言的，全局变量还有另外一种情况会产生，就是没有在任何地方用var来声明，但却在函数中使用，var可以多次声明同一个变量，不会有恶劣的影响。
+
+Number：
+javascript中的所有数字内部实现是64位的浮点数
+十六进制：0x 0X打头  
+八进制：0打头，不推荐使用八进制，因为有些javascript的实现并不支持八进制。
+浮点数可以使用科学技术法，例：1.234 e -4 
+
+Math：
+无需new，直接使用即可
+属性：
+E
+SQRT2
+LN10
+LN2
+PI
+LOG2E
+LOG10E
+SQRT1-2
+方法：
+abs
+cos sin tan cot系列  atan2(x,y)特别的函数：返回x轴到点(x,y)的角度
+ceil  floor
+exp(x) <=> e^x
+pow(x,y) <=> x^y
+log(x)
+max(,,,,) min(,,,,,)
+round(3.1415)
+random()
+sqrt(x)
+
+String：
+定界符‘ “混乱时求助于转义字符
+
+转义字符：
+一般表示一些不易键入得字符，尤其是 \ooo  \xhh   \uhhhh(unicode)表示各种不能键入字符很有效，这里说一些使用转义字符时的注意事项，在html插入转义字符时(document.write()|writelen())，要有标签（<pre>）来进行封装，否则不能被认为是转义字符
+备注：除了转义可以表示特殊字符外，常用的特殊字符有自己的一些编码，例：空格&nbsp;
+
+特殊值：
+NaN 无意义的数字，一般关于数字的计算出错产生
+undefine（没有定义的变量或者未赋初值就使用）和null以及false是不同的值
+备注：其实没有定义的变量fox给出的提示是not define，跟未赋初值还是有区别的，不过使用的时候没区别的
+null 是一个特殊值，与undefine有区别的，它可以赋给别人
+
+typeof：
+用于判断当前变量的数据类型，例：var hel=new Array（），则typeof hel；返回的是object，
+备注：typeof常用来判断变量是否定义或变量的类型是什么，typefo返回的字符串类型的值，取值一般为：number,string,date,object,function,undefine,boolean
+备注2：经过我的验证，string，date，使用typeof返回的都是object而不是string和date，说明他们两个都是继承自object，看来只有元数据类型才会返回真实类型，其他的则返回父类型
+
+数据类型的转换：
+不同的数据类型之间可以相互转换，但具体的转换方法是由各类型自己的方法定义的，在需要转换类型时调用相应的方法即可。
+
+访问控件：
+document.get类访问的就不说了，javascript中通过空间的name属性可以直接访问
+例：<form name='myform'>
+<input name='here'/> </form> 在javascript中访问myform.here.value,是不是很简洁便利，
+
+控制语句：
+javascript中支持c语言中的常见控制语句，例如：switch  continue break while for  do-while;(不要丢了分号)
+
+javascript支持递归调用；
+
+对象属性的访问：
+with可以避免多个方法使用时对象名的重复书写with（）{}
+for(var tempvaris  in objectname){
+objectname[tempvaris];//访问属性
+}
+备注：常规访问属性的方式，objectname['attrinaem'];
+
+对象：（所例举的方法属性并不全面）
+object：提供了创建自定义对象的基本功能
+属性：object.constructor提供了访问以及更改对象构造函数的方法
+          object.prototype返回对象的原型，由此可以给对象添加属性和方法
+方法：object.toLocaleString(）将对象返回为本地相关的字符串
+          object.toString()将对象返回为字符串
+          object.valueOf()返回对象的值（）
+string:
+属性：string.length
+          string.prototype  通过它可以为string添加属性，方法
+          string.constructor  提供了访问以及更改对象构造函数的方法
+备注：1，prototype的使用方法：对象名.prototype.新的东西，注意的是，这里用的是对象名而不是对象实例的名字，而是构造函数的名字，因此添加的新东西对于该类的实例都是可以使用的。2，var here=‘xiao’ 和 var str = new array（）的区别仅限与在使用typeof运算符是，后者是object类型，前者是string，后者有的方法，属性，前者都可以使用。
+方法：待续
+date：
+属性：date.prototype
+          date.constructor
+方法：待续
+event：（事件是指鼠标键盘的相关操作）
+前言：事件对象分为两个流派，ie和w3c，ie的event是全局的，可以window.event或
+event直接访问，而w3c得event事件一般需要在事件发生时传递给事件处理函数，关于event参数的顺序是无关紧要的，
+属性：(ie version)
+event.altLeft  event.altKey event.ctrlLeft  event.ctrlKey event.shiftLeft event.shiftKey  这些是用来监控系统按键的
+event.keyCode键盘的按键代码
+event.button关于鼠标的按键情况，该属性只支持事件onmousedown   onmouseup
+onmousemove 并不支持onmouseout|over 和onclick
+以上的属性均是可读写(w&r)的.
+event.clientX event.clientY event.x event.y 这些是只读的，关于鼠标位置
+event.cancelBubble=true 禁止子元素将事件上传至父元素（w&r）
+event.srcElement事件产生源的元素，在事件层级处理是尤其有用（w&r）
+array:
+前言:创建方式
+new array(); new array(size) ; new array('xia',3,true);
+javascript的是弱类型的，数组对象的元素之间允许类型不同，随着使用数组可以通过这种方式扩展，explame:  arrayname[arrayname.length]='something';
+数组索引输出一个元素，但使用数组名则整个数组输出
+属性：
+array.length
+array.prototype
+array.constructor
+方法：
+myarray1.concat()  myarray1自身不改变，返回的是一个连接后的数组
+例：var myarray3=myarray1.concat(1,'xiao',myarrary2)
+myarray1.shift()将自己的第一个元素删除，并返回该元素的值
+myarray1.unshift(,,,,)将在自己的开头添加不少于一个的元素，返回新长度
+myarray1.pop()将自己的最后一个元素删除，并返回该元素
+myarray1.push(,,,,)在自己的尾部添加不少于一个的元素，返回新长度
+myarray1.reverse()将自身的元素顺序反转
+myarray1.sort(funcsort)  funcsort默认字母排序
+myarray1.slice(start,end)正索引0为起始，不包括end，负索引最后一个为-1， 返回值为数组
+myarray1.toString()将其自身转换为字符串并返回字串
+myarray1.toLocaleString()将其自身转换为字符串并返回字串,具有本地化特征
+myarray1.join(separator)用指定的分隔符，将数组返回为一个字符串，但是数组自身不变化
+备注：到这里我往往会添加一些重口味的东西了，经过验证浏览器支持（或者说是javascript自身支持）非数字索引的数组，也就是说，myarray['xiao']='jkll';是合法的
+但与普通数组的不同在于，使用write时不能用数组名将整个数组写出来，而且不仅仅如此，适用于数组的（多数，也许是全部）函数它不能使用
+String
+属性:
+constructor 所建立对象的函数参考
+prototype 能够为对象加入的属性和方法
+length 返回字符串的字符长度
+方法：
+anchor("name")用来把字符串转换为HTML锚点标记内(<A NAME=>)
+big() 把字符串中的文本变成大字体(<BIG>)
+blink() 把字符串中的文本变成闪烁字体(<BLINK>)
+bold() 把字符串中的文本变成黑字体(<B>)
+fixed() 把字符串中的文本变成固定间距字体,即电报形式(<TT>)
+fontcolor(color)设置字符串中文本的颜色(<FONT COLOR=>)
+Fontsize(size) 把字符串中的文本变成指定大小(<FONTSIZE=>)
+italics() 把字符串中的文本变成斜字体(<I>)
+Link(url)用来把字符串转换-HTML链接标记中(<A HREF=http://www.jb51.net/article/>)
+small() 把字符串中的文本变成小字体(<SMALL>)
+strike() 把字符串中的文本变成划掉字体(<STRIKE>)
+sub() 把字符串中的文本变成下标(subscript)字体((SUB>)
+sup() 把字符串中的文本变成上标(superscript)字体(<SUP>)
+charAt(index) 返回指定索引处的字符
+charCodeAt(index)返回一个整数,该整数表示String对象中指定位置处的字符的Unicode编码
+concat(string2)连接两条或多条字符串
+fromCharCode(num1, num2, …, numN)获取指定的Unicode值并返回字符串
+indexOf(searchString, startIndex) 返回字符串中第一个出现指定字符串的位置
+lastlndexOf(searchString, startIndex) 返回字符串中最后一个出现指定字符串的位置
+match(regex) 在字符串中查找指定值
+replace(regex, newString)将字符串中的某些字符替换成其它字符,newString中可以含有特殊意义的字符$,&至于什么意义自己查找
+search(regex) 针对某执行值对字符串进行查找
+slice(startIndex, endIndex)将部分字符抽出并在新的字符串中返回剩余部分
+split(delimiter)将字符串分配为数组
+substr(startIndex, length) 从startIndex取,取length个字符
+substring(startIndex, endIndex) 从startIndex和endIndex之间的字符,不包括endIndex
+toLowerCase() 把字符串中的文本变成小写
+toUpperCase() 把字符串中的文本变成大写
+toSource() 显示对象的源代码
+valueOf() 返回字符串对象的原始值
+Number：
+属性：
+MAX_VALUE	MIN_VALUE	NEGTIVE_INFINITY		POSITIVE_
+INFINITY		
+方法：
+toString(radix)  radix  进制，数字转为字符串
+toLocalString()  转化为本地化格式的字符串
+toFixed(num) 四舍五入为num为的小数格式后转化为字符串
+toExponential(num)转化为科学技术法的格式的字符串
+toPrecision(num)自动选择科技法或小数法（num很大时），转化为字符串
+Boolean：
+属性：
+constructor:
+prototype:
+方法：
+toString();
+valueOf();两个方法均返回true或false的字符串
+
+正则表达式：
+定界符：/
+模式匹配字符：
+\转义字符       ^开始时匹配标记      $结束时匹配标记         ？当前字符出现0或1次
+*当前字符出现0或很多次      +当前字符出现至少一次      .匹配除换行符外的任一字符
+(content) 匹配content并被返回到数组中     a|b  匹配a或者b    {n}限定当前字符出现的次数为n       {n，m}限定当前字符出现次数n-m     {n，}限定至少出现n次
+[abcdefg]匹配这里边的内容与[a-g]等效       [^abcdefg]是前面的补集
+\f 匹配表单符    \n 匹配换行符   \r匹配回车符  \t 匹配制表符  \v匹配顶头制表符
+\s 等价于[\f\n\r\v\t]  \S匹配制表符
+[\b]匹配一个空格   \b匹配单词分界（空格，换行，制表等）     \B匹配单词的非分界
+[\d]等效于[0-9]    [\D]等效于[^0-9]  \w匹配一个数字，字母，下划线  \W \w的补集 
+对于\b匹配单词的分界，单词开始处也匹配   
+[]匹配任意字符，但是只匹配一个
+.对于汉字而言也是一个字符
+()匹配内容存到返回数组中，引用数组方法，$1,$2...或者[1][2]
+RegExp对象：
+构造函数：
+RegExp(pattern, flags)
+pattern：
+是字符串，不需要定界符/了，但是字符串中的\是要进行转义的，凡是出现\的地方就要用\\来替换，很麻烦，所以不如这里不要参数pattern，完后再赋值给实例即可
+flags可以有：
+g不指定的话，只匹配最早被找到的字串而不是整个文档去匹配
+i指定表示匹配过程忽略大小写
+m指定的话，就将每个被换行，回车隔开的段当成有首尾的字串，否则整个文档只有一个首尾，主要是对^$匹配有影响
+属性：
+global
+ignoreCase
+multiline
+source创建对象时的匹配表达式字串 
+index本次起始匹配位置离文档开始的位置，文档开始为0
+lastIndex 当前已经匹配字串的下一个位置
+lastMatch最后匹配的字串值
+input被检索的文档，可是我发现这个东西不灵
+还有一些不予介绍了
+方法：
+exec(str)匹配，返回匹配
+test(str)测试有无匹配项，返回true false
+match()
+search()返回第一个匹配成功的字串位置
+split()按指定的方式分割字串
+replace()
+备注：默认为贪婪匹配，例如/bo*/ 检索字串book取回的是boo而非b或bo，不想使用贪婪匹配需要这样使用,在次数符号好添加？号：+?  *?   ??  {n,m}?
+使用regexp的实例：
+匹配中文字符[u4e00-u9fa5]
+匹配双字节的字符[^x00-xff]
+匹配空行/\n[\s| ]*\r/
+匹配html的标记/<(.*)>.*</\1>|<(.*)/>/
+	备注：上面的这个写法是不合法的，因为里面有了定界符/，所以这是转义字符派上了用场，重写如下/<(.*)>.*<\/\1>|<(.*)\/>/，还有这里的这个\1的意思是跟刚刚的（）匹配的内容一致，或者可以将其写到RegExp("<(.*)>.*</\\1>|<(.*)/>")
+匹配首尾的空白/(^\s*)|(\s*$)/
+匹配URL形式：/http:\/\/([\w-]+.)+[\w-]+(\/[\w-.\/?%&=]*)?/
+匹配email地址：/\w+([\-+.]\w+)*@\w+([\-.]\w+.)+\w+/这个东西不对，以后维护
+
+异常处理：
+onerror事件机制：(老式的方法了，不是所有浏览器都支持了，最好try-catch)
+作用对象=>window和图片对象
+添加到window，则凡事页面错误都会报告，添加到图片的一个有用的功能是，当载入图片丢失或者无法正常载入时，Onerror事件被激活以提供解决方案。
+window.onerror=function(){return true;}
+document.images[index].onerror=function(){return true;}
+function()是异常处理函数，该函数最好return true，若没有这样做的话，在弹出自定义的异常错误对话框后，浏览器也会弹出一个错误的信息对话框（ie和fox都是可设置的，通过设置可以关掉，但你不能假设用户已经关掉了，所以return true是明智的选择），这样做相当于告知浏览器错误已经处理好错误浏览器不必进行提示了。
+function（）还可以接受三个参数  1，异常信息  2，异常发生文件的绝对路径  3，错误的行号
+
+try and catch机制：
+try{}catch（e）{}finally{}  其中的e是Error的子对象
+备注：一个语句中只有一个catch，但可以在catch块内再嵌套try-catch语句
+Error的属性有：
+message：错误信息
+name：对应的子对象名字
+Error的子对象有:
+EvalError     TypeError     RangeError        ReferenceError    URIError
+一个搭档：throw new  Error(param);用于生成指定的错误
+    一个例子：try{  var num;    if(1/0=='infinity') throw new RangeError('被除数不能为零')}catch(e){alert(e.message);}
+
+调试方法：
+1.插入alert（）；
+代码运行到当前时阻断，可以显示中间或结果变量，缺点是移除的时候麻烦（一个窍门是每个alert（）语句的后面加上/////，这样容易看到）
+2.通过write（）写到页面中
+3.try{ throw new error}catch(e){}
+
+事件流：
+事件是以找根节点与
+发生节点之间的路径传播的，至于由根传出，还是由生发节点传出（即事件的流向）是浏览器不确定的。
+IE支持的是，由发生事件的节点传出（bubble）
+Netscape支持，由根节点传出(capture)
+标准DOM规定，两种方式兼而有之,并且事件event传给处理函数的参数
+
+关于event：
+1.共同点
+  event.type事件类型 
+  event.altKey ctrlKey  shiftKey  altLeft等按键状态
+2.事件处理函数获取问题
+   function myfunc(e)
+	{   var evt;    evt=e||window.event}
+3.事件源
+  IE event.srcElement   Fox  event.target
+  if(event.srcElement) myele=event.srcElement  else myele=event.target
+
+事件监听方法
+  IE  
+   监听：element.attachEvent('onmousemove',callbackfunc);
+   移除：element.detachEvent('onmousemove',claabackfunc);
+  W3C
+   监听：element.addEventListener('click',callbackfunc,userCapture);注意了callback的this会被设置为事件源元素
+   移除：element.removeEventListener('click',callbackfunc,userCapture);
+不同点：1，w3c是click而不是onclick。2，多一个参数，用来指定以冒泡还是捕获处理               事件流，默认为true即捕获方式处理。
+
+打断事件流：
+IE：window.event.cancelBubble=true;
+w3c:event.stopPropagation();
+
+取消事件结束后的默认处理：
+IE：window.event.returnValue=false;
+w3c:event.preventDefault();
+ 
+onclick:
+事件描述：按下，没有位移，弹起。
+onmouseover事实证明，当鼠标移动到区域后并在区域活动时是不会触发mouseover
+onkeypress
+事件描述：按下并弹起，一般用于单击按键
+onkeyup onkeydown
+一般用于组合按键
+onload
+一般用于，页面加载完后对页面的样式设置, 检测浏览器类型以提供合适的页面，cookie设置，典型应用，加载页面时用小图片，鼠标移到用大图片
+onunload
+一般用于，跳转到别的页面时，弹出提示
+onresize
+改变浏览器的尺寸
+onblur
+失去焦点，一般用于文本控件
+onfoucs
+获取焦点，一般用于文本控件
+onchange
+失去焦点且内容变化了触发该事件，一般用于下拉列表框，其实也不单是这样，比如我给text添加这个事件来取代onblur的效果就是，只有向text中写入新的内容才会触发该事件，这里要说明一下select控件是在用户单击选项之后失去焦点的。
+备注：提取select所选值方法,selectname.options[selectname.selectedIndex].value;
+onsubmit
+单击按钮后，表单提交前触发，常用来对提交表单的验证，返回false表明阻止提交
+onreset
+重置表单值
+onsumbit  onreset添加事件处理函数时"return  mypro()",return不能少，而且定义mypro()时也要返回boolean值，否则一律为true，接受表单提交，这里return的true是给浏览器的，函数取回用户交互的结果后告知浏览器，浏览器根据结果执行后续行为
+onbounce   onstart
+事件onstart是滚动开始触发的，所以可以用来设置一些关于滚动文字样式。
+这两个事件都是关于marquee的，得好好研究一下这个标签
+关于标签marquee
+attributes:
+director=up|down|left|right
+behavoir=slide | scroll(回滚) | alternate(回弹)
+scrollamount=步长
+scrolldelay=每个步长的延时
+bgcolor=文字背景色
+width
+height
+loop
+
+oncopy  onbeforecopy
+这两个都要显示return处理函数
+关于对网页的复制行为，fox  ie  chorme都对oncopy支持的不错，oncopy是在用户单击了菜单的复制选项后触发的，而onbeforecopy是在选中文本，弹出菜单时触发的，鉴于fox不支持它，而且chorme阻止了复制后还会弹出菜单，够搞笑，还是用oncopy比较好。
+备注：其实上面这技术没什么大的用处，因为我可以查看网页源码，这样的话我依然可以复制，网页的内容。
+我上面的理解是狭隘的，有时禁止复制功能很有用的。
+oncut onbeforecut
+和上面的复制差不多的意思，这里是剪切。
+同样是fox不支持onbeforecut，而且chorme阻止了剪切后还会弹出菜单，够搞笑。所以也建议使用oncut。
+onpaste  onbeforepaste
+onpaste  显示return处理函数，onbeforepaste这个事件无需return语法了。
+用处，比如输入密码之类的东西时，你可不希望用户粘贴东西过来。
+备注：这里要提一下，复制，粘贴，剪切，要阻止他们时，你要明白，什么时候，你需要提示用户，让其知道他不能这样做，什么时候，你这需要禁用这些功能就可以了，而不用提示用户。
+onselect onselectstart
+这两个都要显示return处理函数，如果要禁用选择功能返回false即可
+这个情况有点复杂了，fox哪个都不支持，ie  chorme仅支持onselectstart
+onselectstart是按下鼠标开始选择文本前就被触发。
+这里有一个有趣的问题，如果有必要知道用户当前选择的内容的话，触发该事件，但是该怎样获取被选中的内容呢？
+function getSelectionText()
+{
+	var text="";
+	if(document.selection)//ie
+	{
+		text=document.selection.createRange().text;
+	}
+	else if(window.getSelection)//fox
+	{
+		text=window.getSelection();	
+	}
+	return text;
+}
+上面的这个东西不可行，因为fox返回选中文本好像不依靠函数getselection()
+虽然通过上面的东西可以获得选择的文本内容，可是要获取选择文本的位置还要使用其他的办法
+function(myid)
+{
+var startPos=endPos=0;
+var element=document.getElementById(myid);
+if(document.selection)
+{
+var range=document.selection.createRange();
+var clonerange=range.duplicate();
+clonerange.moveToElementText(element);
+clonerange.setEndPoint("EndToEnd",range);
+startPos=clonerange.text.length-range.text.length;
+endPos=startPos+range.text.length;
+}
+else if(window.getSelection)
+{
+startPos=element.selectionStart;
+endPos=element.selectionEnd;
+}
+return {"start":startPos, "end":endPos};
+}
+
+
+拖放事件：
+我经过测试，无效，可能测试方法有问题，留待以后研究
+基于被拖放元素：ondrag ondragstart  ondragend
+基于拖放后放置位置对应的元素：ondragover  ondragleave ondragenter  ondrop
+
+document：提供了访问，设置，修改html文档的方法。
+属性：
+alinkColor
+vlinkColor
+linkColor
+bgColor
+fgColor
+links[]
+forms[]
+images[]
+anchors[]
+all[]  储存文档所有对象的数组，可以通过[i]  [name] [tagname]访问当前文档中的所有元素
+虽然all实现的功能可以通过getElementById getElementsByName getElementsByTagName
+替代，但是all真的很方便，各浏览器支持，但是我使用的时候好像有点问题，还是用保险的东西吧
+fileCreateDate
+fileModifiedDate
+fileLastModified
+fileSize当前文档的文件信息不被浏览器一致支持
+title
+body
+URL  IE可读写，chorme，fox仅可读，当前文档的全路径（包括协议 ）
+cookie
+readyState  取值loading loaded  complete  interactive均支持，该属性大多数元素均有
+方法：
+open()打开一个新的html文档
+注意的是，一个文档的打开必须在一个window对象中，所以要这样做的前提是又新建了一个window（对应浏览器上的一个选项卡）
+关于window.open() and  document.open()
+常见的应用情况是，当前页面动态生成另一个页面，也就是说新建一个选项卡，newwind=window.open(),之后通过newwind引用新建的选项卡，并通过document.open()在新选项卡中打开新的文档，使用document.write进行动态写入，相当于父选项卡生成了一个子选项卡，这里的选项卡其实就是窗口的意思。
+close()
+write()
+writeln()与write()的不同在于，每个writeln都是以一个换行符结束，但前提是这个             writeln位于标签<pre>之间，否则跟write一样，还有就是这两个函数写出内容若含脚本和html，则可被解析成脚本和html
+createElement()
+getElementById()
+等等别的方法
+
+dom下元素的属性：
+nodeName  标签名
+nodeType  1element 2 attribute 3text
+nodeValue  只有文本节点才有
+parentNode
+childNodes
+attributes
+firstChild
+lastChild
+nextSibling
+previousSibling
+这是dom模型下每个元素节点都有的属性，与通过控件的属性获取控件值，是不同的途径，同样的值。
+
+动态节点：
+document.createElement()
+document.createTextNode()
+father.appendChild()
+father.insertBefore(new,ref)
+father.removeChild(node)
+fathre.replaceChild(new,old)
+newnode=node.cloneNode(boolean)
+boolean为true则深度复制，将当前节点的子节点统统复制，否则只复制当前节点
+添加多节点解决方案
+docfragment=document.createDocumentFragment();
+docfragment.appendChild(node1)
+docfragment.appendChild(node2)
+...
+targetelement.appendChild(docfragment);fox也支持
+涉及到father的，使用前最好检测有无父节点，if(childnode.parentNode)
+涉及到子节点的也要测试有无子节点if(node.hasChildNodes())
+
+window:
+属性：
+document
+status
+defaultstatus
+location
+navigator
+screen{width height availWidth availHeight pixelDepth colorDepth}关于颜色个浏览器支持不是很一致
+name
+frames
+history存放最近访问url的字符串的数组，只读。
+attributes:length  current  next   previous
+method:back()   forward()   go()
+所以利用这个东西可以自己制作页面前进后退按钮
+<a href="javascript:window.history.back()">back</a>
+<a href="javascript:window.history.forward()">forward</a>
+<a href="javascript:window.history.go(-1)">forward</a>
+parent
+opener通过这个属性子窗口可以操纵父窗口，父窗口想要访问子窗口通过创建子窗口时得到子窗口的引用，引用.attribute or method
+self
+closed
+top  parent-top都与浏览器中的窗口（选项卡）相关
+方法：
+alert()打断代码的执行
+confirm()提供返回确认，不确认功能
+prompt()提示用户输入文本，并将输入返回到脚本中。
+open(url,name,features,replace)新建选项卡，当指定的新窗口属性与浏览器一致时就作为选项卡，不一致就弹出为一个新的窗口，这里有很大的自由空间可以更改新窗口的样式,若name已经存在则不是新建而是对已经存在的引用。
+close()关闭选项卡
+focus()
+blur()
+scroll(x,y)
+scrollTo(x,y)该函数与scroll完全相同，javascript1.2中发布的，建议替代scroll
+将文档滚动给定长度，可以为负数即向相反方向滚动
+scrollBy(offestx,offesty)
+将文档滚动给定长度，可以为负数即向相反方向滚动，滚动到文档底对准窗口底时停止。
+moveTo(x,y)
+moveBy(offestx,offesty)
+resizeTo(x,y)
+resizeBy(offestx,offesty)
+setTimeOut(code,time)
+setInterval(code,time)
+print()
+status()
+defaultstatus()
+navigate(url)
+事件：
+虽然window有很多事件，但是通用的事件却少
+通用事件：
+onerror
+onload
+onunload
+onresize
+onfocus
+onblur这里获取焦点与文本控件获取不同，这里是指选项卡
+扩展事件（ie netscape都有的）：
+onbeforeprint
+onafterprint
+onbeforeunload
+onhelp
+ondragdrop
+onscroll
+onresizestart
+onresizeend
+补：
+window.showModalDialog()
+ie chorme fox都支持这个函数，该函数弹出一个窗口夺取当前页面焦点，除非关闭它，该窗口内也可以打开html文档
+window.showModelessDialog()
+仅ie支持这个函数，该函数弹出一个窗口不夺取当前页面焦点，该窗口内也可以打开html文档，可以用来显示帮助提示信息。
+
+IE访问菜单栏选项：
+在html中的body中嵌入
+<object id="webBrowser" classid="CISID:8856F961-340A-11D0-A96B-00C04Fd705A2" width="0" height="0"></object>
+脚本中：
+webBrowser.execWB(cmdid, cmdoption);
+
+css:
+颜色最好不要用单词而用数字，为了支持更多的浏览器
+background-color
+color
+background-image:none|url(test.png);
+background-position:top|bottom|left|right|center|79%|45px;
+background-repeat:no-repeat|repeat-x|repeat-y|repeat;
+background-attachment:scroll|fixed;  fixed不随页面滚动
+#id  .class   *  tag
+class="here  there"
+h1,h2,h3{}
+
+<form action="mailto:xiaowenbin_999@163.com" method="get|post" name="xiao" enctype="value" target="">
+get:附随url，有长度限制，不保密，速度较快
+enctype：表单信息的编码方式，value=默认application/x-www-form-urlencoded
+| text/plain | multipart/form-data
+对于ajax来说如果没有显示声明请求类型，默认的请求类型是text/plain
+target:显示返回信息的目标窗口，_blank | _parent | _self | _top
+分别是：新的空窗口 父窗口  当前窗口自己  顶层窗口 
+
+<input type='text' maxlength='' size=''>
+maxlength输入字符最多数    size框大小
+<input type=radio value='hell'  checked>
+<input type=checkbox value='world' checked>
+<option value='' selected>
+selected checked都是特殊的属性
+<input type='image' src=''>功能等同于提交按钮，这样就可以创建自己的特色提交按钮
+<input type='hidden' name='' value=''>用于页面中传送一些不希望用户看到的值
+<input type='file'>
+<textarea rows= cols= name=>
+<select name='' size='' multiple>
+document.forms['formname']
+document.forms[0]
+document.forms.elements['elementname']
+document.forms.elements[0]
+
+图片的预先加载：
+javascript中有一个 img数组对象可供使用，
+var imgs=new Image();
+imgs[index].src=""
+将这段代码放在页面加载完成后，使用图片之前执行，相当于在空闲时间下载了需要使用的图片。
+我经过查证image这个所谓的javascript内嵌的类不存在，看来我看的这本书害人不浅，不过我自己写一个image类一点也不难，照样实现预先下载图片的功能。
+
+javascript  一个框架node.js，进来要走进服务端，兴起。
+
+
+定义了一个变量但没有赋值，此时变量类型为undefined, 对于一个未定义的变量typeof也是undefined，但如果给一个变量赋值为null，则类型是object(Array()也是object,还有别的很多也是对象，毕竟它是源对象)，赋值为true,23,'xiao',function(){},Date()各有对应类型，
+
+自动类型转换：
+false  ""   0  undefined null 当你用==比较时是相等的，因为默认进行了转换，严格比较使用===和！==
+css 中的filter处理图像的能力惊人
+navigator:
+appName
+appVersion
+userAgent用于http请求的用户代理头
+appCodeName浏览器代码名
+platform浏览器运行的系统平台
+IE扩展:
+systemLanguage
+cookieEnabled
+userLanguage
+
+Netscape扩展：
+cookieEnabled
+language
+mimeType浏览器支持的mime数据类型们
+plugins浏览器的插件们
+mimeType{description, enabledPlugin, suffixes, type}
+plugin{description, filename, length, name}
+
+检测浏览器特性的支持：
+typeof xmlHttpRequest   ==   undefined  则不支持
+要注意的是，当检测的是函数时，函数后面千万不要加括号
+
+css的模式：
+quirks  和标准模式，不同模式显示效果不一样
+模式检测，document.compatMode读取，若为标准模式返回CSSICompat ,为quirks模式返回BackCompat（oprea是个例外，所以检测CSSICompat而非检测BackCompat）。
+
+javascript的安全问题：
+同源策略，当前页面的脚本只能过访问当前域中的内容。
+是否同一域，看URL，满足条件：
+协议相同，端口相同，域名相同。
+同源策略的突破，data.baidu.com 访问ziliao.baidu.com有时是必要的，这时候，提供突破同源策略的方法是，在双方的脚本中都采用截断的域名，document.domain=baidu.com;
+javascript代码被浏览器放在了一个沙箱内运行，其可以访问的系统资源有限，不能对计算机构成很大的危害。
+http方法在网络上传送的数据是裸着的，加密https协议
+屏蔽按键
+event.keyCode检测到时，忽略并提醒用户
+屏蔽右击，阻止用户使用快捷菜单的功能，event.button
+阻止网页另存为，主要是在body中添加一个标签<noscript><iframe src=""></iframe></noscript>
+禁止复制，粘贴，剪切内容。
+
+javascript等代码的加密
+微软的script encoder工具
+使用md5算法对特殊信息进行加密
+
+乱码：
+php送回的数据有中文时，在php中显示声明，header('content-type:text/html;
+charset=gb2312');
+客户端送给服务端的数据有中文时，客户端使用encodeURIComponent编码中文，
+php添加$gb2312string=iconv('utf-8','gb2312//ignore',$requestajaxstring);
+并且php与mysql交互的时候设置mysql的字符集set names gb2312;
+
+关于鼠标和键盘事件：
+事件的处理可以看成是事件过滤以及分类处理的过程，通过检测event.target|srcElement   event.keyCode  event.button能够辨识不同的事件，或者更加准确的说，能够获取事件的具体信息：事件的发生源是谁，发生时鼠标和键盘的按键情况如何等信息，获取这些消息能够帮助事件处理函数根据具体的情况作出反应。
+
+关于event的几个版本：
+W3C关于按键和鼠标的属性：
+altKey
+ctrlKey
+shiftKey
+button
+clientX
+clientY是指相对于浏览器页面（或客户区）的坐标，也可以说是窗口坐标
+          备注：上面是窗口坐标，如果想要的是文档坐标，IE之外的浏览器可以                                  window.pageXOffset 和 window.pageYOffset 来实现
+screenX
+screenY表示鼠标事件发生时，鼠标屏幕坐标系下的坐标
+metaKey  检测meta键是否按下，meta是什么按键我不知道
+relatedTarget  只对事件onmouseover  onmouseout 有用，分别表示进入前的对象           元素和离开后的进入的对象元素。
+上面这些是W3C的支持属性，IE对于上面的这些属性除了metaKey 和 relatedTarget不支持外，剩下的都支持
+
+IE-event的属性：
+cancelBubble 取消事件的传递，打断事件流
+returnValue  取消事件的默认处理
+fromElement
+toElement  这两个属性可以代替，w3c中relatedTarget的功用
+offsetX
+offsetY 事件发生时，鼠标相对于发生源的坐标值
+srcElement
+x
+y这两个的意思是指相对于css的坐标，具体意思我不知道，待考证。
+keyCode 支持键盘按键的值和虚拟键值的检测
+type 事件类型，例如：mouseout等，这样的东西
+
+event对象：
+bubbles 布尔值，判断事件是否已冒泡触发
+cancelable 布尔值，判断是否可以取消事件的默认处理
+type 事件类型，例如mouseover，不是onmouseover
+button 鼠标按键
+ctrlKey
+altKey
+shiftKey
+metaKey 一般电脑上没有这个按键，类似于ctrl+shift的功能
+isChar  布尔值，当前按下的键是否是字符键
+charCode 当前按下键的unicode值，仅对keypress事件有效
+keyCode 非字符按键的unicode值
+which  当前按键的unicode值，不管是否是字符按键都有效
+target 也即OriginalTarget
+currentTarget  当前处理事件的节点，注意这个与target不同，后者是事件源节点
+relatedTarget 事件相关元素，例如：mouseout事件记录鼠标移入后的元素
+pageX pageY 事件发生时相对于页面viewport坐标值
+screenX screenY 事件发生时相对于屏幕左标值
+timeStamp 事件发生的时间点，这个时间是相对值
+eventPhase 事件当前的阶段
+                      备注：w3c中事件处理有三个阶段，分别是事件的捕获阶段，事件的传递阶段，和事件的冒泡阶段。事件发生后，根元素先进行事件的处理，之后沿事件流传递给事件源对象处理，之后冒泡回溯到根元素。
+W3C的方法：
+preventDefault(); 对应ie的属性returnValue功能
+stopPropagation();对应ie的属性cancelBubble功能
+initEvent();初始化事件
+
+关于出现常见属性未定的情况：
+例如innerHTML本来肯定有该属性，但提示未定义原因出在，获取元素环节，获取元素的步骤必须出现在，id，name定义的后面，或者通过函数调用来获取，总之获取元素之前，元素必须已经存在，被载入页面。
+
+for-in：
+php中有一个foreach（ array as var)
+javascript有相似的for-in语句
+用法：适用于数组元素或者对象属性提取
+for( var i    in    myarray){myarray[i]} or{i}
+标准提供的方法，用于检测对象的属性是否可以for-in：PropertyIsEnumerable()
+
+输入文本时屏蔽非法字符：
+在onkeydown事件处理中通过检测keycode可以筛选出正确的字符，可是如何拒绝非法字符的写入呢，还记得returnvalue和preventdefalut（），文本控件的写入默认处理就是，写到控件中，取消默认处理，则不能写到控件。
+
+图片加载：
+图片加载时一般考虑到页面的布局大小，将图片缩小，当鼠标移到时再将图片还原
+
+事件源：
+对于select控件来说，事件源不可能是option，事件源只能是select
+table下的td则能够成为事件源
+
+关于eval的一个用法：
+eval("obj."+"txt"+i).value
+这里的"obj."+"txt"+i是一个控件的name属性，常规要访问value只需要name.value，但是这里name需要字符串连接后使用，eval则返回连接后的name。
+这里看看eval的功能：
+eval("");
+eval返回经过执行后的字符串，传入的参数不能是string对象（会原样返回对象），只能是原始字符串。
+如果将eval属性改变或者将它赋给别的对象，就会发生一个evalerror异常，其实eval很少使用的。
+
+类型转换：
+转换成字符串：
+boolean  number  string
+这三个原型的均有toString()方法用来将对象转换为字符串
+值得注意的是number的toString方法，默认情况下返回的是十进制的数串，要想返回别的进制只需要添加参数2|8|16即可
+转换成数字：
+parseInt("change",m);
+m可选，用来指定将change当成什么进制解析，如果不指定会自动识别，但是如果出现09这类十进制数字则要显示指定是按十进制解析，否则当成了八进制。返回值是十进制的。
+parseFloat("change");
+无基模式，必须为十进制形式，前面有0的话被忽略。
+强制类型转换：
+三个类型转换函数Boolean()   Number()   String()
+Number()与parse的不同在于，他会试图转换整个传入参数，而不是数值的合法部分
+
+css中的clip属性：
+style.clip=rect( number number number number)  (number可以用auto代替表示不裁剪)
+四个number分别指的是：top  right  bottom left
+
+字体属性：
+fontWeight
+fontSize:xx-small | x-small | small | meduim | large | x-large | xx-large | larger | smaller |le-
+ngth
+fontStyle:normal | italic | oblique  斜体  倾斜的字体
+fontVariant: normal | small-caps  小型的大写字体
+lineHeigth:normal | length
+fontFamily:
+textDecoration:none | blink  | line-througth | under-line | overline
+无修饰 闪烁 贯穿线 下划线  上划线
+tableLayout:auto | fixed
+auto根据单元格内容布局其大小  fixed根据指定的宽度布局单元格大小
+zoom：normal |  number
+设置对象的大小，结合鼠标的滚轮事件可以放缩图像
+
+
+随机验证码：
+使用随机函数虽然可以生成数字随机码，但是为了防止恶意的攻击，产生图片随机码更保险，原理很简单，图片名与数字之间要建立对应关系，这样根据随机数字加载图片就可以。
+
+css中有两个关于显示的属性：
+visibility:hidden | visible
+display:
+区别暂时不知道
+
+下载加载等待图片：
+你在ajax加载东西时希望让用户知道，页面代码并没有偷懒，所以你要显示一个加载图片，加载使用的图片可以从http://ajaxload.info或者http://preloaders.net下载
+
+创建xmlhttprequest
+var myobj=null;
+try
+{myobj=new XMLHttpRequest();}
+catch(e)
+{
+try{myobj=new ActiveXObject("Msxml2.XMLHTTP");}//该版本更新
+catch(e){myobj=new ActiveXObject("Microsoft.XMLHTTP");}
+}
+
+
+//////////////////////////////////////////////
+jsLib
+////////////////////////////////////////////////
+ajaxLib.js-------loadXMLDoc(url,callback,ingnoreWhite)
+使用说明：回调函数中通过全局变量resultXML来访问取回的xml文档
+特色：ingnoreWhite为true可以删除xml文档中的空白，里面写的删除空白的函数有点           乱，好像没有我之前见过的那个除掉空白的函数简单，有空可以研究一下
+备注：使用异步方式，且GET方法
+注意：1，回调函数是传名字，而且一般不能加引号和()
+          2，获取的resultXML是文档对象，要通过firstChild等方式访问节点，需要使用
+               文档根元素resultXML.documentElement,当然若使用tag法访问节点就不必               如此了
+           3，对于fox，要想通过firstChild等方法访问节点，ingnoreWhite必为true
+////////////////////////////////////////////////////////
+///////////////////////////////////////////////////
+一些资料
+//////////////////////////////////////////////////
+js内置对象 学习笔记
+[日期：2012-01-01]    来源：     作者：    [字体：大 中 小]    阅读：1389 次
+更多 0
+mark相关的知识点：
+首先，什么是js的内置对象，它包括了些什么内容？（以下内容转自网上资源的整合）
+（W3shool JS手册地址：http://www.jb51.net/w3school/js/js_reference.htm）
+作为一门编程语言，JavaScript提供了一些内置的对象和函数。内置对象提供编程的几种最常用的功能。JavaScript内置对象有以下几种。
+● String对象：处理所有的字符串操作
+● Math对象：处理所有的数学运算
+● Date对象：处理日期和时间的存储、转化和表达
+● Array对象：提供一个数组的模型、存储大量有序的数据
+● Event对象：提供JavaScript事件的各种处理信息
+内置对象都有自己的方法和属性，访问的方法如下：
+对象名.属性名称
+对象名.方法名称(参数表)
+		 
+		 1.时间对象
+		 
+		 时间对象是JavaScript的内置对象,使用前必须先声明。
+		 基本语法
+		 var curr=new Data();
+注意这里的关键字new的用法，Data()的首字母必须大写。
+语法解释
+利用new来声明一个新的对象实体。使用new操作符的语法如下：
+实例对象名称=new对象名称（参数列表）
+Date对象提供了以下3类方法：
+● 从系统中获得当前的时间和日期
+● 设置当前的日期和时间
+● 在时间、日期同字符串之间完成转换
+下表介绍了最常用的获得系统的时间和日期的方法
+
+Date对象中处理时间和日期的方法
+方 法 种 类 	方 法 名 称 	功 能 描 述
+获得时间或日期 	getDate 	获得当前的日期
+获得时间或日期 	getDay 	获得当前的天
+获得时间或日期 	getHours 	获得当前的小时
+获得时间或日期 	getMinutes 	获得当前的分钟
+获得时间或日期 	getMonth 	获得当前的月份
+获得时间或日期 	getSeconds 	获得当前的秒
+获得时间或日期 	getTime 	获得当前的时间（毫秒为单位）
+获得时间或日期 	getTimeZoneOffset 	获得当前的时区偏移信息
+获得时间或日期 	getYear 	获得当前的年份
+练习笔记：
+<!--注意区分getDate和getDay的作用和区别，getDate返回的是日期（1-31），而getDay返回的是星期中的第几天（） -->
+<!--另外还要注意，创建数组记得要使用new这个关键词， 例如：var myArray=new Array()-->
+<!--在这里还学习了向数组赋值的两种方法：
+1、第一种方法可以创建任意多的值，就类似创建任意多的变量一样：
+如：
+var mytechnic=new Array()
+mytechnic[0]="html"
+mytechnic[1]="css"
+mytechnic[2]="js"
+也可以使用一个“整数自变量”来控制数组的容量。
+2、第二种方法：
+var mycars=new Array("Saab","Volvo","BMW")
+
+如果想要修改数组中的值，直接赋新值：mytechnic[2] = "jquery"
+-->
+
+2.数学对象（比较抽象）
+
+内置的Math对象可以用来处理各种数学运算.其中定义了一些常用的数学常数，例如圆周率PI=3.1415926等.各种运算被定义为Math对象的内置方法，可以利用直接调用的方法。
+基本语法
+Math.数学函数(参数)
+或者
+with(Math)
+{
+	数学函数
+}
+语法解释
+with语句提供了一种简单和清晰的方法来表达其属性和方法之间的关系。简单地说，在 with与语句的作用范围之内，凡是没有指出对象的属性和方法，都是指默认的对象，这个默认的对象在 with语句的开头给出。使用 with语句的语法如下：
+with（对象名称）
+{
+	语句块……
+}
+
+3.字符串对象
+
+一般利用String对象提供的函数来处理字符串。String对字符串的处理主要提供了下列方法。
+● charAt（idx）：返回指定位置处的字符
+● indexOf（Chr）：返回指定子字符串的位置，从左到右。找不到返回-1。
+● lastIndexOf（chr）：返回指定子字符串的位置，从右到左。找不到返回-1。
+● toLowerCase（）：将字符串中的字符全部转化成小写。
+● toUpperCase（）：将字符串中的字符全部转化成大写。
+
+4.数组对象（今晚特别侧重的学了这一种 - 数组对象！）
+
+基本上所有的编程语言都提供数组对象,数组将同类的数据组织在一起,访问起来非常方便而且效率高.如Java语言和C语言等.JavaScript和C语言一样，数组的下标是丛零开始的。创建数组后，能够用[ ]符号访问数组单个元素。
+
+以下是（关于js内置对象的）一些手册类型的总结汇：
+
+1.Date
+属性(1):
+constructor 所建立对象的函数参考
+prototype 能够为对象加入的属性和方法
+方法(43):
+getDay() 返回一周中的第几天(0-6)
+getYear() 返回年份.2000年以前为2位,2000(包含)以后为4位
+							   getFullYear() 返回完整的4位年份数
+							   getMonth() 返回月份数(0-11)
+							   getDate() 返回日(1-31)
+							   getHours() 返回小时数(0-23)
+							   getMinutes() 返回分钟(0-59)
+							   getSeconds() 返回秒数(0-59)
+							   getMilliseconds() 返回毫秒(0-999)
+							   getUTCDay() 依据国际时间来得到现在是星期几(0-6)
+							   getUTCFullYear() 依据国际时间来得到完整的年份
+							   getUTCMonth() 依据国际时间来得到月份(0-11)
+							   getUTCDate() 依据国际时间来得到日(1-31)
+							   getUTCHours() 依据国际时间来得到小时(0-23)
+							   getUTCMinutes() 依据国际时间来返回分钟(0-59)
+							   getUTCSeconds() 依据国际时间来返回秒(0-59)
+							   getUTCMilliseconds()依据国际时间来返回毫秒(0-999)
+							   getTime() 返回从1970年1月1号0:0:0到现在一共花去的毫秒数
+							   getTimezoneoffset() 返回时区偏差值,即格林威治平均时间(GMT)与运行脚本的计算机所处时区设置之间相差的分钟数)
+							   parse(dateString) 返回在Date字符串中自从1970年1月1日00:00:00以来的毫秒数
+							   setYear(yearInt) 设置年份.2位数或4位数
+							   setFullYear(yearInt)设置年份.4位数
+							   setMonth(monthInt) 设置月份(0-11)
+							   setDate(dateInt) 设置日(1-31)
+							   setHours(hourInt) 设置小时数(0-23)
+							   setMinutes(minInt) 设置分钟数(0-59)
+							   setSeconds(secInt) 设置秒数(0-59)
+							   setMilliseconds(milliInt) 设置毫秒(0-999)
+							   setUTCFullYear(yearInt) 依据国际时间来设置年份
+							   setUTCMonth(monthInt) 依据国际时间来设置月(0-11)
+							   setUTCDate(dateInt) 依据国际时间来设置日(1-31)
+							   setUTCHours(hourInt) 依据国际时间来设置小时
+							   setUTCMinutes(minInt) 依据国际时间来设置分钟
+							   setUTCSeconds(secInt) 依据国际时间来设置秒
+							   setUTCMilliseconds(milliInt)依据国际时间来设置毫秒
+							   setTime(timeInt) 设置从1970年1月1日开始的时间.毫秒数
+							   toGMTString() 根据格林威治时间将Date对象的日期(一个数值)转变成一个GMT时间字符串,如:Weds,15 June l997 14:02:02 GMT
+							   toUTCString() 根据通用时间将一个Date对象的日期转换为一个字符串
+							   toLocaleString() 把Date对象的日期(一个数值)转变成一个字符串,使用所在计算机上配置使用的特定日期格式
+							   toSource() 显示对象的源代码
+							   toString() 将日期对象转换为字符串
+							   UTC(yyyy, mm, dd, hh, mm, ss, msec)返回从格林威治标准时间到指定时间的差距,单位为毫秒
+							   valueOf() 返回日期对象的原始值
+							   2.Math
+							   属性:
+constructor 所建立对象的函数参考
+prototype 能够为对象加入的属性和方法
+E 欧拉常量,自然对数的底(约等于2.718)
+LN2 2的自然对数(约等于0.693)
+LN10 10的自然对数(约等于2.302)
+LOG2E 以2为底的e的对数.(约等于1.442)
+LOG10E 以10为底的e的对数(约等于0.434)
+PI ∏的值(约等于3.14159)
+SQRT1_2 1/2(0.5)的平方根(即l除以2的平方根,约等于o.707)
+SQRT2 2的平方根(约等于1.414)
+方法:
+abs(x) 返回数字的绝对值
+acos(x) 返回数字的反余弦值
+asin(x) 返回数字的反正弦值
+atan(x) 返回位于-PI/2 和 PI/2 的反正切值
+atan2(y,x) 返回（x,y）位于 -PI 到 PI 之间的角度
+ceil(x) 返回 x 四舍五入后的最大整数
+cos(x) 返回一个数字的余弦值
+exp(x) 返回 E^x 值
+floor(x) 返回 x 四舍五入后的最小整数
+log(x) 返回底数为E的自然对数
+max(x,y) 返回 x 和 y 之间较大的数
+min(x,y) 返回 x 和 y 之间较小的数
+pow(x,y) 返回 y^x 的值
+random() 返回位于 0 到 1 之间的随机函数
+round(x) 四舍五入后取整
+sin(x) 返回数字的正弦值
+sqrt(x) 返回数字的平方根
+tan(x) 返回一个角度的正切值
+toSource() 显示对象的源代码
+valueOf() 返回数学对象的原始值
+3.Number
+属性:
+MAX_VALUE The largest possible value a number in JavaScript can have 1.7976931348623157E+308
+MIN_VALUE The smallest possible value a number in JavaScript can have 5E-324
+NaN Equal to a value that is not a number.
+NEGATIVE_INFINITY A value that is less than MIN_VALUE.
+POSOTIVE_INFINITY A value that is greater than MAX_VALUE.
+prototype A static property of the Number object
+方法:
+toString Returns a string representing the specified object
+valueOf() 返回数学对象的原始值
+4.Boolean
+属性:
+constructor 所建立对象的函数参考
+prototype 能够为对象加入的属性和方法
+方法:
+toSource() 显示对象的源代码
+toString() 将布尔值转换为字符串,并且返回结果
+valueOf() 返回布尔对象的原始值
+5.String
+属性:
+constructor 所建立对象的函数参考
+prototype 能够为对象加入的属性和方法
+length 返回字符串的字符长度
+方法(20):
+anchor("name")用来把字符串转换为HTML锚点标记内(<A NAME=>)
+big() 把字符串中的文本变成大字体(<BIG>)
+blink() 把字符串中的文本变成闪烁字体(<BLINK>)
+bold() 把字符串中的文本变成黑字体(<B>)
+fixed() 把字符串中的文本变成固定间距字体,即电报形式(<TT>)
+fontcolor(color)设置字符串中文本的颜色(<FONT COLOR=>)
+Fontsize(size) 把字符串中的文本变成指定大小(<FONTSIZE=>)
+italics() 把字符串中的文本变成斜字体(<I>)
+Link(url)用来把字符串转换-HTML链接标记中(<A HREF=http://www.jb51.net/article/>)
+small() 把字符串中的文本变成小字体(<SMALL>)
+strike() 把字符串中的文本变成划掉字体(<STRIKE>)
+sub() 把字符串中的文本变成下标(subscript)字体((SUB>)
+sup() 把字符串中的文本变成上标(superscript)字体(<SUP>)
+charAt(index) 返回指定索引处的字符
+charCodeAt(index)返回一个整数,该整数表示String对象中指定位置处的字符的Unicode编码
+concat(string2)连接两条或多条字符串
+fromCharCode(num1, num2, …, numN)获取指定的Unicode值并返回字符串
+indexOf(searchString, startIndex) 返回字符串中第一个出现指定字符串的位置
+lastlndexOf(searchString, startIndex) 返回字符串中最后一个出现指定字符串的位置
+match(regex) 在字符串中查找指定值
+replace(regex, newString)将字符串中的某些字符替换成其它字符
+search(regex) 针对某执行值对字符串进行查找
+slice(startIndex, endIndex)将部分字符抽出并在新的字符串中返回剩余部分
+split(delimiter)将字符串分配为数组
+substr(startIndex, length) 从startIndex取,取length个字符
+substring(startIndex, endIndex) 从startIndex和endIndex之间的字符,不包括endIndex
+toLowerCase() 把字符串中的文本变成小写
+toUpperCase() 把字符串中的文本变成大写
+toSource() 显示对象的源代码
+valueOf() 返回字符串对象的原始值
+6.Array
+属性:
+constructor 所建立对象的函数参考
+prototype 能够为对象加入的属性和方法
+index For an array created by a regular expression match, the zero-based index of the match in the string.
+input For an array created by a regular expression match, reflects the original string against which the regular expression was matched.
+length 获取数组元素的个数,即最大下标加1
+方法(13):
+concat(array1,arrayn)将两个或两个以上的数组值连接起来,合并后返回结果
+join(string) 将数组中元素合并为字符串,string为分隔符.如省略参数则直接合并,不再分隔
+pop() 移除数组中的最后一个元素并返回该元素
+push(value) 在数组的末尾加上一个或多个元素,并且返回新的数组长度值
+reverse() 颠倒数组中元素的顺序,反向排列
+shift() 移除数组中的第一个元素并返回该元素
+slice(start, deleteCount, [item1[, item2[,...[,itemN]]]]) 返从一个数组中移除一个或多个元素,如果必要,在所移除元素的位置上插入新元素,返回所移除的元素
+sort(compare Function) 在未指定排序号的情况下,按照元素的字母顺序排列,如果不是字符串类型则转换成字符串再排序,返回排序后的数组
+splice() 为数组删除并添加新的元素
+toSource() 显示对象的源代码
+toString() 将数组所有元素返回一个字符串,其间用逗号分隔
+unshift(value)为数组的开始部分加上一个或多个元素,并且返回该数组的新长度
+valueOf() 返回数组对象的原始值
+7.RegExp
+属性:
+$1, ..., $9 Parenthesized substring matches, if any.
+$_ See input.
+$* See multiline.
+$& See lastMatch.
+$+ See lastParen.
+$` See leftContext.
+$' See rightContext.
+global Whether or not to test the regular expression against all possible matches in a string, or only against the first.
+ignoreCase Whether or not to ignore case while attempting a match in a string.
+input The string against which a regular expression is matched.
+lastIndex The index at which to start the next match.
+lastMatch The last matched characters.
+lastParen The last parenthesized substring match, if any.
+leftContext The substring preceding the most recent match.
+multiline Whether or not to search in strings across multiple lines.
+rightContext The substring following the most recent match.
+source The text of the pattern.
+方法:
+compile Compiles a regular expression object.
+exec Executes a search for a match in its string parameter.
+test Tests for a match in its string parameter
+8.Function
+属性:
+arguments An array corresponding to the arguments passed to a function.
+arity Indicates the number of arguments expected by the function.
+caller Specifies which function called the current function.
+prototype Allows the addition of properties to a Function object.
+方法:
+toString Returns a string representing the specified object.
+9.Object
+属性:
+constructor Specifies the function that creates an object's prototype.
+prototype Allows the addition of properties to all objects.
+方法:
+eval Evaluates a string of JavaScript code in the context of the specified object.
+toString Returns a string representing the specified object.
+unwatch Removes a watchpoint from a 属性源 the object.
+valueOf Returns the primitive value of the specified object.
+watch Adds a watchpoint to a 属性源 the object.
+10.全局
+属性:
+Infinity 指定一个正负无穷大的数值
+NaN 指定一个 “非数字” 值
+undefined 指定一个未被赋值的变量
+方法:
+decodeURI() 为加密的URI进行解码
+decodeURIComponent() 为加密的URI组件解码
+encodeURI() 将字符串加密为URI
+encodeURIComponent() 将字符串加密为URI组件
+escape(string) 加密一个字符串
+unescape() 使用escape()对一个字符串进行解码
+eval(string) 判断一个字符串并将其以脚本代码的形式执行
+isFinite(number) 检测一个值是否为一个有限数字,返回True或False
+isNaN(string) 检测一个值是否不是一个有限数字
+Number(object) 将一个对象的值转换为一个数字
+parseFloat(string) 将一个字符串解析为一个浮点数字
+parseInt(string) 将一个字符串解析为一个整数,不是四舍五入操作,而是切尾
+String(object) 将一个对象值转换为一个字符串
+number()
+11.事件
+属性:
+a.窗口事件,只在body和frameset元素中才有效
+onload 页面或图片加载完成时
+onunload 用户离开页面时
+b.表单元素事件,在表单元素中才有效
+onchange 框内容改变时
+onsubmit 点击提交按钮时
+onreset 重新点击鼠标按键时
+onselect 文本被选择时
+onblur 元素失去焦点时
+onfocus 当元素获取焦点时
+c.键盘事件,在base,bdo,br,frame,frameset,head,html,iframe,meta,param,script,style,title元素里都无效
+onkeydown 按下键盘按键时
+onkeypress 按下或按住键盘按键时
+onkeyup 放开键盘按键时
+d.在base,bdo,br,frame,frameset,head,html,iframe,meta,param,script,style,title元素里都无效
+onclick 鼠标点击一个对象时
+ondblclick 鼠标双击一个对象时
+onmousedown 鼠标被按下时
+onmousemove 鼠标被移动时
+onmouseout 鼠标离开元素时
+onmouseover 鼠标经过元素时
+onmouseup 释放鼠标按键时
+e.其他
+onresize 当窗口或框架被重新定义尺寸时
+onabort 图片下载被打断时
+onerror 当加载文档或图片时发生错误时
+自定义对象:有初始化对象和定义构造函数的对象两种方法
+a：初始化对象
+例如： 对象={属性1:值1;属性2:值2;......属性n:值n} 注意:每个属性/值对之间用分号隔开；
+b： 定义构造函数的对象
+例如:
+function 函数名(属性1, 属性2,......属性N){
+	this.属性1=属性值1;
+	this.属性2=属性值2;
+	this.属性n=属性值n;
+	this.方法名1=函数名1;
+	this.方法名2=函数名2;
+
+事件添加的方法：
+1，在html标签中添加,例：<div id='here' onmouseout='getData()'>
+2，因为可以自定义对象，自然也可以为对象添加事件，	
+     方式：<script language='javascript'  for='objectname'  	 
+    event='eventname'></script>
+     该方法不常用，可能是偏向ie的原因
+      例：<script language='javascript'  for='window'  	 
+    event='onload>getData();</script>
+3, 获取元素后为其添加事件，方式：target.onclick=eventprocess;
+    这里要注意的是，获取元素一般是通过id，name等实现的，也就是说获取元素的行    为要出现在id，name已经生成之后，方案有两种，要么直接在想要添加事件的元素    后面使用<script>封装添加事件的代码，要么将添加事件的代码放到id，name出现    之前，然后必须有一个东西来触发添加事件这个函数的执行，这样好像多走了触发这   一步，所以一般用第一种方法，直接写到要添加事件的元素后面即可。
+下载：网页制作完全手册
+
+回调：
+javascript允许函数名作为参数，这样的话，就可以给一个函数传入一个用于回调的函数了。
+
+关于mouseout的问题（实际上是事件冒泡问题）：
+先对事件冒泡问题来一个陈述：父元素，子元素都定义了某个事件，
+在子元素响应后还会将这一事件传给父元素让其响应，但常常你只想让父元素下面的某个子元素响应之后就结束了该事件，解决之道，子元素在响应事件时，设置event.cancleBubble (ie)	event.stopPropagation(fox),这样就可以阻断被子元素处理过的事件再被父元素处理，当然你也不是非禁掉不可，得分情况来看，
+当在一个div中有一个table时，捕捉div的mouseout是一件要命的事请，因为mouse到了div中的tr是就认为是mouseout事件发生，你能采取的方法是，获取鼠标事件，并判断信息源元素是否为div后，再有进一步的动作。
+
+fox不支持innerText outerText但是有一个备选方案，textContent或者是innerHTML
+浏览器对不认识的语句会选择忽略，当然这是后招，能不要页面有一丁点错误都要避免
+
+
+
+
+
+
+
+
+javascript onmouseout问题解决方案
+
+方案一:
+
+希望实现 当鼠标离开一个DIV的时候触发一个事件处理函数 于是用onmouseout 结果却发现它的触发是不是也太敏感了 原因现在也没有弄清楚 IE下好像是因为区分mouseout时的fromElement还是toElement ，IE 5.5以上的onmouseleave事件就比较好用 偏FF又不支持这个事件 只有自己想办法手工判断了。
+<SCRIPT>
+/***
+* 参数e 是对象传递的触发事件 FF下想访问event对象必须传递event参数
+* 参数o 是目标DIV对象
+*/  
+function fun(e,o) {
+        /* FF 下判断鼠标是否离开DIV */
+        if(window.navigator.userAgent.indexOf("Firefox")>=1) {
+            var x = e.clientX + document.body.scrollLeft;
+            var y = e.clientY + document.body.scrollTop ;
+            var left = o.offsetLeft;
+            var top = o.offsetTop;
+            var w = o.offsetWidth;
+            var h = o.offsetHeight;
+           
+            if(y < top || y > (h + top) || x > left + w || x<left ) {
+                alert("mouseout");
+            }
+        }
+
+        /* IE */
+        if(o.contains(event.toElement ) == false    )
+alert("mouseout");
+       
+    }
+</SCRIPT>
+
+<DIV onmouseout=fun(event,this)>content</DIV>
+
+
+需要注意 在取鼠标的值的时候 一定要加上滚动条已经拖动过的内容e.clientY + document.body.scrollTop 如果只是e.clientY得到是个错误的值 当然如果高宽都很小 是看不出来问题。 取一个对象的高和宽 也可以使用 clientHeight clientWidth 属性 以后遇到FF IE不兼容的时候要多看看FF的开发手册 http://developer.mozilla.org/en/docs/DOM:element.offsetLeft
+
+ 
+
+ 
+
+方案二:(与一相似)
+
+js的onmouseout有很奇怪的一个问题。例如
+
+<div onmouseout="alert(123)">
+
+<a href="#">test</a>
+
+</div>
+
+我们预期只有当鼠标从div中移开的时候才会触发onmouseout事件，可是，事实上，当我们移到div中的元素时，例如本例中的a标签时，就会触发onmousout事件。也就是说，移到对象的子对象上，也算onmouseout了。这往往会让我们预期的效果达不到。今天的工作就遇到了这个问题。在blueidea上搜了一下，找了解决办法。兼容IE和FF。
+
+ 
+复制代码
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>阿当制作</title>
+</head>
+
+<body>
+<script type="text/javascript">
+function test(obj, e) {
+if (e.currentTarget) {
+   if (e.relatedTarget != obj) {
+    if (obj != e.relatedTarget.parentNode) {
+     alert(1);
+    }
+   }
+} else {
+   if (e.toElement != obj) {
+    if (obj != e.toElement.parentNode) {
+     alert(1);
+    }
+   }
+}
+}
+</script>
+<div onmouseout="test(this, event)" style="width:100px;height:100px;border:1px #666 solid">
+<span style="margin:5px;width:100%;height:100%;border:1px #ff0000 solid">faddsf</span>
+</div>
+</body>
+</html>
+
+复制代码
+
+ 
+
+ 
+今天发现JQ中关于这个问题,已经有了一个好的解决办法了.呵呵,jquery中定义了一种事件叫做"mouseleave",用这个事件做事件句柄的话,就可以解决这个问题了.越来越发现jquery是个好东西了.
+
+方案三:
+
+，jQuery　V1.2.2推荐用bind("mouseleave",function(){})来代替以前的mouseover方法
+用bind("mouseenter",function(){})来代替mouseout，同样也针对以前的hover方法，要看详细的说明点这个地址：http://docs.jquery.com/Release:jQuery_1.2.2
+
+$(document).ready(function() {
+   $("#a1").bind("mouseleave", function(){
+   $('<div style="color:red;">out</div>')
+   .insertAfter($(this));
+});
+});
+
+/////////////////////////////////////////////
+javascript modern Autor -----Larry Ullman
+	1，链式调用
+关于链式调用的用法，不仅仅在原生的js有链式调用的概念在jquery中这种用法更是常见，链式有这么两种情况，jquery常见的是函数调用完后
+返回原来传入的结果集，还有另外一种情况是返回的别的对象，至于返回是原对象还是别的对象这完全取决于应用的实际情况，总之链式调用提
+供一种奇怪的语法将一系列的处理集合在了一起
+	2，javascript的面相对象
+js中的一切对象都是继承自原型对象的，js不允许你自己定义类，也就是说没有类的概念，但是又各种对象，而且这些对象都允许你去修改，扩
+充其属性和方法，所以虽然js不能够自定义类，但是它能够跟普通面向对象的语言做的一样好
+	3，弱类型
+js是弱类型的，也就是说变量使用时不必声明类型，至于内部如何看待变量的类型则取决于运行时变量的值，也就是说js是自动进行类型转换的
+，当然js也提供了一些手动类型转换的函数，但是你要时刻记住js是自动类型转换的，它会根据context进行类型转换，弱类型带来的好处是灵
+活性，不必像c语言一样声明一个变量只能有专一的用途，可以这种灵活性是建立在牺牲程序员的精力之上的，你要时刻小心自动类型转换，不要
+做任何假设性的想法
+	4，js的诞生
+毫无疑问js有多个母亲，Netscape，微软，不同的js实现让程序员有想死的感觉，鉴于此，人们期待一种标准化，ECMAScript就是一个标准js的
+方案，可以认为多个版本的js在向其靠拢，此外ECMAScript还派生出了其他语言，比如用于flash的ActionScript
+	5，js能做什么
+你不要小看了js，作为一种脚本语言，js能做的事情不光是在浏览器上提供易用的用户界面交互，此外js还用于桌面程序甚至是服务器端的程序
+，当然这样讲只是说明js的用途并不局限于浏览器，但是就如同人一样每个人各有专长，虽然在别的领域也有涉猎，可是并不擅长，js就是这样
+，它擅长的还是提供易用的浏览器交互界面
+	6，js曾不被看好
+原因是曾经没有额外的带宽提供js脚本，当然现在可不一样了，还有就是js的多个母亲是其实现很不一致，你会发现写了一堆的代码，可就仅仅
+为了判断浏览器的类型，这很难让程序员提起精神
+	7，js现在为什么被看好了
+显然既然被看好了，说明上面所说的弊病消除或者减轻了，首先是js标准化的推进，还有js库以及框架的出现，都是的编写跨平台的js并不太难
+了，尤其是ajax技术的兴起，起到了推波助澜的作用，ajax是对一套技术的描述，它实现的功能是，可以在后台处理用户请求，也就是说，用户
+不必为一次单击而等待页面重载了，ajax对象在后台处理一切网络请求，这使得web应用跟桌面应用极为相似
+	8，有了js还差什么
+js可以实现易交互的界面设计，也就是将js是基于页面的行为处理的，那么处理这些还应该有别的吧，html提供页面的内容，css负责页面的外观
+在客户端html是Model，css是View，js是Control，此外还需要有一个服务器端来响应客户端发出的请求，有了这几样就可以实现web程序了
+	9，js与php
+js与php在功能上有所重叠，比如cookie，生成图像，重定向浏览器等，但是最为重要的不同点在于php能够动态的生成js
+	10，flash和js
+flash跟js的目标一样是要提供易用的用户界面，常见的RIA(Rich Internet Application)应用程序都是flash写的，flash与js最大的区别在于
+，js是浏览器的一部分，而flash的运行需要一个浏览器插件支持，随着web标准的成熟，在不久的将来很多flash能做的事情，js也会做到，所以
+flash可以说是js没有成熟起来之前的替代品
+	11，js版本
+你不需要关注js是什么版本，因为即便是一个版本其实现也可能不同，你要关注的是js能够实现什么功能，基于js的功能来编写代码而不是版本
+，例如常见的if(document.navigation)就是这样的例子
+	12，多么混乱，但你不要抓狂
+进行web开发，你面对的不仅仅是js语言实现本身的差异，你还要面对css，dom操纵，xmlhttprequest对象的差异，但是你不要担心，因为一来
+这些东西虽然有差异但是它们的思想相差并不很大，而且这些东西正在逐步的推进标准化，此外你还有跨平台的框架可以使用
+	13，DOCTYPE声明
+DOCTYPE声明是用来说明html页面版本的，版本有strict,transitional,frameset，要注意DOCTYPE必须是页面的第一个内容前面不能有空格，
+版本的声明是为了说明html有什么标记元素构成，而浏览器则根据不同的DOCTYPE选择不同的页面渲染模式，原因是为了让之前那些不遵从
+标准html元素的html页面合理的显示，如果没有声明DOCTYPE，或者声明的DOCTYPE无效时，浏览器选择quirks（怪异模式）进行渲染，否则
+标准模式进行页面渲染，本书建议使用的声明方式<!DOCTYPE html>这样可以使浏览器进入标准模式（这是html5的特性）
+	14，本书提供的html页面一个模板
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+	</title>
+	<style type='text/css'>
+	</style>
+	<!--[if lt IE 9]>
+	<script type='text/javascript' src='http://html5shiv.googlecode.com/svn/trunk/html5.js'>
+	</script>
+	<![endif]-->
+</head>
+<body>
+</body>
+</html>
+注意点，1，meta元素一定要放在title之前，保险起见最好放在head的第一个子元素位置
+	    2，一下这段内容的引入是为了解决IE不能为html5新元素设置样式而写的
+	<!--[if lt IE 9]>该该语句只有ie可以识别
+	<script type='text/javascript' src='http://html5shiv.googlecode.com/svn/trunk/html5.js'>
+	</script>
+	<![endif]-->
+	15，html5新增的表单元素
+<form autofocus='autofocus'>该属性可以使得页面加载时表单获取焦点
+<input type='text' placeholder='init text...'>设置了输入域的初始内容
+<input required='required'>设置该字段为必填字段，浏览器会进行验证是否已填写，并且根据具体的填入类型，对值的有效性进行验证
+<input maxlength='30'>这个属性之前也有，但是现在可以应用到textarea上了
+<form novalidate='novalidate'>取消浏览器自动验证表单的功能
+pattern该属性甚至支持用一个正则表达式验证内容
+有一点要明白，支持html5的浏览器默认会先进行浏览器验证，如果自己写的js有验证功能的话，那也要等浏览器验证过后再进行js验证，当然
+你可以通过属性novalidate来关闭浏览器的验证功能，说句题外话，这里没有提到的一些html5新的表单元素有很棒的特性，我试了一个date元素
+，效果真的很棒居然提供了一个日历控件，可以ie居然不支持，唉，微软日落帝国
+	16，不要在连接外部js文件的script中写自己的代码
+为什么不可以，这是我的疑问，这样不是很合理吗？非得多写一个script
+	17，XHTML中的js
+Xhtml是基于xml的文档，对文档结构有严格的限制，如果在该文档中写js代码，可能因为js中的大小于号等特殊符号的出现被解析为文档的结构 
+的一部分，所以xhtml中的js代码要这样写
+<script>//<![CDATA[
+//code
+//]]</script>
+以便将js代码视为一段文本不参与结构
+上面的情况发生条件是，你写的是xhtml文档，而且是页面script内填写js代码
+	18，关于script的位置
+有人建议将script放在body介绍部分，原因是如果放在head，浏览器遇到要下载的脚本会先下载脚本，如果放在body结束处，在意味着是在页面
+已经完全载入之后再下载脚本，这样的话，页面渲染时间更短
+	19，js的开发指导方法
+功能退化：因为用户并不是总能够运行javascript，所以需要一种解决方案来处理js不能运行时的情况，一种最简单的办法是什么也不做，直接
+		  抛弃掉那些不能使用js的用户，当然没有人建议你这么做，除非你是自己是个赖人，功能退化旨在提供这样的解决方案，如果js不能
+		  运行则给出用户提示，如提示用户开启js或者解释为什么用户没有得到想要的结果，只是一种退而求其次的方案，也就是说你假设所
+		  有用户有潜力访问你网站的完整功能只要你提供适当的提示，哦，对了，常用的技术就是<noscript>标签，可是，这里存在的问题是
+		  你没有提供一个完整服务，完整的服务需要用户自己来解决问题，下面的解决方案旨在解决这个问题
+渐进增强：该方案的思想是，通过基础技术提供用户完整的服务，使用js来制定高级服务，这样就可以保证所有用户不被抛弃，同时那些支持js
+		  特性的用户可以得到js创建易用的界面
+无干扰：该思想是指，要将MVC分开管理，不要再页面中出现行为，样式，内容的混合，无干扰有利有代码的扩展和维护
+	18，use strict
+这是ejs5提出的强制代码严格模式，具体功能我不清楚
+	19，浏览网页代码
+当遇到好的网站是就去浏览代码，看对方是如何实现这个酷酷的功能的你有没有更好的方法实现它
+	20，常见js错误以及调试方法
+变量名和函数名是区分大小写的
+不要将函数当成字符串来进行复制，函数时独特的对象
+内建对象引用是要注意大小写
+= 和 == 这几乎成了每个程序员新手的杀手，有个解决方案是建议这样写相等7==num
+引用不存在的对象，尤其是引用不存在的dom对象，往往这类问题是由于页面未加在完成就访问不存在的dom
+不能进行的类型转换却进行了类型转换
+使用了保留字
+调试方法第一条就是选择一个好的调试工具，好的调试工具意味着不仅仅可以检测到js还可以检测html以及网络请求等
+rubber duck debugging 对橡皮鸭讲对你程序的流程
+记得缓存这个妖孽
+尝试不同的浏览器
+休息一下，在看你的代码往往会有奇迹发生
+	21，如果不用var声明一个变量，则它是全局变量
+	22，javascript中的数字可以包含数字字符，小数点，e，以及正负号，但是不能使用千分位逗号
+	23，null和undefined
+这两者的区别在于null代表没有结果，而undefined代表未定义的变量或者操作，比如说一个函数没有返回值那么获取返回值则是undefined
+	24，负数求余结果还是负数
+	25，数学运算非法时，返回NaN或者Infinity，由对应函数isNaN和isFinite来对这两个值进行验证
+	26，内置Number对象，每个数字其实就是一个Number对象，方法toFixed和方法toPercision用于截断数字
+	27，内置Math对象，该对象的特殊之处在于不用new生成对象实例，而是可以直接通过Math来引用其方法和属性
+其属性定义了一些数学常量，方法也是一系列的数学工具函数，例如abs，ceil，floor，exp，max，min，round，random等
+	28，内置String对象，每个字符串就是一个String对象
+介绍几个常用的字符串方法，
+	charAt(position)返回指定位置的字符，例：str.charAt(str.length-1)返回最好一个字符
+	indexOf在字符串内搜索字符或者单词，返回第一次出现的位置，如果没有找到则返回-1，这里要注意了没有找到时返回的是-1，千万别
+	这样写检测条件if(str.indexOf('xiao')){got it}而要if(str.indexOf('xiao')!=-1){got it}，因为返回值中含有返回首位的请况
+	indexOf函数还可以接受第二个参数，该参数用来指定搜索的起始位置，此外注意了该函数是大小写敏感的，其实转换为大小写不敏感很简单
+	，只要调用toLowerCase或者toUpperCase即可，该函数可以看成是js的字符串搜索函数，很好用
+	lastIndexOf函数如其名字描述，从后往前搜索字符串同样可以接受一个搜索起点，从起点往前进行搜索，找不到返回-1，该函数和字符串
+	截断函数结合起来可以进行完整单词的截断
+	slice(start,end)不包括end，end默认是str.length，要注意的是该函数start和end都可以接受负值，最后一位是-1
+	substring这个函数要被废弃了，不推荐使用，虽然功能与slice类似
+	substr(start,length)提取子串，跟slice功能类似不过是指定长度进行提取
+	str.concat('xiao','wen','bin')将参数中的字符串添加到原串，这个功能完全可以使用字符串连接运算符+=实现，所以就不常用了，但是
+	要注意了常见的函数都是返回改变的新值，该函数则是改变原值
+	toLowerCase和toUpperCase可以实现大小写转换（生成新值），一般用来进行一些大小写不敏感处理的地方
+	新版js实现了trim函数，注意使用测试，其实该函数自己实现也很简单
+	29，js中有没有常量，由于浏览器支持不一致，所以一般不要使用常量
+	30，手动类型转换
+字符串转换为数字：可以使用顶级函数parseFloat，parseInt建议使用第二个参数用来指定基数，parseFloat甚至可以解析含有e的字符串，这两
+				  个函数遇到无法解析字串返回NaN
+				  其实更简单的办法是+str或者str*1;
+数字转换为字符串：调用Number对象的toString函数
+null和undefined转换为数字：undefined=>NaN,null=>0
+	31，条件测试
+js中默认将条件测试的操作数均转换为布尔对象，如果想要严格测试就要用到=== 和 !=
+例如，如果想知道myvar是否未定义，if(!myvar)就是错的，应该if(myvar===undefined),因为第一个测试能通过的值是布尔为假的值，就不光是
+undefined了，但是NaN即便用===也不行，针对它有专门的函数isNaN，但是null等别的值就可以===测验
+	32，|| &&与常见语言的不一样之处
+||该运算的返回值不限于布尔值而是可以返回为真的对象本身，同理&&会返回为假的对象
+	33，数值比较
+js底层的数值是浮点数，进行严格的数值比较是不可能的，这回导致程序出错，可用的方案用使用toFixed函数截断并将数字转换为字串，或者
+将数字先进行放大处理，然后再将结果缩小
+	34，字符串比较
+	不像c语言要通过函数实现，这里只要用==就可以实现字符串比较了，js默认的字符串处理是大小写敏感的，所以如果想要进行不敏感比较的
+话，可以调用toLowerCase姐妹函数，同样如果要进行字母表顺序比较的话，就直接使用>,<就可以了
+	35，确认对象的类型
+typeof运算符：if(typeof myvar=='string')该运算符返回值均是字符串，有:number,string,boolean,object,undefined，注意这里的字符串是
+纯小写的，还有就是null返回的是object，至于原因是没有原因，array也会返回object，此外像NaN这样对象的属性也返回object
+	36，日期
+首先要明白一点，js是基于客户端的，这里的时间值也是客户端的，也是说有可能跟服务器端的时间不一致
+创建时间对象
+new Date(y,m,d,h,m,s,ms)除了y，m均是可选的，d默认为1，别的之默认为0，此外要注意月份是从0开始的
+new Date(milliseconeds)注意了是毫秒不是秒，一天有86400秒
+new Date('date string')以js可理解的日期字符串形式创建，这里有一点要注意的是，如果传入的字串不能被js理解，要么是无效日期值，要么
+对象是基于epoche的（取决于浏览器），可接受的字符串列表参见www.w3.org/protocols/rfc822/#z28，即rfc822/ietf格式
+返回时间原子值得方法
+getTime()如果对象传入的是1970年之前的话，则是一个负值，还有js中的时间戳是基于毫秒的
+getFullYear() 4位数字
+getMonth() 0-11没有返回月份名称的方法，不过自己用一个数组实现并不难
+getDate()
+getDay() 0-6 这里的0是星期天，同样可以数组实现名称返回
+getHours()24小时制0-23
+getMinutes()
+getSeconds()
+getMilliseconds()
+此外以上函数都有对应的set函数，而其get和set函数都有对应的UTC版本，样例：getUTCMonth()
+返回格式化时间字符串
+toString()
+toTimeString()
+toDateString()
+toLocaleString()
+toLocaleTimeString()
+toLocaleDateString()
+toISOString()新版ejs引入
+toJSON()新版ejs引入
+有locale的是根据用户本机的本地化设置进行时间日期的格式化
+此外还有一个UTC版本的函数：toUTCString()
+	37，同步客户端时间
+解决方案有使用utc时间戳，在php脚本中生成的js中嵌入utc时间戳，但是要注意php的time()函数是基于秒的，而js是基于毫秒的
+也可使用utc时间字符串来创建js的date对象，通过date对象的getTimeZoneOffset()可以获取当前时间跟utc时间的差距，注意是分钟数的差距
+，或者调用utc版本的函数同样可以获得当前的utc时间
+	38，时间运算
+时间戳加减：(new Date()).getTime()-86400000*10;等这类运算
+函数增减：通过set类和get类实现时间运算，例如：my.setDate(my.getDate()-)
+date对象运算：直接用date对象相减就可以计算出时间差（毫秒）始终返回正数，书上讲的不准确并不是始终为正数但是你不要以为能减就能加
+				，这里的加运算将导致两个date对象先toString然后字符串连接
+			  对象的比较运算，同理也是先转换为字符串后比较的字符串
+	39，上面涉及到一个小技巧(new Date())的使用，如果你仅仅只是为了使用一个对象达成一个简单的目的，你也可以称之为一次性变量，这
+样的好处在于，页面不必维护一个以后不太可能使用的变量，尽快的释放变量可以节省内存空间
+	40，判断date对象构造的有效性
+前面讲过如果构造date对象的值不合理则根据浏览器的差异被设置一个无效的日期值或者设为epoch，检测有效性的方法很简单if(my.getTime())
+如果是epoch的话，自然getTime是0，如果是无效日期的话则getTime返回的是NaN
+	41，数组
+可以认为js的数组跟php的一样强大，不仅仅支持值为混合类型的，而且支持关联数组并支持混合使用数组索引和关联索引，但是要记得那句话，
+能干什并不意味着一定要干什么
+创建方法:
+myarray=new Array('xiao','wen',3)
+myarray=['xiao','wen',3];
+如果要略过某些位置可以这样写myarray=['xiao',,,'xiao',3]，但是不推荐这样写，应该这样写myarray=['xiao',undedined,undefined,3']
+属性length，说到length就不能不说js中的一个特性数组是稀疏的，也就是说数组中允许undefined值的出现，但是length的值算上了稀疏位置，
+很多语言都支持myarray[]='xiao'添加到最好一个位置，但是js希望你添加元素时明确的指出添加的位置myarray[myarray.length]
+方法：esj新版函数，indexOf和lastIndexOf跟字符串对应的功能相似，参数和返回值都一样
+	遍历数组for(var i=0,count=myarray.length;i<count;i++)
+		如果要略过空值位置if(myarray[i]!==undefined)
+		替代的方案是if(i in myarray)或者直接使用for(var i in myarray)，但是使用in运算符有个问题，in运算符是用来判断或提取键值
+		存在于数组中的，也就是说如果原始数组被赋值为undefined的话，in并不会过滤掉它，其实in可以看成判断或提取用户显示操作的元素
+	删除数组元素：delete myarray[i];要明白一点即便是删除了最后一个元素，数组的length属性值也不会改变的，这里的删除其实是设置为
+		undefined，要真正删除元素得靠array对象的方法
+	真正的删除元素：
+		pop shift返回移除的元素
+	添加元素：
+		push('xiao',[1,2,3],'xio')可以看到push可以用来构建多维数组，返回值为新长度
+		unshift与push功能类似，区别在于添加的元素添到了数组头部
+		concat进行数组连接，但该函数太别扭了，他不改变自身，而是将生成的新数组返回（string也有同名函数，用于将字符串连接到原串
+		）追加到数组尾部，跟push区别还在于，它自动将添加的数组元素展开，不能用来构建多维数组，还有返回值不同，concat返回新数组
+	添加删除元素，任意位置，且改变数组自身
+		myarray.splice(pos,count,insertelement,insertelement,,,,)
+		仅仅想要删除元素仅提供pos和count，此时返回值为一个含有删除元素的数组，即使仅删除一个也是一个数组
+		如果提供了insertelement则会添加元素，即便count不为0，即可以同时删除元素并添加元素
+		pos可接受负值
+	另外一个提取子数组的函数时slice(start,end)该函数返回提取的数组，但是不会改变原数组
+	42，字符串和数组之间转换
+myarray.join(separator)，separator甚至可以是html标记
+mystr.split(separator)，将字符串生成数组
+	43，对象声明
+myobj=new Object({name:'xiao,age:12});
+myobj={name:'xiao',age:12};注意：不要丢掉语句最后的引号，毕竟这也是一个语句的要有语句结束符号，还有就是最后的属性后面不要
+遗留有逗号，在不同的浏览器上有未知的表现
+可以看到只有属性的对象就像是关联数组，这也许就是不常常使用数组实现关联数组的原因
+要注意声明语法属性或方法名一律不添加引号，只有属性值是字符串时给该属性值添加引号，之所以强调这一点是为了与json对象标记法
+有所区分，json中的所有属性以及属性值都用引号包括，而且建议用双引号
+	44，对象使用
+点号访问是常见的访问对象属性和方法的方法，myobj.name;myobj.calucate();
+如果对象的某个属性不存在但是你这样访问它，myobj.help=function(){}就会给对象添加一个新的属性或者方法，这其实就是声明全局对象
+以及全局方法时，这些属性方法隶属于window的原因
+[]方法也可以访问对象，因为有时候点号的访问并不如意，例如myobj有属性name和age，我现在已经有一个变量是name='age';，那我如果写
+myobj.name这个语句我的意图是想要访问myobj.age也就是希望name先求值，这是可以使用[]，myobj.[name]
+	45，判断是否是对象的方法或属性
+一，if(myobj.somepropertyname)但是若该属性的值为布尔假的话就会有问题了，其实想判断的是if(myobj.somepropertyname===undefined)
+二，in语法，if('somepropertyname' in myobj)注意属性方法都要引号包括
+三，typeof方法，if(typeof myobj.somepropertyname =='string')这就不单单是求有没有该属性了，同时还判断有没有指定类型的属性
+	46，遍历对象的属性方法
+for(var i in myobj)
+{myobj[i]}可以看到与for in数组的用法是一样的，但是对象遍历并不保证遍历的顺序
+	47，对象删除方法和属性
+delete my.someproperty;
+	48，对象还是数组？
+当你在选择到底该用那种结构表达你的数据时这个问题摆在了你的面前，虽然数组可以储存关联值，但是js中的数组跟c语言的数组应该一样的被
+使用。
+	49，函数参数没有类型检查，所以你更不必用var声明参数
+但是这并不意味着你不可以为函数添加类型检查，使用typeof你几乎可以进行任何类型检查只要你愿意的话
+	50，函数参数的数量不限
+你可以通过arguments访问传入的任意参数
+	51，函数的参数不能够指定默认值
+这只是说不能用传统方法指定默认值，并不是没有可能来指定默认值，你可以在函数内进行检测，如果参数undefined的话，提供一个默认值，有
+时你想要给第三个参数默认值却要给第四个参数赋值，那么你要给第三个参数undefined
+	52，函数参数的传递方式
+简单变量（数字，字符串，布尔）是值传递的，但是数组和对象却是引用传递的，不需要你声明，只是内部默认的机制来决定的
+	53，变量作用域
+js中只有全局作用域和函数，对象作用域，没有块级作用域，局部作用域优先覆盖对同名全局变量的访问，如果非要访问全局变量要显式声明，
+用window对象引用
+	54，函数也是对象，具体而言是Function对象
+创建函数的同时会创建同名的Function对象，你可以通过对象为函数对象添加属性方法，或者访问它们
+	55，this
+通过这个东西可以实现对象对自身的访问，比如常常需要在对象的方法中访问对象的属性
+	56，匿名函数
+常常用来赋值给变量或对象的属性，传递函数类型的参数，立即调用函数例如(function(){}).();立即调用的好处是将那些从某种意义上讲不
+是函数的代码段封装在一个局部作用域中避免干扰全局作用域
+	57，嵌套函数定义
+子函数可以访问父函数定义的变量以及全局变量，但是对于全局环境而言子函数是不可见的，而且嵌套定义的函数往往会形成一个闭包
+	58，事件监听
+传统方法：直接将监听代码嵌入html标签中，这样做一来不利于js代码的维护，二来不符合渐进增强的概念，因为这样做就假设了js始终工作
+	这种方法将被遗弃
+js中添加事件处理：例如window.onload就是常见的例子，该方法的弊端在于事件监听只能被添加一次，如果后续又添加的话会覆盖前面添加的
+处理器，使用第三方扩展库是这个弊端尤其明显，要删除事件处理只要window.onload=null;
+绑定事件监听函数：非ie，myobj.addEventListen('load',myprocess,false) myobj.removeEventListen('load',myprocess,fasle);
+					ie，myobj.attachEvent('onload',myprocess) detachEvent()
+	
+
+	
+	59，javascript和浏览器
+javascript支持的对话框：（对话框都是阻塞的，在它没有被处理时用户不能跟浏览器交互）
+	alert(msg);
+	confirm(msg)msg询问并有确认取消按钮，供用户选择并返回true或false
+	prompt(msg,defaultInput)msg询问并提供确认和取消按钮以及输入框，如果确认则返回用户输入，若取消则返回null
+	对话框并没有给程序员更多的自定义能力，这是为了避免一些不良居心的人企图将对话框的样式变成一些常见的应用样式欺骗用户，唯一留
+	给程序员的能力就是msg中插入\n
+浏览器的组件控制：
+	window.menubar
+	window.statusbar
+	window.toolbar
+	通过属性visible可以定制组件，这些都是曾经被滥用的技术，现在不推荐在没有征得用户同意时就随意改变浏览器的属性状态
+探测浏览器
+	window.navigator通过这个属性可以知道一系列浏览器相关的信息，这是曾经编写跨平台浏览器是的通用检测方法，html5中添加的定位功能
+	函数就是位于navigator属性下的一个属性
+浏览器窗口大小和位置
+	除非特殊需求，否则不应该改变浏览器的位置和大小，因为这是属于用户控制的东西，如果你强行控制的话，用户会不喜欢的，这js的世界
+	里有一句话很中听，不要因为javascript能干什么，你就干什么，你要考虑你的用户需要什么，喜欢什么
+	浏览器的位置：
+	window.screenX window.screenY或者是window.screenLeft window.screenTop
+	上面这些东西就是用来检测浏览器当前在屏幕坐标系中的位置的，IE有个好兆头是他开始支持标准的方法了同时他还支持他自己的方法，可
+	是涉及到跨平台的问题用起来还是较麻烦的，也许好消息是我的职业生涯里面都不需要改变浏览器中电脑上的位置
+	浏览器的大小：
+	window.innerWidth window.innerHeight页面大小
+	window.outerWidth window.outerHeight浏览器整个大小
+	以上是标准方法，也被ie采纳，ie的方法是window.document.body.clientWidth（页面大小），不过别的浏览器也支持，貌似是这样的
+	改变大小和位置：
+	上面介绍的绝大多数是可读的，看我用了一个含糊的字眼‘绝大多数’，我也不想这样，可事实是这样不同的浏览器有不同的属性，同一个属
+	性名又会有不同的表现，所以我说是绝大多数，归正题
+	如果想要且必须改变的话就使用标准的方法，window.resizeTo(,) window.resizeBy(,) window.moveTo(,) window.moveBy(,)
+	To是绝对值，By是相对值
+物理屏幕的属性
+	window.screen.height
+	window.screen.width
+	window.screen.colorDepth
+	window.screen.availWidth
+	window.screen.availHeight
+	一个不幸的消息是不同的浏览器探测到的值并不保证是一致的，我只有一块屏幕，可是不同的浏览器用不同的观点来看待我的屏幕
+	60，创建窗口
+这种技术正在被兴起的html结合css创建动态窗口所取代，但是在有的时候使用它也可以实现加分
+这种技术被作恶的地方是，经常有网站用它了制作弹出式广告窗口，所以现今的一些浏览器有了阻止弹出窗口的功能，所以如果使用该技术的话
+就要考虑窗口被阻止的情况发生时的替代方案
+顺便提一下对于搜索引擎来说新建窗口的内容不可见
+	var popup=window.open(absoulte path || relative path)
+	if(popup===null)弹出被阻止
+	{重定向到absoulte path || relative path}
+	使用popup进行对弹出窗口的操作，完成后if(popup!==null && !popup.closed) popup.close();
+其实window.open(url,newwindowname,windowattriaute,replace)的完整形式
+newwindowname是新窗口的名字不能有空格
+windowattriaute是一堆用逗号分割的name=value，至于可设置的属性多少以及设置属性的方式因不同的浏览器而差别很大，一般情况的设置样例
+height=200,width=300,outerWidth=320,outerHeight=220,location=yes,status=yes,scrollbars=yes,toolbar=yes,left=20,top=20,resizable
+=yes 注意location是指地址栏，top和left是相对于父窗口的
+	窗口focus，常见的focus发生在表单控件，可是同样不同窗口之间也有focus和blur
+	if(popup!== null && !popup.closed){popup.focus();}
+可访问性解决方案：
+前面提到如果弹出窗口被阻止显然需要一个替代方案，前面说到的重定向其实还是有些问题的，如果如果用户禁用了js的话该页面用户不可能
+访问到该页面了，js指导思想之一渐进增强的先行应该是实现一个最基本的页面访问，所以应该顺着这个思想进行页面组织，最基本的可访问
+可以使用<a href='another.html' target='_blank' id='anotherpage'>another page</a>这里的target是新页面的名字，_blank是预定义的值
+保证了每次页面都会在新选项卡中打开，这就是基本页面访问的实现，接下来要实现的渐进增强的目的是要在新的窗口中打开页面，所以可以给
+该链接用js绑定一个单击事件处理器，在处理器中检测弹出窗口是否被阻止（null），如果没有阻止则retrun false这样就可以取消链接的默认
+行为，不至于同时打开新窗口和新选项卡
+	61，父子窗口之间的通信
+父到子popup.window就可以引用子窗口的window对象
+子到父window.opener引用的就是父窗口的window对象，如果没有父窗口则null
+	62，浏览器的历史记录
+window.history.go()可以实现前进n或后退n步
+window.history.forward()跟浏览器的前进按钮功能一样
+window.history.back()
+	63，地址栏对象location
+重定向：
+最好使用服务端的重定向，如果实在服务端不能重定向就使用js
+不了解js的人这么做：window.location='test.html';
+精确的做法是:window.location.href='test.html';
+可是这两个方法都有一个问题既然是重定向意味着当前的页面不可访问，但是使用上面的方法导致不可访问的页面留在了浏览器的历史记录中，
+所以window.location.repalce('test.html')可能才是你的本意，这样做的话不可访问的当前页面不会存在于历史记录中了
+别的url信息：
+window.location.search查询字符串，例(?name=xiao&age=24)
+window.location.hash锚点，例（#xinzhou)
+	64，事件处理
+鼠标事件：
+	click是指鼠标在一个对象上落下并且弹起的整个行为
+	如果打算检测dblclick的话就不要再检测click了，因为这样会发生两次单击事件
+	关于mousemove的建议，在尽量小的区域范围中检测该事件，因为大范围的使用会带来很大的性能消耗而且应该尽早的将其删除
+	mouseout和mouseover是标准事件并且通用，而mouseenter和mouseleave是个别浏览器的事件，后者跟前者功能一样
+键盘事件：
+	keydown keyup keypress
+浏览器事件：
+	load不仅仅局限于对页面加载的检测，它还可以检测css文件的加载，图片和视频的加载，可以说只要涉及到资源的加载都可以使用它
+	unload曾经常常被用来阻止浏览者离开站点或者在离开时弹出一些可恶的东西，其实更load事件一样该事件应该被合理的利用与对资源下载
+	的检测做出关联的行为，例如在用户离开站点时可以提醒用户保存当前工作等
+	resize事件是在浏览器窗口大小变化时发生的
+	scroll事件是在用户滚动条时发生的，现在常见于地图，图片的缩放处理
+	cut copy paste这些个事件可以用来制作web文档处理程序，可惜曾经人们企图禁用用户盗取站点的代码而禁止这些事件的响应，其实只要
+	用户将浏览器中的js禁用就可以看到他想要复制的任何代码了，再者而言这个世界的知识应该是共享的，不是知识而是智慧共享
+	focus和blur跟表单以及创建的窗口有关
+表单事件：
+	reset该事件在用户单击了表单的重置按钮时发生，随着表单错误提示智能化，用户很少有必要重置表单，所以一般不要提供这个按钮，如果
+	非要提供该按钮的话，最好给该按钮添加confirm用来避免用户误按重置
+	提交按钮会触发click和submit事件
+	input=text和textarea以及select都会触发change事件，前两者只有在失去焦点后才会触发，所以最好使用keyup
+	65，事件可访问性
+随着移动设备的兴起，如果你想要你的网站在不同的设备平台上有相似的表现的话，你就要兼顾事件的可访问性了，例如移动设备并没有鼠标
+所以关于鼠标的事件就是移动设备无法处理的，解决方案是寻找可替代事件，例如mouseover可以用focus替代，mouseout可用blur替代，还有就
+是表单提交时最好检测submit事件而不是提交按钮的click事件，总之要长个心眼，问问自己移动设备上也可以处理该事件吗
+	66，事件对象
+onclick=function(e){
+//////////////获取对象
+if(!e)e=window.event;
+or if(typeof e == 'undefined')e=window.event;
+or e= e || window.event;
+////////////对象属性
+var target=e.target || e.srcElement;
+e.type;
+/////////////////按键
+e.keyCode
+e.which
+e.altKey
+e.ctrlKey
+e.shiftKey
+这里虽然列出了各种按键属性可是各种按键属性在浏览器中的实现很不一致，IE不支持which只能用keyCode，并且IE的keyCode中的值在
+keypress时字符代码，但是在keyup和keydown时却是按键代码，其他浏览器都可以用which且为字符代码同时keyCode为按键代码
+常见的情况是你要检测字符按键的话一般你会检测事件keypress，此时你可以var keycode=e.which || e.keyCode;而且String.fromCharCode可
+以将字符代码转换为字符
+或者你要检测上下左右键的话你会检测事件keyup和keydown，此时var keycode=e.keyCode;
+或者你要检测的是系统按键alt ctrl shift这些按键一般没有keypress事件除非同别的键同时按下
+////////////////阻止事件默认浏览器处理
+方法一return false;
+缺陷：只能用于传统方法监听的事件处理器，会终止冒泡，代码立即返回
+方法二e.preventDefault() e.returnValue=false;
+/////事件捕获和冒泡
+事件捕获从外到内进行直至发生事件的元素，冒泡则在之后自内向外，在这个过程中如果事件捕获或冒泡没有被打断的话，途经的每一个元素，
+如果有相应的事件处理器就会被调用，默认情况浏览器关注的是冒泡阶段，对于foxfire类addEventListener的第三个参数为true是处理捕获阶段
+，接下来很自然的想法是将多个子元素的事件处理委派给父元素，这就叫做事件委派，并不是所有事件都有冒泡阶段比如focus，blur，change，
+scroll，submit
+阻止事件流e.stopPropogation()  e.cancelBubble=true;
+e.relatedTarget  e.fromElement e.toElement
+}
+	67，打印
+if(typeof window.print == 'function')
+{
+document.getElementById('button').onclick=function(){window.print();}
+}
+	68，wirte和writeln
+不建议使用了，原因：在页面重载后使用它们将导致页面重写被破坏，dom操纵是现在动态修改页面的方法，但是并不是说write和writeln没有了
+用武之处，一些第三方脚本或者广告常常使用write和writeln写入页面（结合iframe使用）
+	69，document
+document.title 读写
+document.compatMode  读写BackCompat  CSS1Compat
+	70，DOM
+根据结构访问元素：
+firstChild lastChild children(不含文本节点) childNodes nodeName nodeType nodeValue
+nextSibling previousSibling
+parentNode
+hasChildNodes()
+document是页面的Dom引用，可以将其看成是页面对象，对应的nodeType是#document
+document.firstChild对应的是页面中的第一个元素，正常情况如果声明了doctype则第一个是它
+document.lastChild正常情况是html元素的dom引用，这里所谓的正常情况是指如果没有意外的空白的话，在非IE浏览器中会将空白也算作为节点
+，所以使用这种节点关系方法来访问dom节点有两个缺陷，一要事先知道页面文档结构，二浏览器将空白视为节点将使得访问困难加大，所以dom
+访问除了这些外还提供了快捷方式以及查询节点的方法
+
+dom的快捷方式：
+document.documentElement对应html元素
+document.head对应head元素
+document.body对应body元素
+document.forms
+document.images
+document.links以上三个可以用索引或者是name索引访问
+
+dom的查询方法：
+getElementById()只能够在document页面引用元素上调用，查询整个页面，找不到return null
+getElementsByTagName()可以在任何页面元素上调用，所以其查询范围是可变的，返回即便是一个元素也是数组
+getElementsByName() 可以在任何页面元素上调用，所以其查询范围是可变的，返回即便是一个元素也是数组
+getElementsByClassName()是一个较新的方法，浏览器支持不一致，使用时要检测，不过网上可以找到程序库作为替换方案
+querySelector()根据css选择符进行查询元素，返回第一个匹配的元素，IE8之前支持不太好
+querySelectorAll()根据css选择符进行查询元素，返回所有匹配的元素，IE8之前支持不太好
+
+关于节点的属性：
+attirbutes
+	attributes.getNamedItem
+	attributes.setNamedItem
+	attributes.removeNamedItem
+	attributes.item(index)
+	attributes.length
+函数
+	getAttribute(name)
+	getAttributeNode(name)
+	setAttribute(name)
+	setAttributeNode(name)
+	removeAttribute(name)
+	removeAttributeNode(name)
+document.createAttribute()
+
+常用属性：
+className
+HTMLfor(<label for='xiao'></label>)
+tagName
+style
+href
+disabled
+id
+只要是元素的属性都可以直接.访问或添加
+
+修改节点内容：
+innerHTML 不能修改表单，表单值通过value修改
+innerText  或者 textContent
+
+dom创建添加移除替换节点
+document.createDocumentFragment()可以将其看成是暂存dom元素的容器
+document.createElement()如果能用innerHTML解决就不要创建dom元素
+docuement.createTextNode()
+appendChild
+insertBefore
+insertAfter
+removeChild
+replaceChild如果能用innerHTML解决就不要创建dom元素
+cloneChild不会复制事件处理器和元素附加数据
+	71，CSS
+改变元素的类名.className//html5支持elem.classList.add('newClass');
+改变元素的具体某条样式.style.backgroundColor（注意书写格式与css不一样），此外一定要指定单位，读写只会发生在内嵌样式的范围，所以
+	不再内嵌样式书写的不能读出来，读取所有样式的方案是：IE .currentStyle.width直接返回字符串 非IE
+	window.getComputedStyle(element)返回包含属性的对象可以[]或.访问
+写入内嵌多条规则elem.style.cssText='color:red;font-size:20px';
+修改整个样式表，对于外部样式表，如果在style标记中设置了id就可以getElementById访问样式表，样式表是只读的，但是可以通过给其添加
+disable来禁用样式表以实现换肤的功能，对于内部样式表可以通过mystyle.insertRule('.myclass{width:60px;}',position)插入样式，positi
+on可以提供插入的位置，同理mystyle.deleteRule(position)删除样式规则，这是非IE的方法，IE方法是mystyle.addRule('.myclass','{width:
+90px;}',position)可以看到是将选择符与规则分开写
+动态创建style元素，document.createElement('style').innerText='.myclass{width:90px;}';document.body.append(mystyle)
+	72，显示隐藏
+elem.style.visibility
+elem.style.display会影响布局
+	73，cookie
+题外话，cookie是美国人吃的一种上面附有干果仁的烤饼干，如果将来有机会一定要尝尝
+设置cookie  document.cookie='name=value;expires='+somedate.toUTCString()+';path=/;domain=example.com';
+			除了name=value外剩下的是可选的，据我目前的经验来看不能在一次赋值语句中设置多个cookie，但是分开的赋值语句可以设置多
+			个cookie而且各个cookie自动在document.cookie中实现name1=value1;name2=value2;name3=value3这种格式的字符串，并且其中不
+			会有设置是的expires path 
+			domain的值，有一点较为遗憾的是有的浏览器会在两个cookie之间添加一个空格，这样访问cookie值时很方便使用字符串函数split
+			，如果后续添加的cookie与前面已存在同名的话在前面的值被更新
+删除cookie document.cookie='name=;expires=Thu, 1 Jan 1970 00:00:00 UTC'不提供值并且设置一个过去的事件
+	74，定时器
+setTimeOut(code,time) 
+var h=setInterval(code,time) clearInterval(h)
+	因为javascript是单线程的，所以定时的线程也同时是干别的事情的线程，所以只会延迟，不精确，也许你会问定时器能干什，或者你应该
+	在什么时候使用它，答案是：定时器用于更新内容的任何场合
+	75，表单
+表单的提交：最好的方法是监听提交按钮的submit事件，若监听的是提交按钮的click事件无鼠标用户将不受监听，若不提供submit控件而是通过
+	某些控件的change事件提交表单的话是愚蠢的，因为禁用js的用户将无法提交表单
+关于表单的渐进增强：通过js修改form的action属性，将启用js的用户表单提交到不同的服务器脚本位置，同时通过e.preventDefault() 
+	e.returnValue=false; return false;来阻止浏览器的默认提交，在页面载入时通过调用控件的focus()可以使得控件获得焦点
+为什么监听submit事件：一个很重要的原因是进行客户端的表单验证，如果验证通过myform.submit()进行手动提交，否则e.preventDefault()
+	同时对用户的错误给予提示
+错误提示：常见的控件格局
+				<div>
+                    <label for="email">E-mail Address:</label>
+                    <input type="email" name="email" id="email" />
+                </div>
+		添加错误提示后
+				<div>
+                    <label for="email">E-mail Address:
+						<span id="emailError">error</span>
+					</label>
+                    <input type="email" name="email" id="email" />
+                </div>或者
+				<div>
+                    <label for="email">E-mail Address:</label>
+                    <input type="email" name="email" id="email" />
+					<span id="emailError">error</span>
+                </div>
+		注：一些css教材使用em或strong而不是span。至于错误提示应该插入label还是插入到input的后面与具体的表格布局有关，但从js的角
+			度来说插入到input的后面更简单，再使用css任意定位
+	76，关于正则表达式
+今天打算写一个利用字符串函数split进行分割className的函数，split允许将普通字符或者正则表达式当成分割符，因为className是若干个含
+有空隙的单词组成，所以一开始我自然想到的是使用\s*，结果我使用alert显示的返回数组是逗号将每个字符都打断了，事后查知是*在作怪，我
+应该使用的是+，我又尝试用\w单词定界符分割，结果是一堆逗号和空格，原因是我没有认真理解\w的真实意思，\w是用来匹配单词内部的，而不
+是用来分割单词的，要想分割单词显然要匹配的是单词的边界，也就是非单词\W，但是我用\W时有发现了其中的不足，如果我有两个单词的间隔
+用了一个空格和一个tab那么多余一个的空白会被当成单词回填到数组中，这往往不是我想要的结果，所以最佳的分割用\s+，但是有一点不足在
+与\s不匹配\n，当然这在大多数情况下不会有什么问题，此外还要注意的问题是，如果在字符串的串首或者串尾被匹配的话，要做好清理工作，
+因为这里是空格所以事前清理要优于事后清理，还有很有用的一点是如果正则表达式中有子模式时，子模式会尾随被分割的元素返回
+<[^>]*>是匹配所有的开闭标签
+我受到上面的启发写出了出去script内容的表达式/<script[^>]*>.*<\/script.*>/gi，之前我写的雏形是，/<script.*>.*<\/script.*>/gi一直
+受到困扰的就是\s不能匹配\n所以如果<script \n type='text/javascrpt'>就没办法去除script了，启发我的就是[^>]*>，它的意义可以看成，
+如果没有匹配标记中所有的属性内容
+	77，有趣的字符串中的正则函数
+search:	该函数对字符串进行位置搜索，只返回第一次的匹配位置，忽略正则表达式的g属性，如果没有匹配内容则返回-1
+match:	该函数使用正则表达式进行内容匹配
+正则表达式没有g属性时：只会匹配第一次出现的内容，返回对象可以使用数组方式访问，[0]是匹配内容，[1...]是匹配子表达式的内容，此外
+	该对象还有属性index是内容出现的位置，input是输入字符串的引用
+如果有g：返回的数组中是全局匹配的所有内容，没有input和index可用，也没有匹配子表达式的内容返回，如果想要匹配子表达式的内容返回，
+	请使用regexp的方法
+	78，字符编码
+String.fromCodeChar从编码创建字符，注意该函数是属于String的不能够在实例对象上使用，就像Math得方法一样属于静态的
+mystr.charCodeAt从字符提取编码
+	79，关于表单控件的使用注意
+submit在提交之后最好.disabled=true或.disabled='disabled'（用bool真值）将提交按钮禁用同时可以通过设置遮罩层或者通过文字或图像提
+示用户正在进行提交
+input[type=text]和textarea，在dom元素中访问元素预设的默认值的方法是，elem.defaultValue，往往通过此检测用户是否输入了一个不同于
+默认值的值
+select也有检测默认值的机制，如果没有设置默认被选中的option，则selectElem.selectedIndex等于-1，若设置了一个默认被选中的option的
+话则selectedIndex等于0，selectElem除了selectedIndex属性以及常规的dom属性外还有value属性可以读取被选择的option的value属性，注意
+这里是读取，如果想要修改selectElem的value的话，要通过selectedIndex来实现修改，现在的select允许multiple即允许同时选中多个option
+，这时相应的selectedIndex和value只能储存一个值，所以需要遍历selectElem.options数组，该数组元素可以访问的属性有text,selected,
+value，这样通过遍历该数组就可以将选中的多个值找出来了
+动态选择框
+	或者叫做关联选择框，根据前面选择框的选取内容决定后面选择框的显示内容，一般来讲通过服务器端的html使用innerHTML插入select元素
+	就可以了，但是IE9仍然不支持这样做，所以为了跨平台之能操纵dom了
+dom中的option
+	元素select默认有一个数组options，而其option有三个值selected，text（即innerText的内容，但是这里用text访问），value
+checkbox的功用
+	网站协议，如果用户不同意则后续的步骤不能进行，通过监控checkbox的状态来反转提交按钮的状态，但是禁用js无效
+	网购商品时选择是否使用注册地址作为邮寄地址，注意select通过selectedIndex取值而非value
+	作为主复选框，对其他复选框一致选取或取消
+checkbox和radio
+几个checkbox有相同的name（非数组形式）时在浏览器仍然可以被选中，但是提交到服务器的是最后一个被选中的checkbox
+几个radio有相同的name（非数组形式）时浏览器只能够选中其中的一个，提交到服务器也是选中的那一个
+数组形式checkbox和radio，提交到服务器上的是选中的多个值，访问形式$_POST[name][i]，奇怪的事情就是radio仍然不许选中多个
+	至此明白了，不管name是否是数组形式的radio仅仅能够选中一个，但是数组形式的话在服务器端的访问形式改变了，也就是说radio完全没
+	有必要使用数组形式的name，checkbox不论是否使用数组形式都可以被选中多个，只是数组形式的命名可以提交多个值到服务器
+	
+提升web性能的建议：
+减少HTTP请求
+发送expires头
+使用CDN分发
+使用Gzip压缩
+将样式表发在顶部
+将脚本放在底部
+避免css表达式
+使用外部js和css文件
+简化js
+避免重定向
+删除重复jiaoben
+配置ETag
+使ajax可缓存
+
+性能优化的黄金第一法则就是：
+优化关键区域而不是绞尽脑汁优化没有性能提升的区域（先评估在优化，拒绝进行收效甚微的优化）
+注：性能测试应该同开发阶段同步进行，以利于及时校正开发方案（测试时考虑到用户差异，应该使用低端环境）
+
+优化ajax的法则：
+发送小的数据请求，这将会加快client与server的通信
+
+浏览器性能消耗最大的地方：
+不是js而是页面布局和dom操纵
+
+不要为了添加什么酷炫特性而牺牲浏览器的性能，除非真的有必要
+
+优化之前应该干的事情：
+如果你认为确实需要优化你的js代码，请先使用性能工具对你的代码进行性能评估看是否真的需要优化
+
+性能优化的目标是什么？
+尽可能快的响应用户的输入请求
+注：因为js引擎是单线程的如果一个请求阻塞的话，浏览器就会被冻结，所以快速响应尤其重要
+
+如何评判一个请求的响应是否快速？
+0.1秒 页面应该表现出已经对用户的输入开始响应（一些简短的操纵应该已经完成）
+1秒  当处理一些较大任务时应该给用户处理进行中的提示，比如改变鼠标指针的形状等
+10秒  如果任务实在很大的话应该给出一个处理进度指示，如果没有任何提示就延迟10秒足以让用户离开了
+
+如何对响应时间进行测试？
+firebug或者自己编写测试代码
+注：firbug因为会消耗浏览器资源所以不是很精确
+
+如果页面中没有办法将耗时特别长的代码去除，我只能冻结页面阻止用户交互吗？
+多线程解决方案
+当然并不是说只要有耗时代码页面就会阻塞，关键的问题是js是单线程的，如果线程处理任务就办法处理用户交互了，聪明的人们提出的解决方
+案是将js模拟成为多线程，但是这里的多线程跟传统意义上讲的多线程不太一样，传统意义上的多线程会带来很多问题需要解决，比如：如何避
+免死锁，如何解决资源的互斥访问等，js的多线程不会相互访问对方的变量，仅仅只是为了将繁重的任务剥离给一个线程进行处理而已，同时提
+供了一种在主线程和任务处理线程之间进行通信的机制（基于事件和消息的模式），可用的html5 worker或者google的Gears
+定时器挂起方案
+通过对代码运行时间的检测，每隔一段时间就将任务挂起以响应用户交互
+var start=(new Date()).getTime();
+while(start+howlong>(new Date()).getTime()){
+task();
+}
+if(task not completed){
+setTimeout(thisfunction,200);
+}
+
+可以控制js对内存的使用吗？
+准确来讲是不能的，因为js采用垃圾回收策略由底层的垃圾收集器负责内存的回收利用，当内存使用量很大时会导致一个问题，垃圾收集器每间
+隔一个一段时间会冻结使用中的内存以便判断内存块是否可以进行回收（stop the world），当内存使用量较少时这不是个问题，但是当内存使
+用很多时垃圾回收器冻结内存进行检测的时间就会加长以至于会让用户感觉到间歇性迟钝。当内存占用继续加大时甚至会引起使用虚拟内存，如
+果是这样的话，用户就几乎被冻结了，因为虚拟内存使用效率足够低。说了这样多就是为了说明，对于开发者而言，不能够像对待c语言一样，
+明确的管理内存，这就是垃圾回收器的意义避免开发者管理内存同时失掉内存优化的灵活性，好的实践是：如果知道某一对象不再使用的话，明
+确的使用delete，对于dom则明确的调用removeChild对节点进行释放
+
+js脚本模块化思想
+传统的，整体即模块
+	传统的做法是在页面head区域载入所有页面将会用到的脚本
+	缺点：有的脚本并不会在页面载入阶段使用，也就是说并不是用于对页面进行初始化的脚本（例如：一些页面组建交互的脚本），这样提前
+		  载入将来才会使用的脚本会延长页面的载入时间
+		  繁杂的各个脚本交织在一起，不利于脚本依赖关系的组织和站点的扩展维护
+模块化，按照脚本的功能对脚本进行模块化的划分
+	划分成模块的脚本可以在页面载入时只是加载必要的初始化页面的脚本，可以在合适的时机将载入别的模块脚本
+	模块化设计的思想将面向对象设计的思想引入到js文件级别，从而通过对象管理实现脚本模块化管理
+	模块的划分：页面初始化（head载入），交互界面初始化（页面载入之后立即加载），组件（用户同组件进行交互时载入）
+		页面初始化（head载入）
+			对于页面初始化的脚本
+		交互界面初始化
+			简单组件以及复杂组件的启动脚本
+			注：这里存在一个问题如果用户在界面脚本还没有载入时就试图同界面交互的话界面没有反应
+			    解决方案：初始时界面是不可交互的，只有在脚本载入后才将界面修改成为可以进行交互
+		组件
+			对层次结构较为复杂的组件应该在用户同组件交互时加载脚本
+
+延迟加载js要解决的问题
+为了提升页面的载入速度在页面载入时仅仅载入初始化js，但是如果初始化js中引用到延迟载入的代码该怎么办？
+最好的解决方案就是不要再初始化代码中引用延迟加载代码，如果非得引用延迟加载代码，要问一问自己这个所谓应该被延迟加载的代码是不是
+应该被延迟加载，如果实在没有办法避免引用延迟加载代码，这里有一个聪明的办法，设置stub（桩函数，即一个与延迟加载函数同名函数），
+stub函数可以是一个空函数或者stub可以记录用户的交互以便将来脚本载入后将相关交互信息传递给延迟载入脚本
+
+
+//此段内容已经过时了，现在的浏览器不会对加载脚本进行阻塞而是并行加载脚本和别的资源
+//而且很重要的一点是现在的浏览器并不是对载入的脚本立即进行解析而是等到一定时间后对载入的全部脚本进行解析，并且这种解析不会依赖
+//脚本在head的位置，而是对整体进行解析，这样的话即便将依赖脚本放在引用脚本的后面仍然能够被顺利执行
+//也许你要问什么是现在的浏览器，其实经过我的测试我IE9上开启IE7模式的话也是没有问题可以正确执行的
+脚本加载是阻塞的
+阻塞是什么意思？
+当浏览器遇到<script src='test.js'></script>时开始加载test.js脚本，在test.js脚本没有载入并且解析完成前浏览器不会开启任何新
+的资源加载线程
+	注：并不会影响已经开启的任何资源加载线程
+为什么？
+我们可以这样进行反推，如果浏览器对外部js不是阻塞载入机制的话，也就是说浏览器是异步载入外部脚本的话，如果脚本依照在head中的顺序
+存在依赖关系，异步载入脚本并不能保证载入顺序符合依赖关系，浏览器会先解析已经载入的脚本，所以如果被依赖的脚本没有载入的话就会发
+生错误了，你也许会问为什么浏览器内部要设置成载入脚本立即解析而不是将所有脚本全部载入后再进行解析，原因是这样的，如果有的脚本因
+为特殊原因没有能够载入的话，浏览器先对载入脚本进行解析而不等待所有脚本载入再解析是合理的，要不然因为缺失的脚本会导致整个页面无
+法使用。
+如果我明确知道自己的脚本没有依赖关系的话，有没有什么机制可以让我异步加载脚本，因为我不希望加载脚本时阻塞其他资源的加载？
+的确有这样的方法，异步载入脚本
+//过时内容的结尾处
+
+既然现在的浏览器已经默认实现了脚本的异步加载，那么还有没有必要了解一部加载的机制？
+有，因为刚刚介绍的只是head中引用的外部脚本，如果按照我划分的模块来讲，head中加载的脚本只是用于对页面初始化的脚本，对于交互界面
+的初始化以及组件脚本的加载还是需要异步加载功能的
+
+异步加载如何实现的？
+基于事件的触发器（开启异步加载）：onload之类的页面运行事件和onclick之类的用户交互事件
+异步加载的实现：
+	方案1：XMLHttpRequest + eval
+		   返回脚本后eval执行脚本
+	方案2：XMLHttpRequest + document.createElement('script')
+		   返回脚本后创建一个script元素插入脚本内容并将该元素添加到head中
+	方案3：利用iframe的异步加载特性
+		   将外部脚本转换为行内脚本并嵌入到iframe的html页面中，主页面和iframe可以通过window.frames window.parent等机制进行通信
+		   注：不建议使用因为iframe在dom操纵中是最耗费资源的元素
+	方案4：使用script中的defer属性声明该脚本在页面载入后进行加载，相当于延迟脚本加载时机使得页面载入加快
+	方案5：使用document.write('<script src="test.js"></script>')可以实现脚本异步载入，会在当前script标签的后面添加一个script
+	以上的方案都仅限于加载同源脚本，如果要动态加载异源脚本的话就只有下面的方法可用了（当然还有jsonp）
+	方案6：动态创建一个script，修改src属性，插入head部，这个方法简单实用
+	总结：以上的方法都可以实现异步加载脚本的目的，但关键是它们的用途不太相同
+		方案1，2都是使用了ajax返回脚本代码，其实我现在除了将返回的代码填充到一个新建的script元素之外不知道该怎么使用ajax
+		方案3 该方案的亮点就在于iframe，好像异步加载方面弱一点，毕竟dom操纵性能是个问题
+		方案4 仅仅用于head部延时加载初始化脚本加快页面渲染速度，对于页面载入后动态加载脚本没有任何作用
+		方案5 我发现这个方法很适合我用于加载依赖脚本时使用，因为这个方法可以保证依赖脚本预先载入
+		方案6 这是唯一可以加载异源脚本的异步方案，我发现IE加载脚本的速度较慢
+
+异步加载如何解决脚本的依赖关系？
+外部脚本同外部脚本之间的依赖关系
+也许你想要的情况是每个外部脚本功能独立没有依赖关系，确实像处理表单模块和动画效果模块似乎存在依赖关系的可能性就比较小，更准确的
+讲如果模块是结构树中不同分支的话就不存在依赖关系，但如果是同一树分支的话就会存在依赖关系，那么如果解决这种依赖关系呢？也许对于
+小型或者是不打算进行重用的站点，这种依赖关系在代码开发阶段已经融合进了文件中，这样做的弊端在于可能会在多个文件中重复包含相同的
+代码并且需要开发人员手动管理模块的依赖关系，而且这样做不利于模块的多人开发，我们想要达成的目的是对代码进行模块的划分，在初期阶
+段就模块归属的功能将模块结构关系抽象规划为树状结构，这样在代码开发阶段各个模块独立进行开发，只需通过一个具有动态加载功能的函数
+将其自身依赖的模块载入即可，这样做不仅不用重复粘贴代码，而且在使用代码时完全不用考虑模块系统的依赖关系，你可以从结构树的任意一
+个节点调入模块，调入模块自动依据使用情况载入必要依赖的模块
+注：现在仅仅是我的一个设想，等我将来实现
+利用ajax异步加载也是可以控制依赖关系的，不过这种依赖关系体现在载入文件的顺序上也就是说还得由调用模块的人来把控这种依赖关系，对
+于简单项目较为实用，原理其实很简单ajax载入脚本后进入一个队列当中只有队列当中前面的脚本已经载入后面的脚本才能载入，通过一个队列
+（这里不是先进先出的意思，而是只有前面的脚本处于已经载入状态才会载入后续脚本），这样每次载入一个脚本后触发一次队列查询
+行内脚本依赖外部脚本
+这种依赖关系就好解决了，其思想就是明确知道外部脚本载入之后再使用具有依赖关系的行内脚本
+方案1：将行内脚本总的调用接口写在外部脚本的尾部，这样的话，行内脚本只负责功能的声明，至于功能的实现执行是由外部脚本载入后调用的
+      缺点：如果外部脚本是第三方的脚本该方法无效，即便是自己的外部脚本该方法也不够灵活，约定一个固定的调用接口名称每次将行内代
+			码写进该函数中。我想到了一个更好的方法，在外部脚本的data-属性中可以传入总调用接口名称，这样的话外部脚本就可以取回并
+			调用行内脚本定义的函数了
+	  实例：基于我自己data-的构想，此方法同样适用于第三方脚本，只要对方开启了该功能
+			在外部脚本的尾部
+			(function() {
+				var existedScripts = document.getElementsByTagName('script');
+				var len = existedScripts.length;
+				for (var i = 0; i < len; i++) {
+					var cur = existedScripts[i];
+					if (cur.getAttribute('data-Animate')) {
+						var func = cur.getAttribute('data-Interface');
+					}
+				}
+				if (func) {
+					eval(func + '()');
+				}
+			})();
+			用于记录脚本和脚本调用接口的script
+			<script type="text/javascript" data-Interface="yourInterface" data-Animate='true'></script>
+				注：Animate.js是载入的外部脚本
+方案2：定时器轮询
+	   在行内脚本引用外部依赖脚本的地方设置一个定时器
+	    缺点：定时器耗费资源，如果外部脚本载入不成功定时器将一直运行，时间间隔不能太长又不能太短
+		实例：
+			(function() {
+				try {
+					animateRise(show);//具有依赖性的函数
+				} catch (err) {
+					setTimeout(arguments.callee, 20);
+				}
+			})();
+方案3：上面的方法耗费较多资源，编写额外的代码，最好的方案应该是脚本载入后执行回调函数中的行内脚本
+		实例：
+		loadScript('animate.js',function(){
+			animateRise();//这就是依赖执行的脚本
+		});
+		具体回调的实现是对script元素src绑定onload或者onreadystatechange事件
+		其实同理使用ajax异步加入脚本也可以使用该方法原理是一样的，不过ajax载入脚本后要先create一个script元素作为代码容器
+方案4：这个方案算作是一块膏药，一般情况下如果script标签引入外部脚本后标签中的包含的代码就会被浏览器忽略，这个方案可以使得这样的
+		代码得以执行
+		实例：在外部脚本的尾部添加如下代码
+		(function() {
+				var existedScripts = document.getElementsByTagName('script');
+				var len = existedScripts.length;
+				for (var i = 0; i < len; i++) {
+					var cur = existedScripts[i];
+					if (getBaseName(cur.getAttribute('src'))==当前脚本文件名) {//getBaseName()是一个获取路径中文件名的函数
+						eval(cur.innerHTML);
+					}
+				}
+		})();
+
+如果你想载入的是异源脚本的话，你有什么方案可选？
+方案1：head中的script引入异源，如果又想同时实现延迟加载的话配合defer使用
+方案2：动态插入script元素（对src赋值），记得监听onload或者onreadystatechange事件
+方案3：document.write('<script src=""></script>')
+方案4：听所过jsonp吗？好像这个东西很好用
+
+行内脚本的执行（如果仅仅是声明一个函数没有影响）会阻塞浏览器对后续内容的加载以及页面的渲染
+方案：将行内脚本放在页面底部或者声明defer或者在window.onload后再执行行内脚本
+
+javascript的作用域管理
+什么是作用域？
+作用域是用来对变量可访问范围的一个划分，在js中最小作用域为函数，最大作用域为全局作用域
+为什么要管理好作用域？
+因为作用域决定着变量访问问题，我们想要达到的效果就是用最少的时间访问到对应的变量
+作用域是如何进行切换的？
+有一个概念叫做执行环境，这个概念包含从硬件到软件的计算机各个领域，其实执行环境就是一个当前变量状态的维护，程序从一个环境到另一
+个环境完成作用域的切换
+执行环境和作用域是怎样联系在一起的？
+每个执行环境对应一个作用域链：局部变量作用域，全局变量作用域（分先后顺序进行变量搜索），如果使用了with语句的话在局部变量之前还
+会有一个特俗的作用域用于存放with作用的对象的属性，如果触发了catch语句同样也会在局部作用域之前增加一个特述作用域
+该如何优化作用域？
+尽量使用局部变量而不是全局变量（将全局变量赋给一个局部变量）
+如果你的with语句中要频繁的访问局部变量或者全局变量的话不推荐使用with
+catch语句中也不要频繁访问局部变量或者全局变量
+
+优化条件判断
+if-else还是switch？
+要针对不同的应用场合选择合适的方案
+if-else更加适合简单的条件判断以及具有区间特点的条件判断（if-else的二分法就是极好的例子）
+switch更适合根据若干离散值决定流方向
+还有一种特殊的条件判断：利用数组索引求值，预先将要使用的值放进数组中根据索引进行求值，适合于有大量值需要查询的情况
+
+循环优化
+不要在循环中每次对数组长度求值（尤其是dom对象数组，这会导致每次进行dom查询）
+for-in的工作原理是遍历对象的整个原型链，如果你仅仅是要访问几个明确的属性的话，就使用数组（保存要访问的属性名）结合普通循环即可
+如果你处理的数组很大的话就需要使用循环展开技术了
+var len=my.length;
+var counter=(len/8)>>0;
+var start=len%8;
+do{
+	switch(start){
+		case 0:func();
+		case 1:func();
+		.
+		.
+		.
+		case 7:func();
+		}
+	start=0;
+}while(--counter);
+更好的版本
+var len=my.length;
+var counter=(len/8)>>0;
+var start=len%8;
+while(start){
+start--;
+func();
+}
+do{
+func();
+func();
+.
+.
+func()
+}while(--counter);
+
+优化正则表达式
+以一个例子来说明，创建一个trim函数，下面的函数逐步提升性能
+function trim(str){
+	return str.replace(/^\s+|\s+$/g,'');
+}
+function trim(str){
+	return str.replace(/^\s+/,'').replace(/\s+$/,'');
+}
+function trim(str){
+	str=str.replace(/^\s+/,'');
+	for(var i=str.length-1;i>=0;i--){
+		if(/\S/.test(str.charAt(i)){
+			return str.substr(0,i+1);
+		}
+	}
+}
+
+定时器挂起
+鉴于javascript是单线程的，如果js处理一个较为繁重的任务时将会剥夺用户交互的权利，当然现在可以通过worker以及gears实现解决，但是如
+果出于某种需求要自己的话可以用定时器实现挂起
+别人写的一个函数（让我佩服）
+function chunk(array,process,context){
+	setTimeout(function(){
+		var item=array.shift();
+		process.call(context,item);
+		if(array.length>0){
+			setTimeout(arguments.callee,100);
+		}
+	},100);
+}
+
+comet技术
+这个具体是什么技术我是不太清楚的
+comet客户端技术
+轮询
+	客户端固定时间间隔不停的向服务器发送请求
+	setTimeout(function(){
+		使用XHRO对象向服务器端发送请求
+	},2000);
+	简单易用，但是除非事先知道服务器数据更新的时间间隔否则要么频繁向服务端发送请求致使服务器超负荷要么时间间隔太长数据更新不及
+	时
+	注：我因为在轮询时只使用了一个xhro对象所以对于我的设计是时间间隔只能长不能短，如果时间间隔太短的话当我open下一个请求时上一
+		个请求就会被自动终止，准确来讲客户端轮询的时间应该比服务器端更新数据用的最短时间要长。
+长轮询
+	客户端只用收到上一个服务器响应时才会触发下一次对服务器的请求，这样可以保证有可用数据即时返回给客户端同时减少了无用请求
+	function longPoll(url,callback,type){
+		var xhro=new xmlhttprequest();
+		xhro.onreadystatechange=function(){
+			if(xhro.readyState=4){
+				if((xhro.status>=200 && xhro.status<300)|| xhro.status==304){
+					if(type=='xml'){
+						callback(xhro.responseXML);
+					}
+					else{
+						callback(xhro.responseText)
+					}
+					//注意这里开启了下一个请求
+					//你也可以采用递归调用longPoll函数的方法实现，但是这里的方法更简单
+					xhro.open('GET',url,true);
+					xhro.send(null)
+				}
+			}
+		}
+		xhro.open('GET',url,true);
+		xhro.send(null);
+	}
+	相比较而言长轮询好像已经很好用了，对于客户端而言不浪费任何多余的请求，服务器也不会受到无用的请求，但是对于轮询和长轮询的方
+	案在服务器端还有优化的空间，对于传统的www服务器因为是基于网页的发送所以对于服务器而言要解决的首要问题就是海量的并发访问，所
+	以传统服务器的关注点在于快速的打开和关闭连接，它并没有关注连接的持久性，轮询的本质意义就是要持久的获取数据，所以comet服务器
+	就是为此而生的，它优于传统服务器的地方就在于可以并发处理长连接（长连接可以避免频繁关闭打开连接带来的性能损耗，其实就是这样
+	一个道理如果你事先知道请求方还会不停发起请求的话就没有理由每次开闭一个连接，从而使得服务器性能得到提升）
+特殊轮询
+	要明白一个道里，技术不是隔离的孤岛，所以你完全可以将轮询和长轮询组合起来使用，例如当数据更新密集时采用轮询技术，当数据更新
+	稀疏时采用长轮询技术，甚至可以根据获取响应数据的频率来决定请求的频率，怎么做看你自己
+永久帧forever-frame
+	据介绍是利用HTTP1.1的块编码特性和iframe实现了文档的增量读取，我看不懂，并且给出了针对ie的hack技术，叫什么htmlfile文件
+xhr流（只有老ie不支持）
+	先来说说什么是流。常见的网页传输是基于client请求和server响应的模式，连接状态随着每次的请求进行打开关闭，而基于流的xhr却不是
+	这样的，基于流的xhr允许打开一个连接用来持续接收数据，数据好像一个水流一样源源不断的流向了客户端，其实基于流的本质就是客户端
+	不对连接进行关闭，实现的方法就是，如果xhr支持流的话，你可以在readyState为3而不是4时取回数据（注意readyState为4时表示响应完
+	成连接关闭）
+	实例：
+		var lastSize = 0;
+		var XHRO = getXHRO();
+		XHRO.onreadystatechange = function() {
+			var receivedText;
+			if (XHRO.readyState > 2) {
+			//use lastSize to make sure every time fetch new text
+				receivedText = XHRO.responseText.substr(lastSize);
+				lastSize = XHRO.responseText.length;
+				callback(receivedText);
+			}
+			if (XHRO.readyState == 4) {
+				XHRStream(src, callback);
+			}
+		}
+		流的特点是服务器端持续保留连接，所以使用时要特别注意除非你想要一个流否则不要轻易使用因为这会消耗服务器很多资源，并且
+		如果流数据很多的会客户端的xhr消耗内存也会很多这时需要通过检测lastsize是否很大来决定打开一个新的连接
+webSockets是新的数据传输规范，很强大，很好用
+	上面介绍的都是介于http协议模拟实时通信（原理是：根据数据请求的频繁程度决定服务端http连接打开的时间长度，显然轮询，长轮询，
+	流在服务端连接的打开的时间依次增长），实时通信的根本要求就是服务器端不要关闭客户端的连接以保证数据的持续传输，但是基于http
+	协议的模拟导致通信数据包含很多无用的http头信息（即便连接没有断开也会有一些头信息）而且http传输的延时问题也导致模拟的实时通
+	信有点差劲
+	webSockets是支持全双工的web应用程序传输协议面向url（http协议面向主机和端口），其他高层协议可以构建在webSockets之上
+	1，初始化连接握手：将http协议升级为webSockets协议
+	2，可以双向通信：在js中的实现是通过window.WebSocket，send，onmessage实现通信的
+	
+见识一下XMLHttpRequest对象
+之前也是用xhr但是总用open，send，onreadystate这几个属性，但是xhr对象不仅仅是这样的一个东西，对于复杂的问题我也许就要使用别的属
+性了
+timeout//用于设定xhr请求的超时时长，默认为0即不设置超时，设定一个超时值对于数据响应时间有严格限制的应用和防止数据丢失很重要
+要注意这里的on事件触发于常规的事件触发一样都会传递一个event对象作为参数，不过event.target不是dom而是当前的xhro对象
+onreadystatechange//每次readyState状态变化就会触发这个处理器
+ontimeout//当数据响应超时时触发该函数，可以利用该函数再次发送请求或者进行超时的适当处理
+onload//该事件在数据完全载入后触发，相当于readyState==4
+responseText
+responseXML
+responseBody//这个东西不知道用于取回什么数据
+
+status//服务器响应码
+statusText//服务器响应状态
+readyState//用于说明当前的请求阶段
+
+addEventListener()
+removeEventListener()
+dispatchEvent()//不清楚
+
+getResponseHeader()
+getAllResponseHeaders()
+setRequestHeader()//这个东西是设置请求头信息的，对于请求一些特殊类型的数据时必须使用它声明不然服务器理解不了你的请求
+//post 请求就要设置请求头
+open()
+send()
+abort()//中断当前请求
+下面这些都是用来判断xhro状态的变量
+OPENED
+UNSENT
+LOADING
+HEADERS_RECEIVED
+DONE
+以上是IE的属性枚举，对于firefox的属性就更多了
+
+跨域
+js处于安全考虑限制当前页面的脚本访问非同源的资源
+非同源是指：端口，主机名，域名，协议任何一个不同都是非同源的
+forever-iframe永久帧可以实现跨子域
+xhr的abe fetting方案也可以实现跨子域
+jsonp这是常用的方案跨域解决方案
+
+gzip压缩
+因为web页面很多是基于文本的而文本内容又是最容易进行压缩的所以在很早以前人们就对web压缩提出解决方案就是gzip，使用gzip的压缩效率
+极高
+gzip的工作原理client请求头中包含Accept-Encoding: gzip,deflate（表明浏览器支持gzip，其实现在不支持gzip的浏览器可以说没有了），
+server受到这样的请求后就会返回头信息Content-Encoding：gzip并且对内容进行gzip压缩
+既然浏览器已经全面支持gzip了，似乎我们没有研究gzip的意义了，毕竟我们并不能使得压缩效率更高一些，但是这里存在一个问题很多支持
+gzip的浏览器却收不到压缩内容，原因在于使用了web代理或者是pc安全软件所致，因为对压缩后的内容进行安全监控更加困难所以这些软件处于
+便利的考虑破坏了accept-encoding致使压缩失效
+如何解决这个问题？
+看起来似乎这些问题只能通过安全软件的厂商来解决了，其实我们也可以绕过他们自己解决
+方案1：简化你的代码使得代码尽可能的少（将那些重复的地方进行重用）：
+		事件委托：合理的事件委托会使得你少写很多的事件绑定和事件处理代码
+		使用相对url：当前位置http://www.example.com/path/page.html
+					 http://www.example.com/path/page.html = //www.example.com/path/page.html 可以省去协议
+					 http://www.example.com/index.html = /index.html
+					 http://www.example.com/path2/page.html = ../path2/page.html
+					 http://www.example.com/path/page.html?xiao=who = ?xiao=who 查询字符串和hash可以直接使用
+					 http://www.example.com/path/page.html#here = #here
+		使用一些流行的工具移出空白：例如jsmin
+		不要使用行内css
+		对常用js链式属性赋给变量
+方案2：对浏览器进行功能探测而不是依赖浏览器是否发送asscept-encoding头
+		具体实现请搜索
+		
+图片优化
+你也许会问，什么图片也能够被优化？
+是的，随着现在的站点对图片的依赖图片在一个页面中所占的比重越来越大了，所以对图片进行优化至关重要
+优化方案：
+	在图片设计阶段就应该有一个明确的概念，设计的图片要是用多大的分辨率多少颜色深度用什么类型的图像，这都要事先进行考虑
+		gif：bool透明，256调色板，动画，修改无损，隔行扫描（水平颜色相近的话压缩比更高）
+		jpeg：修改有损，真彩，是储存照片的最佳格式
+		png：可以说png兼具gif和jpeg的特点，alpha透明，真彩和调色板都支持，动画，无损，隔行扫描（其实png也是分为很多格式的）
+		可以这样讲如果不是用于动画，png8可以完全替代gif，png8的压缩比更高
+		gif用于简单动画
+		jpeg用于照片，但是如果jpeg中有大片的色块时请用png真彩替换
+	在图片设计好之后通过一些程序工具对图片进行优化（无损的）
+		优化png的工具：pngcrush，pngout，optipng，pngoptimizer，pngslim
+		优化jpeg的工具:jpegtran，exiftool
+		将非动画gif转换为png8：imagemagick之后将用工具优化一次png8
+		优化动画的gif：gifsicle
+		在线工具smush.it
+
+javascript 构建mvc富应用开发
+1，不要构建复杂且相互缠绕的程序，坏处有：各个部分纠缠在一起导致复杂度提升脑袋混乱，不利于维护和扩展。没有清晰的架构就开始写程序
+	你的程序一定又写得艰难而且功能无法增减，独立功能快，写出以后在其他项目中可以重用的模块，就像搭积木一样，先用积木搭建一
+	些简单的结构，以后可以重用这些结构，并且当明确了架构后可以将注意力集中在当前要及解决的功能模块
+	MVC就是程序开发常用的架构：
+		model是程序的模型即驱动数据的模型，是程序核心计算部分，包含数据以及数据操作方法。
+		view是程序的交互界面，view中除了最基本的条件语句（view显示切换）外不应含有其他的逻辑，但是并不是说view不能写入逻辑部分
+			，其实有很多情形是需要view支持较复杂的逻辑，view helper就是用于view显示的工具函数，但其实helper的实现部分也是定义在
+			view的外部的，所以说view中没有复杂逻辑是正确的
+		controller是用于沟通model和view，页面载入时controller给view绑定事件，view发生事件controller收集发生状态提交给model，
+			model计算后controller再将计算结果传给view进行界面更新
+	MVC的优势：view和model是完全独立的，它们并不知道对方的存在，它们只要给controller留有适当的接口就可以了，这样的话，一个程序
+		核心功能，界面显示，事件响应是完全分开进行开发维护的。
+2，new与this
+	this代表当前js运行context，浏览器默认this是window
+	改变this：
+		函数调用因为作用域的切换回导致context*自动*改变
+		new关键字生成一个新的空的context，这样就可以用function实现构造函数了
+		apply，call函数改变函数内的this
+	new funcName();//funcName中可以用新建的环境this添加属性方法
+		如果funcName函数没有return则默认return this
+3，类方法，原型方法和实例方法
+	funcName.prototype.attribute //原型方法
+	funcName.attribute //类方法，可以认为是静态方法
+	注意：
+		原型不能访问类方法，类也不能访问原型方法
+		类方法直接用类名访问，而原型方法需要用new生成实例，实例进行访问
+		添加到原型的方法可供所有之前之后生成的实例使用，但是当前实例添加的方法仅限当前实例使用
+4，接口的实现
+	var obj={method1:function(){},method2:function(){}}这就是一个简单的接口，通过for-in复制对象属性可以实现接口的共享
+5，原型链
+	每个对象都有一个原型prototype，并且每个原型都是继承自别的原型，这就产生了原型链
+	当获取一个属性时会沿着原型链查找属性找到Object.prototype，若没找到则返回undefined
+	相关函数：hasOwnProperty();属性是否为继承而来的，isPrototypeOf();是否是对象的原型
+6，apply和call以及proxy
+	js支持改变函数运行时this指向，这样就可以将运行时的状态传入函数中
+		func.apply(thisObj,args);func.call(thisObj,arg1,arg2...)
+		用于改变函数func中的执行context为thisObj
+	有时也许你不想函数中的this由运行时决定
+	var self=obj;
+	var obj={
+		processClick:function(){},
+		addListener:function(){
+			$('#here').click(function(){
+				this.processClick();//殊不知这里的this不是obj了，已经被jquery改变为当前单击的元素
+			});
+		},
+		addListener:function(){
+			$('#here').click(function(){
+				self.processClick();//添加一个局部变量self形成闭包
+			});
+		}
+	}
+	所以proxy函数应运而生
+	var proxy=function(func,thisObj){
+		return function(){
+			func.apply(thisObj,arguments);
+		};
+	}
+7，js的作用域
+	js的顶级作用域是window的属性，js的作用域是按照函数进行划分的，子函数可以访问父函数的作用域，在顶级作用域下使用匿名函数可以
+	新建一个作用域，这种技巧常常用于避免对顶级作用域的污染，同时匿名内的this还是window
+8，原生事件绑定
+	原生事件绑定addEventListener，触发事件时会将callback的this设置为事件源元素
+	我原来以为jquery会这样做没有想到，jquery也是想原生的js学习的
+9，事件委托：冒泡阶段，在父元素监听子元素上发生的事件
+	好处一，减少了事件监听数
+	好处二，动态添加的子元素不必手动再次监听
+	jquery委托$('ul').delegate('li','click',function(){});
+10，ajax跨域请求
+	以前出于安全考虑限制ajax请求异源资源，但随着技术的发展人们渐渐认识到其实同源策略进行限制的根本目的是限制ajax对不安全资源的
+	资源访问，但是显然异源并不等同于危险的资源，比如我自己建站是一个是www服务器，另一个是用于分发图片资源的服务器，显然我对自己
+	部署的异源服务器是可以确保没有任何危险的，对于这种情形之前的解决方案是：
+		jsnop该技术其实是一个hack，利用<script>标签可以包含异源资源的特点，请求时写明json文件地址以及回调函数，这样当<script>
+		载入后取回的json数据作为参数传递给回调函数并调用回调函数
+	现在可用的方案：
+	XMLHtttpRequest 2.0对象改进后实现了异源请求的能力，但是这跟http信息头设置有关Access-Control-Allow-Origin，Access-Control-
+	Request-Method等头信息有关
+11，js最为优秀的特性匿名函数
+	匿名函数可以使得代码模块化，隔离出独立的作用域形成特定的功能模块
+	模块和外部的交互：
+	(function(export){
+	
+	export.something=inner;
+	})(context);
+	通过传入对象实现模块内部对象的导出，根据环境传入的context不同可以将模块集成在不同的作用域
+12，window.location对象
+	{
+	hash:'#header',
+	search:'?name=wikty&age=24',
+	host:'www.wikty.com',
+	hostname:'www.wikty.com',
+	href:'http://www.wikty.com/test.html?name=wikty&age=24#header',
+	origin:'http://www.wikty.com',
+	pathname:'/test.html',
+	port:'',//default is 80,so is empty
+	protocol:'http',
+	reload:function(){[native code]},
+	replace:function(){[native code]},
+	assgin:function(){[native code]},
+	ancestorOrigins:DomStringList//i don't know what is this
+	}
+13，url知道多少
+	url的hash不会传递给服务器
+14，视图
+	视图有html代码构建
+	来源：
+		dom动态创建：灵活，但是对于事先知道要用到的视图动态创建耗费性能
+		事先硬编码在页面中的html代码：不灵活，但是对于事先要用到的视图只需显示隐藏即可
+	总结：由上知道对于临时，小型，经常要改变的视图dom创建，对于模块化的主视图硬编码是最为合理的方案
+15，视图模板
+	视图模板的实质是混合了简单条件逻辑语句的视图生成代码
+	如果模板中有稍复杂的逻辑处理，一定要使用helper（helper是视图中的逻辑助手，应该将视图中的逻辑处理抽离到到helper名称空间中，
+		这样就准照了mvc架构）
+	工作流程：模板语句解析=>helper求值=>生成渲染视图的元素
+	js视图模板代码放在哪里？
+	1，<script id='here' type='text/x-jquery-tmpl'>推荐的方法，因为不是脚本type所以只当作普通文本对待，不会解析耗时
+	2，远程加载：加载渲染缓慢
+	3，放在html代码中
+	4，放在外部js文件中
+16，性能
+	减少http请求数目
+		将多个脚本文件合并成一个
+		将多个css文件合并成一个
+		将站点使用的小图片合并成sprite
+		避免意外的重定向，比如wikty.com其实会被重定向到wikty.com/。Apache需要Alias或者mod_rewrite模块来解决这个问题
+	资源加载和页面渲染
+		一般情况在js和css文件没有加载完成之前页面是不会渲染的，如果明确js加载不影响页面渲染使用defer属性或者async属性
+	资源缓存
+		跟缓存有关的http头信息
+		response ：Expries，Cache-Control，Last-Modified，Etag
+		request： If-Modified-Since
+	源码删减压缩
+		js，css文件都可以被删减空白进行压缩
+		推荐工具：YUI Compressor，JSMin，Tpacker
+	传输时压缩（跟服务器配置有关，大多数都开启了gzip）
+		response：Content-Encoding: gzip;
+		request：Accpect-Encoding: gzip, deflate
+		根据服务器的配置会针对相应的文件进行压缩，对于文本文件压缩率很高，但是对于图片或者pdf等文件压缩率就不高了，所以你可以
+		配置服务器决定压缩哪些文件，另外Apache2.0以上版本依赖于模块mod_deflate
+	使用CDN
+		这样当用户访问你的网站时就可以从最近的服务器上加载资源，并且可能用户已经缓存了你的资源
+		备注：使用CDN的一个小技巧，这样写url //code.google.com/而不是http://code.google.com，可以根据当前页面使用的协议用于
+			加载cdn资源
+17，函数属性
+	我知道在函数内部可以访问arguments，其实创建了一个函数就自动为函数添加了某些属性，比如说funcName.length是函数期望传入的参数
+	个数
+
+javascript patterns模式
+1，写易于维护的代码，常见的情况是完成一个项目需要20%的成本，但是维护一个项目却需要80%的成本
+	全局变量：其实全局变量就是window的属性而已
+		避免使用全局变量，这是一个老生常谈的问题的，很多语言都强调避免使用全局变量，不是说全局变量不可用而是说不应该乱用全局变
+		量，因为如果你的页面加载了第三方的脚本的话，会发生全局变量覆盖的问题，这将导致你的代码是很难进行扩展的
+			注：一个常犯的错误是var a=b=0;这里的b其实是一个全局变量
+			注：不使用var声明的全局变量是可以被移除，delete window.varName;但是在所有函数外使用var声明的全局变量不可delete的
+	
+	将函数内变量的生命集中在顶部（使用一个var用逗号隔开）并适当进行初始化：
+		这样有便于日后查找变量，并且在编写代码过程就可以发现未定义的引用避免产生全局变量
+		注：
+		js有个特点只要是在函数内声明过变量，不论是在引用前还是引用后声明的js都认为函数中声明过这个局部变量了
+		但是要注意仅仅只是声明过了其附随的赋值行为并不会发生
+		
+	改进for循环：不建议用for-in遍历数据，因为如果数组对象添加新方法的话将会导致错误
+		var arr=['xiao','wen','bin'],i;
+		for(i=arr.length;i--;){}
+		i=arr.length; while(i--){}
+	
+	for-in：
+		如果你确定要访问的只是当前对象自己的属性而不是来自原型链的属性时请用hasOwnProperty
+		myobj.hasOwnProperty(key)或者Object.prototype.hasOwnProperty.call(myobj,key);
+		建议这样简写代码结构更为清晰
+		for(name in myobj) if(myobj.hasOwnProperty(key){
+		//process myobj[key];
+		}
+	
+	给内置对象原型随意添加属性也是使程序失去可扩展性的不良行为：但是如果该方法是在es5中将会支持的，则鼓励添加
+	
+	switch：如果你的某个case确定是没有break的话，请明确给出注释，这样维护代码的人才不会迷惑
+	
+	===：有时候可能你认为从代码执行角度而言只使用==就足够了，比如typeof some == 'string'，但是从代码可读性角度而言，如果你
+		的代码意图是===的话就不要吝惜使用===
+	
+	eval：据说不要使用eval，一个常见的错误是在解析ajax返回的json数据时使用eval，你完全可以下载json.org的库解决这个问题
+		与eval类似功能的new Function();
+		二者的区别：可以认为eval的权限更大一些，eval执行时可以访问从当前作用域到全局作用域的整个作用域链并且在执行过程声明的
+			局部变量中会污染当前作用域，new Function(str);只可以访问全局作用域并且定义的局部变量被放在一个临时的局部作用域
+	
+	parseInt鉴于对以0开头的八进制数的解析误会建议提供parseInt第二个参数，如果仅仅是"9"想要变成9的话建议+"9";即可
+	
+	{的位置：
+		样例：
+		return
+		{name:'xiao'};
+		该实例返回未定义，原因在于js解释器对分号不是强制的，它可以自动猜测代码行的结束位置
+2，构造函数
+	构造函数其实只是一个普通的函数而已
+		this：如果没有使用new调用构造函数的话this指向window对象，如果使用了new那么this指向继承自Object.prototype的当前实例
+		返回值：如果没有指定返回值或者返回一个非对象的值都将导致返回this，否则返回指定的对象
+	解决丢失new调用构造函数引起的问题：如果不用new调用构造函数的话其实添加到this的东西都会添加到window对象上
+		构造函数首字母大写，虽然没有实质作用但是可以提醒用户不要忘记使用new
+		不使用this添加属性而是用一个局部对象添加属性并返回该局部对象，这样的话不论是否用new返回值是一样的，缺点是丢失了原型链
+		终极方法：
+		function Klass(){
+			if(!(this instanceof Klass)){//这样会更好this instanceof arguments.callee，但是es5废弃callee属性
+				this=new Klass();//这样会更好this=new arguments.callee();
+			}
+			this.attr='s';
+		}
+		
+	对于所有实例都会用到的属性方法不应该在构造函数中添加：（以下所说构造函数添加东西是指通过this进行添加的）
+		在构造函数中添加的东西没生成一个实例就会产生一份副本，如果属性是被该类型共有的话，请使用funcName.prototype.attr添加
+		这样的话每个生成的实例通过原型链来访问该方法而不需要生成一份副本，可以这样理解构造函数中添加的属性是具体某个实例所独享
+		的，通过原型添加的属性而这个类型所共享的，而通过函数名添加的属性是不可被实例访问的可理解为仅仅是函数名名称空间下的属性
+3，数组
+	判断是否是数组
+		o instanceof Array某些IE有问题
+		Array.isArray(o) es5的方法，如果不支持es5可以将下面的test添加为isArray
+		o && typeof o == 'object' && o.constructor == Array 我常用的方法
+		function test(o){ return Object.prototype.toString.call(o) ==='[Obect Array]'; };
+	splice可以删除以及添加元素
+	shift push splice都是修改原数组
+	concat不修改原数组
+	小技巧：
+	生成重复字符var str=new Array(10).join('#');这将会生成重复的9个#
+4，JSON
+	与js对象的区别在于：
+		1，json中的属性名必须双引号起来，而js对象仅当属性名称含有非法字符时才使用引号
+		2，json中属性值不能为函数和/regexp/，而js对象属性可以是任意值
+5，throw
+	并不局限于返回内定的error对象，其实你可以throw任何东西，这样的话你的错误处理更加灵活了
+6，惰性定义模式
+	function test(){
+	//some init working
+		test=function(){
+		//the test fuction define part
+		}
+	}
+	缺点：init阶段添加的属性丢失；如果test是赋值给其它变量或者对象的属性永远只执行init部分
+7，立即函数模式
+	用于初始化：
+	立即函数提供了一个一次性调用的局部工作环境，如果页面加载后有些初始化工作要做却又不想污染全局作用域的话立即函数很合适
+	可以通过给立即函数传递参数以导入全局对象，默认立即函数中的this是父作用域，但是如果立即函数要访问外部变量的话还是建议
+	通过参数导入更明显
+	用于封装数据：
+		样例：
+		(function(){var obj={name:'xiao'}; return function(){obj}; })();
+		var obj={
+		name:(function(){
+			var test='xiao';
+			return test;
+			})(),
+		age:24};
+	模块化：
+	因为立即函数调用是局部作用域的所以形成独立模块，不会对页面中别的内容造成冲突
+8，立即对象模式
+	用于结构化较为负责的初始化
+	({
+		name:'xiao',
+		getName:function(){return this.name+this.age;},
+		init:function(){ this.age=24;}
+	}).init();
+	从上面可以看到这种初始换方式也实现了作用域隔离并且这种方式结构更为清晰
+	缺点：minifier工具一般无法mini，但是closure complier例外
+9，加载时分支模式
+	常用于浏览器探嗅或者检测特定dom属性支持
+	平时所用的方案是在一个函数中判断某特性是否支持，但是这样意味着每次使用某特性时都要进行测试，其实完全没有必要这样，比如如果
+	你已经测试xmlhttprequest可用，那么你仅需测试这一次就可以了。加载时分支就是这样的思想，事先只实现功能的接口定义，在页面加载
+	时通过测试对接口赋值以实现接口，这样后续使用的接口就是已经过探测的接口了
+10，缓存结果模式
+	因为函数也是对象，所以可以给函数附加属性，鉴于此该模式就是要将上一次函数的计算结果缓存到函数的属性中，这样的话对于计算密集
+	型的函数十分有利，下一次调用时也许就可以直接返回结果而不必计算，并且将结果缓存在函数本身的作用域下，缓存机制对于调用函数的
+	人是隐藏起来的。
+	function test(param){
+		if(typeof test.cache === 'undefined')test.cache={};
+		if(!test.cache[param]){
+		//这里的param参数是字符串，如果参数比较复杂的话JSON.stringify(Array.prototype.slice.call(arguments);
+			//caluate result
+			test.cache[param];
+		}
+		return test.cache[param];
+	}
+11，函数参数使用对像
+	如果函数的参数比较多或者不能确定以后函数参数是否会变多时使用对象打包参数就很有必要了，这样做的好处在于便于以后添加参数，
+	不必关心参数顺序，但是显然需要调用者知道每个配置项的名称
+12，函数式编程之部分应用(curry,schonfinkelize)
+	func.apply(thisObj,array);
+	func.call(thisObj,item);
+	js中通过call和apply方法实现了函数式编程的应用，根据修改不同的context是函数实现不同的功能
+	但是js并不支持部分应用：
+		部分应用的示例：
+		function test(a,b,c){
+		}
+		var newFunc=test.partialApply(null,[2,3]);//不是调用test返回结果而是返回的新函数并且新函数拥有默认参数a=2,b=3
+	function schonfinkelize(fn){//该函数就是用于部分应用的函数工具
+	  var slice=Array.prototype.slice;
+	  var defaultArgs=slice.call(arguments,1);
+	  return function(){
+		var args=slice.call(arguments);
+		args=defaultArgs.concat(args);
+		return fn.apply(null,args);
+	  };
+	}
+	var newfunc=schonfinkeilze(test,2,3);
+	当你发现函数经常需要传递某几个参数时部分应用很管用
+13，名称空间
+	名称空间可以有效的管理名称冲突问题，这样可以实现模块集成
+14，依赖关系
+	模块往往不是独立的个体，各个模块之间存在复杂的依赖关系
+15，私有属性
+	构造函数实现私有：
+	因为js闭包的特性实现私有属性小菜一碟，只要是在构造函数中的局部变量生成的实例就不可直接访问（实例的方法可以访问）。
+	但是闭包不能保证绝对的私有，比如说如果实例的方法返回了构造函数的局部变量而此变量是数组或对象的话，私有性就被破坏了，
+	根据最低授权原则，你应该保证返回的数据是用户必须的且只含有必须的数据，也就是所你也许需要构造一个含必要数据的新对象，
+	如果确实需要全部数据的话，你应该采取克隆技术。
+	对象实现私有：
+	将对象的声明放在一个匿名函数中，匿名函数中的局部变量就相当于对象的私有成员了，如果有需要还可以返回该对象，同上面一样要遵守
+	最低受限原则。
+	(function(){
+		var name='wikty';
+		return {
+			getName:function(){
+				return name;
+			},
+			setName:function(n){
+				name=n||name;
+			}
+		}
+	});
+	构造函数结合对象私有:
+	首先要明白构造函数中通过this添加的属性是每个实例都有一个副本，当然如果你的准确意图是每个对象一个属性副本的话就没有什么问题
+	但是对于那些所有实例共享的方法这样是浪费内存的，解决方法就是将那些共享的属性添加到prototype，如果prototype添加的属性需要私
+	有变量可以这么做
+	funcName.prototype=(function(){
+		var name='wikty';
+		return {
+			getName:function(){
+				return name;
+			},
+			setName:function(n){
+				name=n||name;
+			}
+		}
+	})();
+	揭实对象的方法：
+	(function(){
+		var astr='[Object Array]';
+		var toString=Object.prototype.toString;
+		function isArray(o){
+			return toString.call(o)===astr;
+		}
+		function indexOf(arr,item){
+			for(var i=arr.length;i--;){
+				if(arr[i]===item)return i;
+			}
+			return -1;
+		}
+		return {
+			isArray:isArray,
+			indexOf:indexOf,
+			inArray:indexOf
+		}
+	})();可以看到这种模式采用的就是对象的私有实现，但不同之处在于这里返回的是方法的引用，如果返回引用被修改则引用无效，为了避免
+	这种情形示例中对indexOf方法提供了两个引用
+16，模块模式
+	1，创建名称空间namespace('/name/alias/first');//其实就是创建嵌套对象
+	2，实现模块
+		name.alias.first=(function(globalvar){//导入变量
+			//依赖对象
+			//私有属性
+			//私有方法
+			//一次性的初始化代码（将被立即执行）
+			//返回公有属性和方法
+			return {
+				method:function(){},//如果想要揭示私有方法的话这里替换为相应私有方法名称
+				...
+			};
+			如果name.alias.first不是方法集而是一个对象那么就应该返回一个构造函数而不是一个对象
+		})();
+17，沙箱模式
+	该模式用于改进名称空间模式的缺陷，名称空间模式的缺点有：繁琐的.对象访问方式，同一名称空间的不同版本形成冲突
+	沙箱的实现原理就是根据依赖为每个用例生成独特的沙箱环境，具体实现参看我的SandBox教程
+18，静态属性方法
+	公有静态：
+	给构造函数添加的属性就是静态的，静态属性只能由构造访问，实例属性只能由实例访问
+	注意：常用的一个技巧是funcName.prototype.isArray=funcName.isArray，但是要注意了，如果isArray函数中出现this则会导致错误
+		因为静态方法中的this代表构造函数本身，而被实例引用后this却代表实例本身，解决方案是：
+		funcName.prototype.isArray=function(){return funcName.isArray.call(this);};改变静态方法的this指向
+	私有静态：
+		看一个实现了对象计数的例子
+		var Constructor=(function(){
+			var counter=0;//私有成员
+			var ctr=function(){//构造函数
+				console.log(counter++);
+			};
+			ctr.prototype.getLastId=function(){return counter;};
+			return ctr;
+		})();
+	
+19，常量
+	js习惯将常量用大写表示，当然这并不能保证该变量不被修改仅仅是提醒的作用
+	如果一定非要实现常量，其实也不复杂可以参看实现的常量类
+20，链模式
+	就像在jquery中的使用方式，将一系列的调用集中在一行中完成。一个对象的属性方法如果没有特别有意义需要返回东西那么返回this实现
+	链式调用
+	优点：清晰可读，使得设计库时就开始考虑函数功能的独立性而不是将复杂的功能集成在一个函数中
+	缺点：不利于调试，即便知道了哪行调用出问题也不知道是具体那个链结点出问题
+21，method模式
+	该方法的思想是将通过简单而且一致的方式给原型添加方法属性
+	样例：
+		var Name=function(){
+		  this.name='';
+		}.method('setName',function(n){
+		  this.name=n;
+		  return this;
+		}).method('getName',function(){
+		  return this.name;
+		});
+	method的实现：
+	if(typeof Function.prototype.method !=='function'){
+		Function.prototype.method=function(name,func){
+			this.prototype[name]=func;//添加方法属性到原型中
+			return this;//返回构造函数自身以实现链式调用
+		}
+	}
+22，继承
+	样例：
+      function Parent(name){
+        this.name=name||'default name';
+      }
+      Parent.say=function(){console.log('say');};
+      Parent.prototype.sayHello=function(){return this.name;};
+      
+      function Child(){};
+	加入原型链继承
+      function inherit(child,parent){
+        child.prototype=new parent();
+      }
+	  通过将原型指向父实例以实现父原型方法和父构造函数this属性添加到子类。
+	  缺点：通过原型链追溯访问属性，无法向父类构造函数传递参数
+	借用构造函数继承
+	  function Child(name){
+			Parent.apply(this,arguments);//这里可以添加多个父类以实现多重继承
+	  }
+	  这种方式仅添加父类构造函数中用this添加的属性，并且不存在原型链追溯问题并且解决了想子类传递参数的问题，但是显然缺点是
+	  继承形式不够明显，不继承父类原型属性。为了解决不能继承父类原型属性的问题可以在之后Child.prototyp=new Parent();
+	共享原型
+	  function inherit(child,parent){
+		child.prototype=parent.prototype;
+	  }子类直接引用父类的原型，缺点：子类如果更改了原型属性父类跟着受到牵连
+	原型继承
+	  function inherit(o){//o是一个字面对象或者是一个对象的实例，总之是一个对象
+	   function F(){};
+	   F.prototype=o;
+	   return new F();
+	  }在es5种的Object.create()函数就是原型继承
+	复制继承
+	  通过复制父对象的属性以及父对象的子对象的属性到另一个对像以实现继承，并且如果你允许从从多个父对象复制属性的话还可以实现
+	  max-in模式
+	方法借用
+	  如果仅仅想要使用一个对象的方法而并不想从这个对象继承所有的方法时，js提供的call和apply就很用了
+	  常见借用数组方法：[].slice.call(arguments,1);或者Array.prototype.slice.call(arguments,1);
+	临时构造函数，终极方案
+	var inherit=(function(){
+		function F(){};
+		return (function(child,parent){
+			F.prototype=parent.prototype;
+			child.prototype=new F();
+			child.prototype.constructor=child;//如果没有这句默认constructor是指向parent的
+			//child.super=parent.prototype;你可以选择实现一个指向父类原型的指针
+		});
+	})();子类继承了父类的一切原型属性没有继承父类构造函数中this添加的属性，可以认为这是最优的继承方式了
+23，单体模式
+	描述：js中如何使得new构造函数每次都返回同一个对象而不是新生成的实例
+	解决方案：通过在构造函数静态属性上挂再缓存属性或者通过构造函数内的闭包实现
+		挂载到构造函数：
+			function Func(){
+				//已经生成过实例
+				if(Func.instance instanceof Func)return Func.instance;
+				//正常生成实例
+				this.name='wikty';
+				//挂载
+				Func.instance=this;
+				return this;
+			}
+			缺点：挂载的实例是公有的可以被任意访问
+		储存到构造闭包：
+			function Func(){
+				//重写构造函数
+				Func=function(){
+					return instance;
+				}
+				var instance=null;
+				//保留构造函数初始化时的属性
+				Func.prototype=this;
+				//实例储存
+				instance=this;
+				//重置构造函数的指针
+				instance.prototype.constructor=Func;
+			    //首次实例化
+				instance.name='wikty';
+				
+				return instance;
+			}
+			缺点：需要维护闭包开销
+24，工厂模式
+	描述：工厂类根据传入条件返回不同的类实例
+	解决方案：工厂类预先定义了静态的各种类，工厂类根据传入的字符串决定要生成实例的类型
+	 function CarMaker(){//这个是工厂类，用于生成相关类型
+        //工厂类相关类型公有的动态方法
+        CarMaker.prototype.driver=function(){
+          return 'Vroom, I have '+this.doors+' doors.';//这里的this.doors随着类型的不同而不同，这就是所谓的动态方法
+        };
+      }
+      //生成实例的工厂方法
+      CarMaker.factory=function(which){
+        if(typeof CarMaker[which] !=='function'){
+          throw ('no '+which+' class!');
+        }
+        //将公有的方法赋给具体类型
+        if(typeof CarMaker[which].prototype.dirver !=='function'){//保证仅执行一次
+          CarMaker[which].prototype=new CarMaker();
+        }
+        return new CarMaker[which];
+      }
+      //各种委托类型的构造函数定义
+      CarMaker.SUV=function(){
+        this.doors=24;
+      }
+      CarMaker.Compact=function(){
+        this.doors=4;
+      }
+      CarMaker.Convertible=function(){
+        this.doors=2;
+      }
+25，迭代器对象
+	在复杂结构的数据集合上提供一套简易的遍历数据集的方法，常见提供访问接口有next(),hasNext(),current(),rewind();
+	var datainterface=(function(){
+	  //data collection
+	  var data=[{name:'wikty',age:24},{name:'moust',age:23}];
+	  var length=data.length;
+	  //record pointer
+	  var index=0;
+	  //return methods are used as access data collection's interface
+	  return {
+		next:function(){
+		  if(this.hasNext()){
+			var temp=data[index];
+			index++;
+			return temp;
+		  }
+		  return null;
+		},
+		hasNext:function(){
+		  return index<length;
+		},
+		current:function(){
+		  if(this.hasNext()){
+			return data[index];
+		  }
+		  return null;
+		},
+		rewind:function(){
+		  index=0;
+		}
+	  };
+	})();
+26，装饰器模式
+	对象方法动态被装饰改变
+	function ColorPanel(color){
+		this.color=color||'white';
+		this.decoratorsList={};//装饰列表 e.g.{'colorize':['pink','yellow','black']}
+	}
+	//装饰资源池
+	ColorPanel.decorators={};
+	ColorPanel.decorators.pink={
+		colorize:function(){return 'pink';}
+	};
+	ColorPanel.decorators.yellow={
+		colorize:function(){return 'yellow';}
+	}
+	ColorPanel.decorators.black={
+		colorize:function(){return 'black';}
+	}
+	//装饰工具
+	ColorPanel.prototype.decorate=function(decorator,method){
+		var which=this.constructor.decorates[decorator];
+		if(which){
+			var list=((this.decoratorsList[method])? this.decoratorsList[method]:(this.decoratorsList[method]=[]));
+			if(which[method])list.push(which[method]);
+		}
+	}
+	//装饰方法合成调用
+	  ColorPanel.prototype.colorize=function(){
+		var list=this.decoratorsList['colorize'];
+		var result='';
+		if(list){
+		  var len=list.length;
+		  for(var i=0;i<len;i++){
+			result+=list[i]();
+		  }
+		}
+		return result;
+	  };
+27，策略模式
+	为用户提供一个接口却可以通过配置使得该接口在运行时选择不同的算法来完成类似的任务
+	样例：表单验证时，不同的表单内容不同但表单验证的流程是一致的：根据规则验证表单项并给出反馈信息。由此可以利用策略模式实现
+		表单验证，表单验证对象提供一个接口来供验证但用户需要事先配置对象使得验证时可以选择合适的算法进行验证
+    var validator={
+      types:{//这里可以认为是算法集合的地方
+        isNonEmpty:{
+          validate:function(value){return !!(value);},
+          instructions:'此项值不能为空'
+        },
+        isNumber:{
+          validate:function(value){return !isNaN(value);},
+          instructions:'此项值应该为数字'
+        },
+        isAlphaNum:{
+          validate:function(value){return !(/[^0-9a-z]/i.test(value));},
+          instructions:'此项值应该为数字或字母'
+        }
+      },
+      config:{//在运行时通过配置该项体现策略
+        //default is empty,if you want validate should fill this before validate
+      },
+      errors:[],
+      validate:function(data){//主要的工作函数应用配置的算法完成任务
+	  //data is validated {name:key} data set
+        for(var name in data)if(data.hasOwnProperty(name)){
+          var type=this.config[name];
+          var checker=this.types[type];
+          if(!type){
+            continue;//if data[name] not in this.config meaning no need to validate
+          }
+          if(!checker){
+            throw '没有跟'+type+'对应的验证器，请先编写验证器再进行验证';
+          }
+          var result=checker.validate(data[name]);
+          //if validate message is false,or message is prompt information about feedback
+          this.errors.push({name:name,message:(result)?false:checker.instructions});
+        }
+        return this.hasErrors();
+      },
+      hasErrors:function(){
+        return this.errors.length !==0;
+      }
+    };
+	//运行时策略配置
+	validator.config={
+      'first_name':'isNonEmpty',
+      'age':'isNumber',
+      'username':'isAlphaNum'
+    };
+	验证样例
+	var data={
+      'first_name':'xiaosdf',
+      'age':'232',
+      'username':'xiado'
+    };
+    validator.validate(data);
+    if(validator.hasErrors()){
+      console.log(validator.errors);
+    }
+28，外观模式
+	描述：将重复，老旧，繁杂的接口调用封装成简单一致的接口
+	样例：e.preventDefault()和e.stopPropagation()经常一起调用所以可以用一个函数封装它俩并且它们在老IE上有不同的实现也都可以
+		写进封装函数中，这样就把繁杂的处理封装起来提供给客户一致简单的调用接口
+	此外外观模式还很适合软件的重构，基于原有的api封装成新api的外观，这样当底层被封装的api变化时并不会影响客户端对api的依赖，因
+	为客户端使用的外观就是新的api接口
+29，代理模式
+	描述：在客户端程序和本体对象之间介入一个代理对象，该代理对象用于保护本体对象，使得本体对象做尽可能少的工作
+	样例：
+	延迟初始化：当本体对象的开销很大并且客户端发出初始化本体的请求后并不是立即就会使用本体对象，在这种情形下应该延迟初始
+		化本体对象，介入代理对象后，当客户端发出初始化本体对象的请求后代理对象正常响应告知客户端本体已经初始化完成，但实际上本
+		体对象只有当客户端真正要调用时才进行初始化
+	整合http请求：频繁的http请求是web对服务性能损耗很大，所以尽量合并多个http请求可以加速应用程序，传统的方式是用户触发一个
+		事件导致一个http请求到服务器端，介入代理后的模式是每个请求先被代理对象收集缓存起来，在合适的时机代理对象发送一个请求
+		到服务器（该请求当然包含之前数个请求的请求信息），并且代理对象可以提供缓存机制这样请求同一资源时可以立即从缓存中取回
+30，中介者模式
+	应用程序有各式各样的很多对象组成，对象之间通过彼此的接口进行通信，这样导致了对象之间的接口依赖，当想要重构一个对象时，你不
+	能确定到底有多少对象以怎样的程度在依赖着它，所以随着对象的增多程序变得越来越不可维护，中介者模式采取的方法是，对象并不会直
+	接通信而是通过一个中间人进行通信，这样就实现了对象之间的松散耦合
+31，观察者模式又叫订阅/发布模式
+	其实js中的事件就是这种模式，当绑定一个事件是就是在进行订阅，事件触发就是发布
+32，DOM
+	访问dom
+	降低访问dom带来的开销
+		尽量减少对dom的访问次数
+		用局部变量引用dom
+		避免中循环中访问dom
+	更改dom
+	更改dom性能损耗极大，如果引起reflow的话会有很大的性能开销
+		批量添加dom节点：document.createDocumentFragment();将要添加的节点添加到fragment后一次性添加到dom树使得仅reflow一次
+		批量更新dom节点：mynode.cloneNode(true)对要更改的根节点克隆一个副本，修改副本后replaceChild使得仅访问一次dom
+	
+
+Maintainable javascript可维护性的js
+1，编码风格
+	缩进：使用tab4空格缩进
+	分号：不要省略;想想return对象的情景吧
+	行长：很多别的语言规范指出代码行长80个字符
+	换行：在运算符后换行并且为新行添加两个缩进量（以区别于正常的层级缩进），但是如果是给变量赋值的语句新行应该跟=符号对齐
+	空行：应当在合适的位置插入空行提高代码可读性，合适位置是指如果你认为代码块所代表的含义不一致则用空行隔开
+	命名：变量myName（名词作为前缀），函数和方法getName（动词作为前缀）推荐动词can,has,is,get,set，常量的命名大写字母
+		用_连接单词，构造函数CarMaker
+	字符串：js中单双引号没有任何差别，如果字符串太长占据多行在行末使用\只是一个hack，正确的做法是行末用+连接字符串（同时记得
+			遵循换行规则，新行与=对齐）
+	数字：不要省掉小数点之前和之后的数字，不要使用0开头的八进制数字了
+	null：可以将js中的null当成是对象paceholder（typeof时返回object），建议使用的场景：初始化变量，同已经初始化变量比较，返回空
+			值，传入空参数。不期望使用的场景：同未初始化变量比较，同参数比较看是否传入了参数
+	undefined：注意undeinfed和typeof返回的'undeinfed'是不同的
+	对象直接量：样例
+				var obj={
+				    name:'wikty',
+					age:24
+				};
+	数组直接量：[1,2,3,4];
+	注释：
+		单行注释的书写：
+			1，独占一行用于对下一行进行注释，并且注释的上一行为空行，注释跟下一行对齐
+			2，在当前行尾+缩进+注释，如果超过行长将注释移到当前行前面采用上面1的规则
+			3，多行，注释掉一块代码，如果仅仅是用于说明性质的代码注释要使用/**/
+		多行注释的书写：
+			1，上面提到的如果要注释掉一块代码使用//是鼓励的
+			2，多行注释总应该出现在要注释内容之前，并且注释和代码之间没有空白行，注释前应该留有一空行，与要注释代码缩进一致
+				样例：
+				
+				/*
+				 *这是注释
+				 */
+		要不要注释：代码难以理解部分，关键性部分，迷惑性部分，hack部分
+		文档注释：使用注释生成api文档这是一个很具魅惑性的事情，不仅写好的代码而且同时有了文档，哦，太棒了！
+	条件语句：
+		花括号：if，for，while，do-while，try-catch-finally都应该总是使用{}
+		语句跟块间的空白：if(condition){; if (condition) {; if ( condition ) {;这三种推荐第二种
+		switch：样例
+			switch(condition){//java风格
+				case 'o':
+					//code
+					break;
+					
+				case:'l':
+					//code
+					break;
+			}
+			或者
+			switch(condition){//dojo使用的风格
+			case 'o':
+				//code
+				break;
+			case 'l':
+				//code
+				break;
+			}
+			根据个人偏好选择即可
+			如果case连续执行最好给出注释/*fall through*/
+			如果switch没有default行为，那就这样default://no default用注释说明没有默认行为
+		with：不建议使用，维护人员不能分清哪些是with属性，而哪些又是外部变量
+		for-in：推荐总是使用hasOwnProperty(name)判断，如果明确要变量原型链请给出注释，不要用for-in遍历数组
+	变量声明：因为js中变量声明会被提升（注意仅仅是声明，赋值不会提升），所以与其在函数各处散落变量的定义不如在函数顶部定义变量
+			推荐样例：多变量声明合成一个语句，有赋值在前，=对齐
+			var name = 'xiao',
+				 age = 24,
+				 i,
+				 k;
+	函数声明：函数声明也会提前（匿名函数赋值除外），所以推荐在函数顶部定义了变量之后就定义函数
+	函数调用：doSomething();函数名跟(之间没有空格，这样就同块语句区分开了
+	匿名函数：
+		匿名函数赋值：
+			var my=function(){
+				//code
+			};
+		匿名函数的结果赋值：
+			var result=(function(){
+				//code
+				return {
+					name:'wikty'
+				};
+			})();
+	严格模式：es5中提出的严格解析js代码语句，只要添加'use strict';语句即可实现严格模式，为了不妨碍全局中引入的其他js文件，
+			不推荐使用全局严格（即在全局作用域中执行'use strict';语句），推荐在局部作用域中使用
+	字符串执行为代码：eval(str),Function(str),setTimeout(str,200);setInterval(str,200);尽量不要使用它们
+	原始类型对象：var name='wikty';name.toLowerCase();在执行toLowerCase语句时生成了临时String对象并在该语句完成后销毁了对象
+
+	
+	
+		
+	
+2，js，html，css
+	很多设计模式要解决的问题就是紧耦合，组件对系统知道的越少（组件不可能一点都不了解系统，不然组件怎么参与到系统中呢？）
+	越有利于系统的构建和维护
+	js和css松耦合：
+		IE8支持在css中使用expression函数插入js代码，这个特性太可怕了，不要在css中插入js表达式
+		js中要修改一个element外观时不要用css规则而要用类名
+	js和html：
+		将html中的事件触发移到js文件中
+		js中不要硬编码html代码用于注入页面dom，js需要html代码的话：
+			1，ajax向服务器请求，通常请求的html量较大
+			2，少量html代码可以使用自定义模板（就是自己约定模板代码的占位符），模板文本可以写在<script type='text/x-my-tmpl'>
+			   中或者写在html代码注释中（使用firstChild这类的dom方法可以提取出注释内容），之后提取模板并replace占位符生成
+			   html代码
+			3，如果觉得模板好用可以考虑一些模板系统jquery-tmpl和Handlebars
+			4，预先写在html代码中只不过被display:none;，对于页面中变化不是很频繁的html代码很适合
+3，事件处理
+	将事件处理和应用逻辑解耦
+	1，将应用逻辑（即功能性代码）从事件处理中抽离，这样可以实现应用逻辑的重用
+	2，将event对象跟应用逻辑解耦，只传递应用逻辑需要的事件状态值即可，不必重现事件才能调试应用逻辑
+	3，事件处理程序的东西不要放在应用逻辑中，比如event.preventDefault();这类事件处理
+4，检测值
+	基本类型：typeof value === 'string' 方法适用于string,boolean,number,undefined,function，即使typeof一个未声明的变量也
+	          可以就像PHP中的isset
+	null：value ===null,value !===null（typeof null返回'object'没有多大意义）
+	对象：value instanceof Constructor（typeof 对象返回'object'没有很大意义），可用于检测Object,Date,Error,以及通过new
+			生成的自定义对象实例，要注意的是true并不能说明是当前Constructor的实例也有可能是当前类的子类的实例，比如任何对象
+			instanceof Object 都回返回true，此外自定义对象，函数，数组在不同frame中会遇到问题，大致问题是这样的来自不同frame
+			的同一个Constructor被认为是不同的，所以不同frame下有相同Constructor创建的实例并不能在另一frame中instanceof通过测试
+	函数：上面typeof value ==='function'是推荐做法，instanceof由于不同frame作怪不建议使用，但是typeof遇到IE8有问题了，样例：
+			typeof document.getElementById 返回'object'而不是期望的'function'，因为IE对Dom访问方法的特殊实现导致如此，所以
+			针对dom方法的测试应该这样if('querySelectorAll' in document)
+	数组：Object.prototype.toString.call(value) === '[object Array]';这个方法甚至可以扩展到所有的*内置*对象使用。最终方案
+		function isArray(value){
+			if(typeof Array.isArray === 'function'){//如果实现了es5方法的话优先使用
+				return Array.isArray(value);
+			}
+			else{
+				return Object.prototype.toString.call(value) === '[object Array]';
+			}
+		}
+	属性：判断对象的某个属性是否存在，如果你这样做(obj[propertypName])你就犯了大错误因为这样的话，如果属性值为假同样你会以为
+			属性不存在，应该这样'propertyName' in obj，如果不想查询原型链请用hasOwnproperty(name)，但是IE8的dom对象不能使用
+			hasOwnProperty所以使用时先用in进行检测
+5，配置数据从代码中抽离
+	你也许奇怪什么是配置数据，如果你的数据长期较为稳定不变的数据就可以看成是配置数据，比如：错误重定向url，特定类名，特定用于
+	呈现给用户的提示字符串。配置数据应该跟逻辑代码分开这样在更新数据或逻辑任何一方时才能保证便利性
+	样例：
+	var config={
+		MSG_INVALID_VALUE:'你输入的值是无效的',
+		URL_INVALID:'error/invalid.php',
+		CSS_SELECTED:'selected'
+	};通过一个变量将配置数据抽离出来
+	如果你对通过变量抽离配置数据不太满意，你可以将配置数据独立到一个json文件中，如果你对书写json文件语法畏惧你甚至可以用ini，
+	cfg等文件格式书写配置数据然后再用特殊的工具将其转换为json，本书作者的github.com/nzakas/props2js就是不错的东西
+6，异常
+	怎样抛出异常：
+	throw 'value invalid';不推荐这样写，因为多数浏览器不能正常显示抛出的字符串，而是要throw new Error('value invalid')是推荐的
+	当然你可以使用throw自定义对象，哦，对了抛出的消息一般用来描述谁发生了什么错误
+	何时抛出异常：
+	只对那些最有可能失败的地方抛出，你没有必要对一个函数的参数作全面地类型检查，你应该只对那些关键部分抛出异常，如果函数是私有
+	供内部使用的话，甚至没有必要做参数类型检查，但要写一个库时，库的编写者应该负担起错误检测的责任
+	try-catch-finally：
+		finally甚至阻断try中的return而执行再return
+	何时throw何时try：
+		throw应该是底层组件抛出的
+		try-catch是应用逻辑捕获底层组件抛出的异常
+	异常类型：Error,EvalError,RangeError,ReferenceError,SyntaxError,TypeError,URIError，在异常处理中使用instanceof可以处理特定
+			类型的异常，甚至你可以从Error继承一个自定义异常类型
+7，不要修改作业环境
+	不要去修改你的作业环境，因为如果是多人协作很多人会依赖于该作业环境，如果你对环境进行了修改就会影响到环境中的其他人（作业
+	环境包括依赖的js库，内置对象，原有的dom对象，原有的浏览器对象）
+	不要覆盖原来的方法：正如你所预见的在js中你可以覆盖很多的方法，比如：document.getElementById=null;，你也可以自由的覆盖库方法
+						可以这样说你是否可以覆盖一个方法之取决与你的编程素养而跟js无关
+	不要删除方法：跟覆盖方法一样的严重甚至更加严重
+	如果你一定要修改作业环境已实现特定功能的话，这里有替代的方案可供选择：
+		通过继承得到你想要的子环境对象，可惜dom，bom，array等对象不能继承
+		通过门面模式封装已有的环境接口以得到你想要的作业环环境
+	es5支持对象保护：
+		Object.preventExtension(obj); Object.isExtensible(obj); 阻止为对象添加属性
+		Object.seal(obj); Object.isSeal(obj);					阻止为对象添加属性并且阻止对原有属性的删除
+		Object.freeze(obj); Object.isFrozen(obj);				阻止为对象添加属性并且阻止对原有属性的更改
+8，浏览器探嗅
+	探嗅：
+	navigator.userAgent.indexOf('useragent string');能用吗？
+	在web伊始服务器根据浏览器发送的user agent来决定是否浏览器可以合适的呈现网站，随后各浏览器兴起出于兼容的目的复制添加
+	别的浏览器的user agent，使得通过检测user agent识别浏览器成为一件相当混乱的事情，尤其浏览器不断更新user agent不断变化
+	使得通过检测user agent识别浏览器越来越难，但是如果实在你要用，对于那些不再更新的浏览器（因为user agent不变了）你可以
+	浏览器探嗅
+	特性检测：
+		注意顺序，先是标准方法，再是针对各个浏览器的方法检测
+		注意不要检测了一个方法就认为另一个方法也能用
+9，项目目录和文件组织
+	js项目实践原则
+		一个文件一个对象
+		相关文件用目录分组
+		保持第三方代码的独立，单独用一个目录管理第三方代码
+		保持测试代码的完整性
+	web项目中js文件的组织
+		assume js文件都放在项目的script目录中，script目录的结构：
+			src 原始js文件，该目录下的子目录划分模块
+			bulid 最终构建后的文件
+			test 测试文件，有与src子目录对应的目录
+10，Ant可用于javascript的构建系统，提供文件校验，文件合并，文件压缩，文档生成，自动化测试代码等很多能力，注意：ant本身并不会做
+	这么多事情，ant是通过命令调用别的程序完成这些任务的，此外你还需要将构建系统和CI系统整合在一起
+
+
+	
+	
+	
+	
+	
+		
+		

@@ -1,0 +1,9 @@
+pip install somepackage==1.0
+
+pip show --files somepackage
+
+pip list --outdated
+
+pip install --upgrade somepackage
+
+pip uninstall somepackage

@@ -1,0 +1,45 @@
+1，Apache虚拟主机的配置参见：foundationphp.com/tutorials/apache22_vhosts.php
+apache配置的虚拟主机可以分成三类
+一，根据多个IP地址区分虚拟主机
+二，根据不同的端口号区分虚拟主机
+三，根据不同的域名区分虚拟主机
+下面使用的是第三种方案：
+1，修改http.conf中
+			# Virtual hosts
+			#Include conf/extra/httpd-vhosts.conf
+  确保去掉了include虚拟主机配置文件的注释
+2，打开conf/extra/httpd-vhosts.conf就是上面对应的那个文件
+   根据文件中的提示修改成下面的样子
+   	<VirtualHost *:80>
+    ServerAdmin wiktymouse@gmail.com
+    DocumentRoot "D:/Users/Administrator/Documents/htdocs/VirtualHost"
+    ServerName wikty.com
+    ServerAlias www.wikty.com
+    ErrorLog "logs/wikty.com-error.log"
+    CustomLog "logs/wikty.com-access.log" common
+	</VirtualHost>
+	<VirtualHost *:80>
+	    ServerAdmin wiktymouse@gmail.com
+	    DocumentRoot "D:/Users/Administrator/Documents/htdocs"
+	    ServerName localhost
+	</VirtualHost>
+	也许你认为第二小节<VirtualHost>设置似乎没有意义，其实是这样的第一小节<VirtualHost>虽然设置了
+	虚拟主机的访问信息，但是同时将localhost默认的配置信息覆盖，所以如果此时通过localhost访问的话
+	跟与新域名访问的是同一个目录，除非增加了第二小节的设置
+3，修改本机上DNS文件记录
+   windows：c://windows/system32/drivers/etc/hosts
+   添加 127.0.0.1    wikty.com
+综述：工作原理是这样的，当你在浏览器中输入wikty.com时，你的电脑会想办法获取wikty.com对应的IP地址
+      你的电脑就跟你一样喜欢偷懒，所以它先在hosts文件中找对应的IP地址（找不到的话，就要向DNS服务器
+      请求了），幸好你配置了wikty.com到127.0.0.1的映射，也就是说这是浏览器清楚了，该死的家伙想难住
+      我还起个wikty.com域名，你不就在本地loopback吗？好了，浏览器这时向本地127.0.0.1:80，发起了请求
+      ，本地127.0.0.1:80监听的程序就是Apache，所以Apache收到了请求打算做出回应，默认情况下localhost
+      是可以被Apache接受的请求，现在想要让Apache接受wikty.com域名的请求，所以要配置Apache，以便让这
+      个家伙根据不同的域名（虽然都是127.0.0.1，但是请求头信息中还有域名信息），将不同的内容呈现给你。
+
+
+php5.4以上提供了可替换的方案建立虚拟主机
+Alternatively — if you are using PHP 5.4 or above — you may start the internal PHP cli-server in the public directory:
+  cd public
+  php -S 0.0.0.0:8080 index.php
+This will start the cli-server on port 8080, and bind it to all network interfaces.

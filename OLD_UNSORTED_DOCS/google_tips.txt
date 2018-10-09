@@ -1,0 +1,32 @@
+1，直接访问谷歌
+	将浏览器的语言设置为English
+	访问https://www.google.com即可
+	（如果没有修改浏览器语言的话会被重置到.com.hk）
+2，访问google的no country redirect
+	将浏览器语言改成你喜欢的（将会决定你看到的网页语言）
+	访问http://www.google.com/ncr
+3，中国fans做的google复原
+	访问http://www.google.com.im
+4，google虽退出中国但是翻译没退出
+	http://translate.google.cn
+5，修改你电脑的DNS记录
+	复制以下内容：
+	203.208.46.146 www.google.com
+	203.208.46.147 www.google.com.hk
+	203.208.46.132 clients1.google.com
+	203.208.46.149 mail.google.com
+	203.208.46.161 chatenabled.mail.google.com
+	203.208.46.161 mail-attachment.googleusercontent.com   
+	203.208.46.146 id.google.com
+	203.208.46.146 encrypted.google.com
+	203.208.46.161 encrypted-tbn0.google.com
+	203.208.46.162 encrypted-tbn1.google.com
+	203.208.46.163 encrypted-tbn2.google.com
+	203.208.46.164 encrypted-tbn3.google.com
+	203.208.46.132 webcache.googleusercontent.com
+	203.208.46.191 ssl.gstatic.com
+	203.208.46.161 docs.google.com
+	203.208.46.157 0.docs.google.com
+	203.208.46.157 1.docs.google.com
+	windows用户到c:\windows\system32\drivers\etc\hosts
+	linux用户到/etc/hosts

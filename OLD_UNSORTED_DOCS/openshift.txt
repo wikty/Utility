@@ -1,0 +1,28 @@
+Authorization Token
+
+ 
+22b3069ad0816ab34ba6fcc414d53218ee105e3fca669182151918dc5aef1614
+The token will allow clients to perform these operations on your behalf:
+
+Scope	Description
+session	Grants a client the authority to perform all API actions against your account. Valid for about 1 month.
+OpenShift Console (from 218.75.123.186 on Safari) Edit
+
+Created on Monday, Nov 11th, expires in 30 days Delete
+
+How to use your token
+To make a request to the OpenShift REST API, pass the token as an Authorization header
+
+Authorization: Bearer 22b3069ad0816ab34ba6fcc414d53218ee105e3fca669182151918dc5aef1614
+For example, from the command line program cURL use the -H option
+
+curl https://localhost/broker/rest/user -H "Authorization: Bearer 22b3069ad0816ab34ba6fcc414d53218ee105e3fca669182151918dc5aef1614"
+You can pass this token directly to the rhc command with the --token option:
+
+rhc apps --token 22b3069ad0816ab34ba6fcc414d53218ee105e3fca669182151918dc5aef1614
+
+Authorizations
+Allow clients and 3rd parties to access your account via a secret token.
+
+Note	Scope	Expires in
+OpenShift Console (from 218.75.123.186 on Safari)

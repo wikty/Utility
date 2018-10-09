@@ -1,0 +1,18 @@
+Alignment 代码对齐
+	用法：选中要对对齐的文本，ctrl+alt+a
+
+JS Format 格式化js代码
+	用法：选中要格式化的js代码，ctrl+alt+f
+
+JS Minifier 压缩js文件
+	用法：ctrl+alt+m压缩js代码，ctrl+alt+shift+m压缩js代码并生成压缩文件*.min.js
+
+Hex to HSL 将16进制转换为hsl()
+	用法：ctrl+shift+u
+
+LESS less代码高亮
+	用法：安装重启即可看到less高亮的效果
+
+pretty json 格式化json代码
+	用法：貌似直接可以自动格式化的
+

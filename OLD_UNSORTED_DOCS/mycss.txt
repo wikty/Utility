@@ -1,0 +1,615 @@
+﻿1，简介
+	不要以为css只能用在html页面上
+	雅虎的网站上有推荐进行网站测试的浏览器
+	浏览器分类（根据使用的页面渲染引擎）
+	webkit: safari  chrome
+	trident: IE (ie6 %16 ie7 %10 ie8 %27 ie9 开始支持大量css3)
+	gecko: mozilla firefox
+	presto: opera
+2，css解释器忽略空格和换行
+3，css属性值的类型
+	关键字：red blue blod left auto等，同一关键字可以应用不同的效果，例如auto
+	字符串：常见应用，将带有空格的属性值引号起来
+	长度度量：
+		绝对值类型，in mm cm pt pc主要应用于需要物理长度的地方，例如打印时
+		相对值类型，em ex px % 主要适用于屏幕布局，像素依赖显示器的屏幕分辨	率，em的优点在于尺寸是相对于字体
+			尺寸的，尤其现在很多浏览器提供了设置浏览器默认字体大小的功能，这样设计出的页面就会根据浏览器的调
+			整而改变页面的大小，不会因为用户对浏览器的设置而影响到页面的布局，百分比设置是依赖与另一个元素的
+			具体的依赖关系受到所处环境而不同，ex根据字母x度量很少使用
+	数字：支持整数和浮点数，大多数情况二者可以替换使用，数字前可以添加正负号
+	颜色值：关键字，十六进制，十六进制简写（仅限于通道值相同时），rgb（数字|百分比）rgba
+	url：将url放在函数url()中，引用图片或者样式表时
+4，使用样式
+	<link rel="stylesheet" type="text/css" href=""/>
+	注意link还可以引用别的资源，所以这里的rel不可少
+	<style type="text/css">@import url("");  </style>
+	这是一种高级方法，暂时用不到
+5，选择器
+	id和class的命名时，用功能描述而非外观描述，因为外观以后可能改变
+	div.content和div .content的区别要注意
+	可以给一个元素添加多个类，但是如何用选择器来选择呢，合理的逻辑是.myclass1.myclass2，这样想没有问题，可
+	是IE6对此理解不了，他只能解析最后一个类名.myclass2，所以有必要找一个替代方案解决这个问题
+	*选择范围包含表单，表格，是整个页面
+	伪类选择器，用于描述元素的状态，:link  :active  :visited :hover :focus
+	基于webkit的浏览器有点问题，他会将:link的样式应用与链接的所有状态，所以编写时最好用:active :visited的
+	中的值覆盖掉:link中的值，对于:focus :hover对应捕获键盘，鼠标的焦点，为了浏览的一致性，最好这样来写
+	:hover,:focus{},关于:focus IE6只提供超链接元素支持，其它浏览器可以应用于任意元素，同样:active 对于IE6 IE
+	7只应用于超链接，其它浏览器可以应用于任意元素
+	div>.myclass  IE6 not support
+	div+p IE6 not support
+	input[name]
+	input[name='xiao']
+	input[name^="x"]
+	input[name$="o"]
+	input[name*='i']
+	属性选择器IE6均不支持
+	:first-letter
+	:first-line虽然css3新规用::而不是: 但是很多浏览器仍用:
+	:first-child IE6 not support
+	:last-child IE6 7 8 not support
+	:nth-child(n) IE6 7 8 not support
+6，样式表来源
+	浏览器内置默认和浏览器提供用户设置网页外观的样式，是默认样式值，除非网站开发者明确指定了某一属性的值，否
+	则使用默认值，这些样式表的优先级渐强
+7，选择器的优先级
+	规则：模糊选择器的优先级要比精确选择器的优先级低
+	具体规则参见meyerweb.com/eric/css/link-specificity.html这篇文章
+	在这里略微介绍一下该文章的思想
+	a=style属性|b=id|c=类，属性，伪类|d=元素名(求出现次数)
+	(a,b,c,d)从左往右，值越大针对性越强
+	建议：每个选择器的针对性尽可能低，这样便于样式的维护，否则修改时复杂程度相当于重写样式表
+	最高优先级
+	background-color:red !important;
+	优先级高于style，只能被后面新添加的important修改，一般不建议使用
+8，继承
+	要明白并不是所有的css样式都会继承，如果像宽度这类值被继承的话页面就没有办法布局了，一般来讲，文字会被继
+	承
+9，文字
+	font-family:
+	大小写不敏感,因为不同平台安装字体的不一致性所以该属性可以接受多个值，直到找到可用字体，推荐方法是，在最
+	后包含通用字体（css指定名字，由浏览器映射到具体的系统安装字体），这里列举出常用与web的名称是sans-serif
+	，对于印刷材料使用serif，其实sans-serif映射到的字体有(arial helvetica)也就是说用arial有时跟用sans-serif
+	效果一样，但是推荐用css命名的通用字体名称
+	font-style:normal| italic | oblique
+	对于oblique不推荐使用，因为字体italic一般会字体文件中有样式信息，而oblique完全是模拟出来的，而且没什么人
+	用它，同样italic的信息也并不是每个字体文件都会有的，如果没有，IE的选择是正常显示该字体，其他浏览器则选择
+	下一个支持斜体的字体显示。
+	font-weight:normal | bold | bolder | lighter | 100 | 200 | 300...|900
+	在实际的应用时，字体要么正常，要么粗体，所以一般就使用normal和bold两个属性值，再者字体的加粗还得得到字体
+	文件的支持，所以那些复杂的加粗一般也不实用。normal=400 bold=700
+	font-variant:normal | small-caps
+	small-caps是将小写字母转换为小一点的大写字母，small-caps的常见用处是，首字母大写的标题转换为全大写时使用
+	，这样转换出来的大写标题错落有致。
+	font-size: <absolute-size> | <relative-size> | <lenght> | <precentage>
+	absolute-size=>xx-small x-small small medium large x-large xx-large  相差1.2倍
+	xx-large对应h1,后面依次h2,3...
+	relative-size=>larger smaller 倍数1.2
+	上面这两个一般不使用
+	length=>可以使用任何绝对或相对单位值，ex很少使用
+	例如像素，但是有个问题，IE不会根据用户对浏览器的调整而相应的修改页面的像素和绝对单位定义的值，这就意味着
+	，如果用像素设置字体大小而恰巧用户放缩页面，那用户看到的一定是一个糟糕的页面，我们的目标是，使得页面的布
+	局独立于浏览器，甚至独立于用户设置的差异化，所以一定要使用相对尺寸（像素也不能使用），推荐百分比和单位em
+	，1em=100%  1.5em=150%，所有浏览器默认字体大小是16px，1em默认是10px，要注意的是，百分比和单位em设置的尺
+	寸是嵌套累加的
+	font可以一次写多个字体相关属性
+10，文字显示
+	line-height:3
+	这里的意思是，设置行高为当前行的字体font-size的3倍，但不要使用ling-height:3em，因为它有副作用，em可能受
+	到继承关系影响，并不是当前行字体的font-size,但好像有理解的不太对，就先用数字吧
+	letter-spacing:normal | <length> |inherit
+	normal由使用的字体决定，对应于length=0，length可正负，可以取任意单位的值，注意该属性会被继承
+	word-spacing:类似于letter-spacing
+	关于控制字间距英语同汉语是有差别的
+	text-indent:<lenght> | <precentage> | inherit
+	常用lenght可以取任意单位的值，百分比是相对于父元素的宽度，不容易控制
+	text-align:left | center | right | justify
+	justify一般用于印刷，网页上使用较难看
+	text-decoration:none [| underline || overline || line-through || blink]
+	添加空格可同时应用几个样式，但是并不建议使用该属性，因为网站会因此而变得难以阅读
+	不过一个常见的应用是，现将链接的下划线隐藏，当hover,focus时再将下划线添加到链接
+	text-transform: capitalize | uppercase | lowercase | none
+	顺带提一个建议将所有的内容放到标签中，这样便于使用样式控制文本
+	white-space:normal | pre | nowrap
+	normal是指默认会将所有的空格换行替换为一个空格显示，pre类似于标签pre的功能，显然对标签code应用它是不错的
+	选择，至于nowrap将多行文本强制一行输出知道遇到<br/>，不建议使用因为这会打乱页面的布局
+11，背景
+	background-color: <color> | transparent
+	应该为body明确的制定background-color和color，即便是黑白色，不要依赖与浏览器的不确定性
+	background-image: <url> | none;
+	图片默认在元素的width+padding内重复平铺，如果为body指定了背景图片而没有为html指定则图片应用与html而非仅
+	仅是body
+	关于背景图片由一个很有用的使用方式，精灵图片，即将要使用的多个小图片制作为一幅图片，然后通过background-
+	image background-repeate background-position来控制图片显示，这可以缓解带宽压力
+	background-repeat: repeat | repeat-x | repeat-y | no-repeat
+	background-position: (<precentage> | <length>){1,2} || ([top | center | bottom ]|[right | left |center])
+	实例background-position:top left;
+	如果出现precentage或length的话，(即便混合使用关键字和数值)第一个水平，第二个垂直,注意顺序不能乱，例如
+	background-position:bottom 100%;会导致设置失败
+	据说center有一个副作用，不过我好像没有发现
+	background-attachment:fixed | scroll
+	IE6仅仅对于body支持fixed
+	background可以一次写多个背景属性
+12，盒模型
+	设置盒值时顺序top right bottom left，且都允许{1，2，3，4}个值的设置方式
+	margin: <lenght> | <precentage> | auto 
+	可以接受负值
+	允许出现一个两个三个值，这里的auto值很有意思，应用与（水平方向上）margin-left:auto margin-right:auto可以
+	实现对齐，同样margin: 10xp auto 20px;也可以实现居中对齐，应用到垂直方向上将被忽略，这里auto的意思可以理
+	解为自动用空白补齐，IE在怪异模式下不能使用这个方案，解决方案就是通过属性text-align实现对齐
+	margin可以实现折叠，父子或兄弟关系均会发生折叠，只要两者接触则折叠成较大的边距，父子关系防止折叠的方案是
+	父元素设置border 或者 padding
+	border:只能够用一套值来同时指定四个边
+	border-width border-top-width border-right-width border-bottom-width border-left-width
+	允许出百分比外的常见长度值设置，虽然还定义了几个关键字thin medium thick，但是在实践中很少使用
+	border-style border-top-style....
+	:none | hidden | dotted | dashed | solid | double | groove | ridge | inset | outset
+	border-color border-top-color......
+	:<color> | transparent
+	若没有指定边框颜色则与文本颜色一致，IE6 7 不支持transparent,显示为黑色
+	border-top border-right border-bottom border-left
+	padding: <lenght> | <precentage> 注意不支持auto设置，不可以接受负值，没有折叠一说
+	width: <length> | <precentage> | auto默认auto
+	height: <length> | <precentage> | auto 默认auto，百分比值相对父元素而言
+	一般height没有使用价值，因为页面高度一般会随内容扩展
+	当width height设置太小不足以容纳内容时，除了IE6外都会将内容溢出处理，IE6则会扩展宽度和高度以适应内容
+	当div form ul h p等块级元素使用auto限制宽高时，元素占用所有可用水平长度，不足在向下扩展，对于table而言
+	auto的使用只会争取够用的长度
+	IE在怪异模式下width已经包含了border和padding，解决方案是将所有浏览器在怪异模式下的行为调整成与IE类似，
+	因为用户的屏幕分辨率是不可预知的，如果采用相对尺寸布局网站，有可能用户查看时过度缩放显得页面怪异，这时
+	应该指定缩放的上下限min-width min-hegiht max-width max-height:<lenght> | <precentage>
+	IE6不支持上述特性不过它对应的width height表现与min max一致
+	overflow: visible | hidden | auto | scroll
+	overflow-x overflow-y这两个对于IE6 7 只能在兼容模式下使用
+	默认visible，scroll即便内容没有溢出也显示滚动条，auto只在必要时显示，也许你想知道什么时候用它，显然如果
+	你给定的一个盒子内容溢出时，你就可以用它调节溢出的处理行为，默认的溢出显示可不是个好想法,溢出虽然没有打
+	乱页面布局，但是内容叠加在一起没法看了
+13，浮动
+	float:left | right | none   用来并排排列内容的属性
+	不管元素原来是什么类型的元素，当应用了float后就成为块级元素了
+	浮动元素会重新定位，外边距不会同周围元素折叠，仅仅影响后面元素的内容内容不会影响背景边框
+	浮动时元素只会占用够用的空间而不是占用可用的所有空间
+	clear:left | right | both | none
+	消除浮动效果
+	入门经典中专门有关于IE6浮动bug的解决方案，介绍的很详细
+14，垂直对齐
+	vertical-align:baseline | sub | super | top | bottom | middle | text-bottom | text-top | <length>
+	| <precentage>默认baseline
+	百分比设置以line-height为度量，放在基线上
+	具体应用上下标的使用，表格中的使用
+	当在表格中使用时只能有baseline top middle bottom
+15，列表
+	常见应用网站导航，资料目录树，选项卡
+	list-style-type: disc | circle | square | decimal | lower-roman | upper-roman 等，较多不常用的，而且
+	浏览器支持不一致
+	无序列表disc circle square none
+	有序列表通用decimal lower-roman upper-roman none
+	list-style-image:<url> | none
+	有图片当列表的头，更炫
+	list-style-position:inside | outside
+	指定列表头在列表项内还是在列表项外,默认outside
+	list-style: type||image||position
+16，定位
+	position: absolute | relative | fixed | static默认static
+	top right bottom left:<length> | <precentage> | auto
+	绝对定位abosulte
+	默认情况绝对定位时相对浏览器视口，声明position:absolute;后通过top left bottom right可以实现绝对定位，
+	要注意的是绝对定位使得元素脱离文档流（不占空间）并通过赋给一个z轴值插入文档的绝对位置的
+	要改变绝对定位的参考点，则父元素应该具有非静态位置属性
+	相对定位relative
+	相对定位不会脱离文档流，同时可以给子元素绝对定位提供参考点，拥有z轴值，通过偏移属性（top bottom left rig
+	ht 这里充当偏移角色）可以调整位置，但是有一点注意了，虽然元素偏移了但是原来占据的空间并不改变
+	固定定位fixed
+	类似于绝对定位，会脱离文档流，但是不会因为放置于非静态元素引起定位参考点变化，其参考点始终是视口
+	IE6不支持fixed定位，不过有解决方案
+	z-index: <integer> | auto
+	auto按照元素出现的顺序依次向上堆叠，但是这里有一点要明白使用数字设置的z-index优先级较高，当auto堆叠完后
+	再将数字设置的元素依次堆叠起来而且每一层的嵌套多是一个内部堆叠不会与外部进行堆叠，也就是说auto是不管嵌套
+	层次的，只是按照对文档解析的顺序堆叠元素，而数字则会按照文档层级关系分别堆叠
+17，表格
+	完整的表格
+	<table>
+		<caption>name-list</caption>
+		<colgroup>
+			<col class="first_name">
+			<col class="last_name">
+		</colgroup>
+		<thead>
+			<tr>
+			<th>First Name</th>
+			<th>Lase Name</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				
+			</tr>
+		</tfoot>
+		<tbody>
+			<tr>
+				<td>xiao</td>
+				<td>wenbin</td>
+			</tr>
+		</tbody>
+	</table>
+	设置表格标题位置
+	table{caption-side:top | bottom;}
+	通过对col的设置来控制表格列的background-color 和 width
+	表格的布局算法table-layout: auto | fixed 默认auto
+	auot会扩展到够用的宽度，而fixed则对表格使用指定宽度，内容太多则会溢出，IE的处理是隐藏溢出内容，
+	别的浏览器需通过overflow手动设置，我检测后知道，IE也需要手动设置overflow，总这样做没错的。
+	单元格的间距和边框
+	border-collapse: collapse | separate
+	指定为collapse会删除单元格间距并折叠边框，但是IE并没有把这个工作做完全，你还得自己再稍作修改
+	border-spacing: length || length
+	指定单元格的间距，比上面那个有更多的控制，但是IE67不支持，解决方案就是用div全部替代表格来进行表格的模拟
+	border-collapse会覆盖border-spacing的设置
+	刚刚学习了引用特效字体和为页面添加渐变色背景，有时间再研究
+18，鼠标指针
+	通过cursor可以设置很多指针样式，甚至自定义的样式，入门经典中有样式关键字与图案对应的表格可供参考
+19，元素的可见性
+	opacity: num（0-1）
+	默认1，表示完全不透明，可取到两位的小数，0时完全不可见，要注意的时，它仅仅会影响元素的内容，对于背景等
+	不受影响，而且为0时元素并不会脱离文档流
+	老版的浏览器不支持该属性，例如IE8甚至都不支持，所以该项仅仅是渐进增强的方案
+	visiblity:visible | hidden
+	hidden也不会将元素抽离文档流，仅仅不可见仍占居空间，不能被屏幕阅读器阅读，不可交互
+20，虽然css可以实现对页面元素的任意定位，但是还是建议按照页面顺序流编写html，这样在那些不完全支持css的设备上看到的页面效果不至于
+	太离谱
+21，一个典型的内容页面布局
+	<body>
+		<header></header>
+		<menu></menu>
+		<container>
+			<bar></bar>
+			<maincontent></maincontent>
+		</container>
+	</body>
+22，一个事实
+css是基于html的，所以没有一个良好结构的html要想实现css的效果就有困难了
+23，不要滥用div元素
+只有在没有别的元素可用于分块时才用div，例如导航时不要用div包含一个ul，直接在ul上使用导航css即可，关键要明白div的实际应用意义，在
+与将页面中有某种相同属性的元素分组
+24，span干嘛的
+它是用来进行块内再分组的
+25，微格式microformats
+解决特定类型的数据在html中没有对应的标记表示的html-css方案，很多知名网站采用了微格式，要想了解：microformats.org
+26，css3新规则怎样被老式浏览器所理解
+很简单的方式，如果规则不能被理解整条规则会被忽略
+27，高级选择器
+>直接子选择器，IE7的问题是父子之间不能有html注释，IE6的问题是不支持这个选择器
+	针对IE6的解决方案是：先将样式应用到整个后代，再使用*将不是直接子的元素的样式除去
+假设现在要建立一个树形文件夹
+html：
+<ul id='nav'>
+	<li><a href='home/'>Home</a></li>
+	<li><a href='tool/'>Tool</a>
+		<ul>
+			<li><a href='tool.js'>tool.js</a></li>
+			<li><a href='help.chm'>help.chm</a></li>
+			<li><a href='php.pdf'>php.pdf</a></li>
+		</ul>
+	</li>
+	<li><a href='css/'>Css</a></li>
+<ul>
+css:
+非IE6
+#nav>li{
+padding-left:20px;
+background:url(floder.png) no-repeat left top;
+}
+IE6
+#nav li{
+padding-left:20px;
+background:url(floder.png) no-repeat left top;
+}
+#nav li *{
+padding-left:0;
+background-image:none;
+}
+
++兄弟选择器，当兄弟之间有注释时IE7会出问题
+
+属性选择器，IE6不支持属性选择器
+[title]
+[title='help']
+[title!='help']
+[title^='help']
+[title$='help']
+[title*='help']
+[title~='help']空格分隔开的属性值中含有help
+[title|='help']
+28，样式表的优先级
+浏览器用户设置为!important的规则
+网站作者设置为!important的规则
+网站作者的一般规则
+浏览器用户的一般规则
+浏览器的默认规则
+此外对同一元素应用样式，会根据优先级覆盖先前设置的样式，常常产生的一个困惑是，在样式表的尾部追加了某个样式却发现追加的规则没有起
+作用，如果规则没有写错的话一般是由于前面的优先级较高导致的，解决方案是为规则设置更为具体的选择器，当然有important也可以实现相同
+的效果，但是important一般用于特别重要的规则（被重写的话导致网站不成样子）。
+关于选择器的优先级
+(inline_rules,num_ids,num_classes_attributes,num_tags_falseclasses);
+29，基于页面的样式控制
+站点中一类型的页面具有类似的样式，所以可以给每个页面的body元素添加一个类，至于具体的页面的不同则通过添加一个id实现
+
+
+精通CSS高级Web标准解决方案（第二版）
+30，盒模型
+标准盒模型：
+	margin-left border-left padding-left width padding-right border-right margin-right = 页面布局所占据空间
+		注1：边框不单独占据空间而是利用内边距，背景图片或背景色会的应用区域是内边距和width，这样可以看出内边距的作用是用来显示背
+		   景的否则都被width遮挡，外边距的作用是用来控制元素之间的间距的
+		注2：css2.1规范添加的outline与border类似，不同点在于outline占据外边距的空间并在必要时侵占其他块区的空间，另外outline只能
+		   用于指定四周的边框没有对应设置单独边框的规则且设置的边框形状不一定是矩形而是取决于包含块的形状，因为其占据外边距不会
+		   影响空间布局，所以常常用来修改老式浏览器的bug
+		注3：外边距设置的小技巧，可以设置负值并且水平方向设置auto会居中对齐，这些在内边距上是不行的
+IE6的盒模型：
+	margin-left width margin-right = 页面布局占据的空间，并width=padding-left+元素内容大小+padding-right
+		注1：同样边框是占据内边距的空间，可以看到这里不能直接调整元素内容大小，而是通过padding和width来调整的，这样的同样的css规
+		   则将被IE6和标准盒模型理解不一致，会将影响页面的布局
+		注2：解决方案，现在的方法是回避，不要在元素上添加指定宽度的内边距，以后学习中会见到合理的解决方案
+		注3：css3提供了box-sizing可以设置元素布局使用哪种盒模型，但是除非特殊场合一般不使用该属性，因为我们要的不是在不同的布局
+		   间切换的方案，而是一个可以准确运行在两种盒模型上的方案
+外边距合并：
+	准确来讲是垂直外边距合并
+	垂直外边距合并的条件：1，普通文档流中的元素：即那些没有绝对定位和浮动的元素 2，块级元素：即div h p 等而非span strong 3，合并
+		元素的关系父子元素，兄弟元素，元素自身 4，垂直外边距相互接触：没有被border和padding隔开
+元素类型：块级，行内
+	块级元素在普通文档流中会引起换行，用与页面的分块，特殊的块级元素产生于文本直接添加到块级元素中，这些文本就是块级的
+	行内元素在普通文档流中一行中显示（超过所在块的宽度自动换行显示），对于行内元素不能够设置width，height，垂直margin，垂直padd
+		ing（虽然我证实浏览器可以是设置垂直padding但是表现不一致）只能够通过padding-left padding-right margin-left margin-right
+		来调整水平布局，可以用于垂直调节的属性是line-height
+	注：即便内容超过父块级元素换行显示但是从逻辑上讲还是一行，因为padding-left和padding-right只会出现在第一行开头和最后一行结尾
+		，但是从变现上讲是多行的所以line-height可以设置行高
+	块级和行内的转换
+	display:block | inline
+		注：特殊值inline-block可以使得块级元素排成一行，但是它还像块级元素一样的表现，可以这样理解该属性，它用来表明允许后面出现
+		   的元素与自己同一行
+相对定位：position:relative
+	相对二字是指，相对于元素自己在普通文档流的原位置定位，元素原来所在空间仍会存在并且元素移动到的新位置可能会覆盖别的元素，依次
+	可知相对定位虽然不会改变普通文档流的布局空间，但是留出来的空位置以及覆盖新位置的元素也不太好吧，依然扩展可用空间
+		注：常常的应用是使得父元素relative以便作为子元素绝对定位的参考，并不会真的使用它进行相对于普通文档流定位的
+绝对定位：position:absolute
+	绝对定位会使得元素脱离文档流，也就是说元素不再占据文档流的空间了，这会改变普通文档流的布局，普通文档流中的元素就当绝对定位的
+	元素不存在一样会占据其原来的位置，并且进行绝对定位的元素不会占用可用的所有空间了
+	绝对二字是指，相对于已定义的父元素或者浏览器默认顶元素进行定位，与相对定位不同的在于相对定位点不一样，可以将绝对定位看成是元
+	素位于页面之上的某层，至于是哪一层需要通过z-index来进行设置
+	IE6bug：如果绝对定位的父元素是相对定位的并且没有设置width和height的话，绝对定位使用right和bottom就会出问题，简单的解决方案是
+		    为相对定位的父元素设置width和height
+	注：相对定位和绝对定位只是定位相对点不同，至于left等值的设置方式是一致的，正值表示向父框（绝对定位）或原空间框（相对定位）中
+		心位置移动，负值表示向框外移动，并且定位点根据指定的属性(left,top,bottom,right)确定
+		我一直对绝对定位有一个理解上的误区：我以为只有直接父元素具有relative或者absolute时，子元素才可以绝对定位，其实是这样的，
+		子元素任何情况下都可以绝对定位只不过定位的参考元素不同，自元素会在父元素链上查找最近的可以参照的父元素，如果没有找到可以
+		参照定位的父元素的话，自元素就会相对于视口进行定位
+固定定位：
+	使得元素出现在浏览器视口的固定位置，IE6不支持该属性：Jonathan Snook使用javascript解决了这个问题
+浮动：
+	浮动元素左右移动直到碰到父元素的边界或者遇到另一个浮动元素，同样浮动的元素脱离了文档流其所在空间被别的元素占据，但是浮动的一
+	个特点就是虽然空间可被元素占据可是元素的文本不能够占据空间，也就是说后续元素的文本将会围绕在浮动元素的周围，要想清楚这种行为
+	clear属性可以使用，给属性会给元素添加足够的外边距使得元素不必围绕在浮动元素的周围
+		注：浮动和绝对定位都会使得块级元素不在扩展可用空间
+背景：
+	通过设置背景图片以及对图片进行调节创建丰富的解决方案
+	注1：background-position可以设置为像素：相对于元素左上角的偏移量，百分比：图片百分比位置跟元素百分比位置对齐，还可用关键字，
+		但是不建议混合使用这些值
+不透明效果
+	opacity=0.8或者filter=alpha(opacity=80)会改变元素背景以及内容的透明度，有时你可能并不想改变内容的透明度，请用下面的方法
+	rbga(23,45,67,0.8)可以分别为内容和背景指定透明度
+	png图像实现的透明效果，png图片支持alpha通道可以实现图片的透明效果，问题是IE6不支持png的透明效果，解决方案是
+		1，为每个引用png透明效果的图片指定filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='your images path',
+		   sizingMethod='crop');background:none;（背景要禁用不然不透明的图片也会显示）
+		2，如果不想每个图片都写这些规则，使用IE PNG fix技术，这要用到Microsoft专有的behavior属性并且要下载.htc文件
+		注：以上的ie专用样式最好放在ie专用样式变种，以免使得不识别属性的浏览器出错
+链接设置样式
+	不要用a，因为锚也是a，如果你只想要应用到链接上的话就明确的使用a:link a:visited a:hover a:focus a:active
+	注1：刚刚写的顺序很重要，如果顺序打乱会有不可知情况发生
+	注2：IE7之外的浏览器在非链接元素上也可以使用:hover :focus :active
+	注3：css3的新的伪类:target允许为转到的锚添加样式
+问题：IE6无法使用属性选择器的解决方案
+	解决方案1
+		给要添加样式的元素添加类，缺陷：如果要添加的地方很多的话将会要添加很多的类
+	解决方案2
+	   使用js给元素添加样式，jquery当然可以优秀的完成属性选择的功能，但是jquery太大了，如果单单是要利用js的选择器功能的话，js
+	   内置的querySelect可以使用（较新），为了可靠的使用js实现选择器的功能应该是用js库，例如：Simon Willison编写的getElementBy
+	   Selector参见simonvillison.net/2003/mar/25/getelementbyselector
+问题：精灵图片使用时，即便改变背景图片的位置IE仍会重新请求图片
+	解决方案1：将图片应用于父元素
+	解决方案2：在ie专属样式表中开启背景图片缓存html{filter:expression(document.execCommand("BackgroundImageCache",false,true));}
+问题：居中：元素居中，文本水平居中，文本垂直居中
+	元素垂直居中的话就要只能经过计算给元素定位了
+	元素水平居中的话，可以使用margin: 1em auto;来实现，不过如果你的元素浮动或者是绝对定位的话这个方法就失效了
+	元素垂直居中，简便的方法是对元素使用line-height设置，元素会自动垂直居中，复杂的方法是通过padding营造居中的假象
+问题：出于可访问性的考虑，常常将链接的文本缩进到屏幕之外后给链接添加一些特效，但是IE有一个问题对于定位在屏幕之外的链接不能应用任
+	   何效果，其实准确的将这个问题是如果元素的内容为空的话，就对hover失效
+	 解决方案：给链接添加一个蒙版的图片，或者干脆给链接指定一个不存在的背景图片就可以了
+问题：对表格的单元格应用双斜面效果
+	解决方案：设置表格border-collapse:separate;border-spacing:0;，但是IE7不支持border-spacing属性，所以需要使用老式的方法，在tab
+			  le元素中插入属性cellspacing="0"（对，你是对的，这就将属性和表现混在一起了，但是为了IE）
+问题：label设置为display：block，但是你并不想将radio和checkbox输入域换行显示
+	解决方案：将input放在label标签中，并给input设置外边距
+列表
+	对列表应用图片
+		margin:0;padding:0;list-style-type=none;padding-left:20px;background:url(images) no-repeat left top;
+		注：虽然list-style-image可以为列表项添加图片但是没有background的控制能力强
+	导航，一个网站可以看成有不同的版块，每个版块下面有会有不同的页面，需要一种机制在网站结构之间和导航建立关系，这种关系的建立
+		可以通过给页面的body添加类和id来实现，类进行样式的大致设置，id进行微调
+	水平导航，通过设置li为display:inline或者float，浮动更为灵活
+	下拉菜单的实现本质：开始将子列表定位到屏幕之外，当鼠标悬停时定位回到屏幕的正确位置
+表格
+	caption元素建议尽可能的使用
+	table元素的summary属性用于对表格内容进行大致的描述，减少给用户决定是否浏览表格提供依据
+	一个表格中只能有一个thead和一个tfoot元素，但可以用多个tbody元素
+	行列标题使用th设置，但是如果有的元素既是内容又是标题的话建议使用td，通过设置th的属性scope：row|col来决定是行或列标题
+	元素colgroup和rowgroup可以对行列进行分组，这样的话就可以通过这些属性对整行列应用样式了
+	设置表格的单元格是否共享边框通过对table元素设置border-collaspe:separate|collaspe，并且可以通过border-spacing来设置边框间距
+		默认是separate即不共享边框，如果想要给单元格设置双斜面效果的话，这样是你想要的设置border-collapse:separate;
+		border-spacing:0;即保留了两个边框又使得显示的像一个边框
+表单
+	使用fieldset对表单进行分组，通过它可以设置分组的布局和样式，legend是分组的标签，该元素也可设置样式
+	给输入域添加label，可以通过两种方式添加label：将input包含在label中或者是使用for属性建立于label的联系
+问题：不同浏览器默认显示的textarea大小不一致（所以仅仅用rows和cols指定大小是不行的）
+	解决方案：给textarea设置相对于父元素的百分比宽高
+问题：表单垂直布局的实现方式？
+	解决方案：将label设置为block，并调整input的宽度到合适尺寸
+问题：垂直布局表单时，check和radio的label如果也换行的话就会显得很奇怪
+	解决方案：<label><input type="check" />I'm Check</label>并且注意设置input宽度为auto，再给input设置一点margin-right
+问题：对于textarea，input：text，input：password这类文本输入元素应用斜面效果
+	解决方案：其实就是设置不同的border-top border-left border-right border-bottom
+问题：对于必填域设置标志使用的元素
+	解决方案：我以前总是用span，但是更为合理应该使用：em和strong
+问题：水平表单布局以减少对垂直空间的占用，水平布局如何实现？
+	解决方案：label 左浮动设置一定宽度文本右对齐，input右浮动设置一定宽度左对齐，还要记得父元素clear：both
+问题：有时候可能你会打算在几个输入域上公用一个label，比如你提供三个input输入生日的话，但是label原生只能够支持一个input
+	解决方案：也许你会说不用在代码中写那些个用不到的label不就行了，这样的话将会抛弃那些使用屏幕阅读器的用户，我们的解决方案是在
+			  代码中写入所有的label，然后通过css将其隐藏，说到隐藏你一定会说display:none;不就行了，不行，这样做同样会使得屏幕阅
+			  读器用户无法访问这些内容，我们的方案是text-indent缩进消失label，同时将label的width设置为0
+问题：有时候也许你要管理一组checkbox或者radio，但是label只适用于一个元素，fieldset可以管理一组元素，用legend充当标签，可惜legend
+		应用样式在不同浏览器上的实现不一致，该怎么办？
+	解决方案：使用fieldset，div和h模拟出分组的效果
+问题：IE对legend的显示同别的浏览器有个差异，ie不会将legend突出到fieldset的边框外
+	解决方案：css <!--[if IE]> legend{margin-top:-10px;}<![endif]-->
+问题：I将button设置为提交按钮无疑在表现上来讲是件好事，因为button给设置样式提供了更多的可能，但是这里涉及到两个问题，一IE7对butt
+	  on的提交内容跟普通浏览器有差异，二button触发的事件是click，这会在js监听事件时造成一些困扰
+	  解决方案：暂时没有
+问题：表单出错反馈消息（em）放在（文档结构的）哪里合适？
+	解决方案：放在label中，理由：如果放在input元素后面，定位是个问题，如果是水平布局那需要浮动input和反馈消息，如果垂直布局更麻
+			  烦你要将反馈消息进行绝对定位以便同label等高
+问题：IE6不能理解margin:0 auto;
+	解决方案：如果想要让元素居中的话在IE6中可以对父元素设置text-align:center，ie6错误的理解为让元素居中而不仅仅是元素中的文本，
+		      然后对元素应用合适的text-align以修正父元素设置的center值
+问题：对于浮动元素老版本的IE会根据内容扩展元素的尺寸（标准浏览器的不会扩展元素尺寸，只是将元素的内容超出容器显示），这引起的问题
+	 是当浮动的元素尺寸增大到超过父元素的宽度时会引起浮动元素换行显示，这样精心的两列布局就被破坏了
+	 解决方案：不是将每列都向左或者右浮动而是分别向左右浮动并在中间预留一定宽度作为隔离带，这样当元素随着内容扩展时就会占据隔离
+			   带的空间
+问题：固定布局，流式布局，弹性布局，该选择哪个？
+	固定布局：以像素为单位进行布局设计，优点给了设计人员更多地控制，缺点这种设计不能根据用户屏幕分辨率对页面大小进行调整使得空间
+		      被浪费或者需要滚动才能看到完整的页面，此外如果用户调整计算机的字体大小固定布局的缺点就更加明显了，因为设计的是固定
+			  的像素，随着字体的加大一行中可以容纳的字数就会减少。
+	流式布局：通过百分数进行布局设计，这样的布局可以提高屏幕空间的利用率随着屏幕的大小进行伸缩，缺点是：如果屏幕太小或者太大的话
+			  ，页面也会随之太小或太大，通过设置min-width可以限制页面太过于小，通过给页面设置合理的百分比可以使得页面不会太大，
+			  还有max-width也可以限制页面太大（单位使用em）
+	弹性布局：使用em进行的布局就是弹性布局，弹性布局的好处在于可以随着用户对字体大小的调节改变布局，缺点：不能有效利用屏幕大小
+	推荐：结合使用流式和弹性布局，甚至在有的时候也可以使用固定布局
+问题：如果布局是可以随着用户屏幕伸缩的，那么图片怎么办，图片可是不会伸缩？
+	解决方案：不要使用img而是给元素应用背景图片，或者给图片元素的父元素设置overflow:hidden，这两种技术的结果都是图片随着页面的伸
+			 缩被裁减了。如果你不想要裁减图片只是想要图片随着页面伸缩的话，给图片设置百分比的宽度并设置max-width以防止图片失真
+问题：老IE不支持text-shadow
+	解决方案：css filter:Shadow(Color=#cdcdcd,Direction=135,Strength=3)
+问题：老IE不支持css的旋转，渐变，透明效果，阴影等特效
+	解决方案：这些东西都可以使用IE的DirectX过滤器实现
+CSS布局网站的步骤：
+	1，审查设计，找出站点中重复的模式，这时主要关注站点页面的结构和意义
+	2，将页面划分为结构性区域，例如页面，容器，内容区域，页脚
+	3，关注内容区域，建立网格结构，应该设立几个，各个区域有无共性
+	4，在内容区域中进行布局结构设计
+	5，开始关注内容区域的表现样式，检查类似的表现，采用一般的类名，使用上下文环境应用不同样式
+	6，最好立马将设计转换为html元素
+	7，挑选html元素时最好将一些关键的样式记录下来
+	注：大体的思想是，先结构，后内容，再表现，将重复的结构内容表现玻璃出来
+31，管理css代码
+	将css代码放在html代码之外的文件中，利于代码的维护，可以缓存css文件
+	
+	引入css文件<link rel='stylesheet' href='' type='text/css'></link> 
+		or <link rel='stylesheet' type='text/css'>@import url();
+	
+	将css文件拆分为若干文件有利于代码的维护，但是经验表明这回影响页面的加载速度，所以推荐将css代码放在结构良好的单一文件中
+	
+	将css文件合理的分块将有利于代码的维护
+	/*~group general styles
+	-----------------------------------------*/
+	一般规则：主体样式，reset样式，链接样式，标题样式等
+	/*~group helper styles
+	-----------------------------------------*/
+	辅助规则：表单样式，提示和错误提示样式以及其他一致性较强的条目
+	/*~group page structure styles
+	----------------------------------------*/
+	页面结构规则：整体结构布局，结构内部的结构布局
+	/*~group page components styles
+	----------------------------------------*/
+	页面组件
+	/*~group overrides styles
+	----------------------------------------*/
+	覆盖前面的规则
+	这里的~可以为别的特殊字符（在样式规则中几乎不会出现的字符，这样将有利于找到特定的部分）
+	
+	有意义的注释关键字请参看：cssdoc.net
+	
+	发布网站是删除注释和不必要的空白www.cssoptimiser.com
+32，关于错误和处理
+	1，已经使用了很具体的选择器导致当前的规则不能应用到指定元素
+		注：但是并不意味着你的每条规则都要使用很具体的选择器（尽量一般化的选择器是可重用的），只有在必要的时候才使用具体的选择器
+	2，垂直外边距的叠加导致布局意外
+33，修正bug
+	1，当出现错误时，首要的任务是找到错误原因
+		可以通过给元素应用border或者background-color来观察元素的布局是否出问题了，当然使用firefox查看页面布局会更好
+		还可以修改你怀疑的规则，通过bug效果消失或者放大你就能够锁定问题所在了
+	2，一些问题当你添加了border后就会解决，比如说外边距叠加的问题
+	3，常见的方法
+		将元素设置为inline,relative,显式设置元素宽度高度等就可以修复bug
+	4，基本测试案例
+		通过最少的html和css重现bug，这样可以缩小bug的范围
+34，低版本IE问题的根源
+	低版本的IE出于性能上的考虑使用了布局的概念，默认情况下只有部分元素拥有布局，只有元素拥有布局才能够进行定位和大小设置
+	默认具有布局的元素有：html,body,table,tr,td,img,hr,input,select,textarea,button,applet,object,embed,iframe,marquee
+	可以通过css设置的某些属性使得元素间接的拥有布局，还可以通过js函数hasLayout查看元素是否拥有布局
+	设置下列css可以是元素拥有布局
+	float:left,right; display:inline-block; width:value; height:value; zoom:value; writing-mode:tb-rl; overflow: hidden,scroll,
+	auto; min-width:value; max-width:value;其中zoom,writing-mode是IE专有
+	带来的问题
+	1，当某个元素浮动时，我们常常希望附近的文本产生围绕的效果，但是如果附近的元素拥有布局的话（比如设置了高度）就不会产生围绕的
+		效果了
+	2，布局会自动清理浮动，就好像设置了overflow:hidden进行清理浮动一样
+	3，拥有布局的元素，当其内容大于自身尺寸时会自动扩展自身尺寸，而不是我们期望的内容溢出，也就是说如果设置了width其实效果是跟设
+		置min-width类似，这常常引起的问题是浮动元素随着的内容的扩展尺寸增加以至于被挤到了下一行
+	4，拥有布局的元素定位或者浮动不会自动缩紧
+	5，相对定位的元素不具有布局
+	6，拥有布局的元素垂直外边距不进行叠加
+	7，将链接虽然设置为了block，但是如果它不具有布局的话，单击响应的区域仅限于链接的文本
+	所以如果IE遇到bug第一个要尝试的解决方案就是为元素添加布局
+	注：IE8开始不使用布局概念了
+35，IE条件注释
+<!--[if IE] do-something -->
+<!--[if IE 6] do-something -->
+<!--[if lt IE 6] do-something -->
+<!--[if !IE]>-->
+<link rel='stylesheet' type='text/css' href='advanced.css' />
+<!--<![endif]-->
+36，hack技术
+	只有万不得已的时候再使用hack，如果使用hack的地方比较多的话最好将其独立为一个专用的样式表便于维护
+	1，浏览器探嗅（过滤）
+		tantek.com/css/examples/
+	2，* html{for IE 6}因为IE6 默认html元素会被一个匿名元素包住
+37，常见Bug的修复方案
+	1，IE6浮动元素的水平外边距加倍
+		解决方案：将元素设置display:inline;因为元素是浮动的所以设置inline是无害的
+	2，IE6 3px偏移
+		问题：当你不希望元素文本围绕浮动元素时，你可以给元素设置与浮动元素同宽的左外边距（这里只针对左浮动），但是你会发现元素与
+			  浮动元素之间有了莫名其妙3px的间隙
+		解决方案：在针对IE6条件注释的规则中为元素添加一个很小的高度（因为IE6会根据内容扩展元素尺寸，所以无需担心，但是一定要放在
+			  IE6专用样式中，因为别的元素会介意的）这样的话元素就具有布局了，因为具有布局的元素不会围绕浮动元素的，并且要将元素
+			  的左外边距清零（即然元素不会围绕浮动元素添加左外边距就没有了意义），还要将浮动元素设置margin-right:-3px;
+			  注：如果浮动的是图像的话，IE5 p{height:1%; margin-left:0} .myfloat{margin:0 -3px;}
+				  IE6 p{height:1%; margin-left:0;} .myfloat{maring:0}
+	3，IE6 一系列浮动元素的最后一个浮动元素中最后的字符会在下一行重复出现，原因是这些元素间有注释
+		解决方案：移除注释
+	4，IE6 消失的文本
+		问题：如果在一个设置了背景色或背景图片的容器中，浮动元素后面跟着非浮动元素，接下来是清除浮动的元素，如果清除浮动的元素和
+			  浮动元素接触了，则非浮动元素的文本就消失了
+		解决方案：去掉容器元素的背景或者为容器元素指定宽高或行高或者对浮动元素和容器元素display:relative;
+	5，IE6相对定位不能获取布局，致使不能为子元素提供绝对定位环境
+		解决方案：在专用样式表中为元素指定一个较小的高度
+	
+若干图像替换技术（首先要明白图片替换技术的缘由：为了解决web有限使用的字体而产生的技术）
+FIR：该技术的思想是用设计好的图片替换元素中的文字，通过给父元素应用背景图片并且将元素设置为display none实现的，该技术的缺陷是：
+		屏幕阅读器不能够读取设置为none的元素，所以替换后的页面对于屏幕阅读器来说是不可见的内容
+Phark：该技术通过将文本设置一个很大的缩进值（text-indent:-5000px）使得文本隐藏，该技术下屏幕阅读器的访问就没有问题了，但是该技术
+		的缺陷在于，如果用户禁用图片且没有禁用css的话，用户将看不到任何内容了，所以对于页面中一些关键性的部位不宜使用该技术
+IFR：使用flash和js实现文本替换  www.shauninman.com/plete/2004/04/ifr-revistied-and-revised
+sIFR：是对IFR技术的扩展 novemberborn.net/sifr3
+
+	
+	
+
+	
+	
+	

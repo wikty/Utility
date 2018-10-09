@@ -1,0 +1,10 @@
+jquery.map是一个建立未压缩到压缩后js文件的代码位置映射文件
+，对于支持.map文件的chrome浏览器而言，可以通过jquery.min.js
+和jquery.min.map文件精确的报告错误发生在jquery.min.js哪个位
+置，对于没有Jquery.map之前（jquery-1.9.0之前）我们在开发阶段
+一直是使用jquery.js，如果用min的话，发生错误很难调试，但是在
+生成环境下我们别无他法了，但是现在有了jquery.map技术，浏览器
+只要可以加载.map和.min.js就可以自动给出jquery.js出错的位置，
+而且.map的技术不仅仅限于此，据说将来有计划将coffeScript,
+sass,less,等文件的位置信息也建立起来，这样的话用起来就很方便
+，chrome开启.map功能，开发者工具->设置->enable source map

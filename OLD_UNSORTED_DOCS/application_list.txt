@@ -1,0 +1,17 @@
+avast
+BitTorrent
+cURL
+Free Download Manager
+Haskell Platform
+Heroku
+MarkdownPad
+Node.js
+Oracle VM VirtualBox
+Pepsky Video Cutter
+Poedit
+PostgreSQL
+MySQL
+Sublime Text
+Tiled Map Editor
+UltraISO
+Wireshark

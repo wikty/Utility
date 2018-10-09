@@ -1,0 +1,117 @@
+neyo - beautiful monster
+Inna - Love
+crystal castles - crimewave
+ke$ha - tik tok 
+amber - this is your night
+black box - everybody everybody
+crazy frog - gonna make you sweat
+gloria estefan - conga
+haddaway - what is lov
+la bouche - be my lover
+Dragostea Din Tei O-Zone
+cascada - everytime we touch
+twilight zone 2 unlimite
+another night - real mccoy
+rednex - cotton eye joe
+chaka khan - i feel for you
+freak nasty - da' dip
+crystal waters - pure love
+darude - sandstorm
+eurythmics - sweet dreams 
+aqua - lollipop
+Munbo Jumbo                Air Supply
+Love The Way You Lie  Eminem&Rihanna
+Breaking News               迈克尔杰克逊
+Oh Santa                       Mariah Carey
+Give a Little More          Maroon 5
+far away from home
+complicated
+innocence
+higher
+she will be loved
+u make me wanna
+blame it on me
+because of you
+//////////////////////////////////////////////////
+
+
+[npm]
+npm install //安装依赖包（在packag.json中所写的）
+npm ls //tree型显示当前目录中的node_modules目录
+npm info express version //远程查询express版本信息
+express --ejs --sessions等参数 //用于构建一个基于express的web骨架
+var express=require('express')
+var app=express()
+app.get('/',function(req,res){
+	res.send('hello world');
+});
+app.set('name',value);
+app.get('name');
+app.disable('name');
+app.enable('name')
+app.disabled('name')
+app.enabled('name')
+[configure methods]
+#legacy method config method
+app.configure(function(){//for all environments
+	app.set('title','my-app');
+});
+app.configure('development',function(){//just for development env
+	app.set('db uri','localhost/dev');
+});
+app.configure('production',function(){//just for production env
+	app.set('db uri','n.n.n./prod');
+});
+#now should use follow methods to config
+app.set('title','app');
+if('development'==app.get('env')){
+	app.set('db','some');
+}
+if('production'==app.get('env')){
+	app.set('other','value');
+}
+
+
+
+[middleware]
+The main effect of this feature is that mounted middleware may operate without code changes regardless of its "prefix" pathname.
+app.use([path],function(){});
+#no path
+// GET /javascripts/jquery.js
+// GET /style.css
+// GET /favicon.ico
+app.use(express.static(__dirname + '/public'));
+#use path
+// GET /static/javascripts/jquery.js
+// GET /static/style.css
+// GET /static/favicon.ico
+app.use('/static', express.static(__dirname + '/public'));
+#the order of app.use is important,e.x. you should use logger first
+app.use(express.logger())
+app.use(express.static(__dirname+'/public'));
+app.use(function(req,res){
+	res.send('hello');
+});
+if you want to ignore request for static files logging
+this order will be good for you
+app.use(express.static(__dirname+'/public');
+app.use(express.logger());
+#static directory should before other directory
+app.use(express.static(__dirname+'/public'));
+app.use(express.static(__dirname+'/files'));
+app.use(express.static(__dirname+'/uploads'));
+
+
+[settings]
+env :Environment mode, defaults to process.env.NODE_ENV or "development"
+trust proxy :Enables reverse proxy support, disabled by default
+jsonp callback name: Changes the default callback name of ?callback=
+json replacer: JSON replacer callback, null by default
+json spaces: JSON response spaces for formatting, defaults to 2 in development, 0 in production
+case sensitive routing: Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as the same
+strict routing: Enable strict routing, by default "/foo" and "/foo/" are treated the same by the router
+view cache: Enables view template compilation caching, enabled in production by default
+view engine: The default engine extension to use when omitted
+views: The view directory path, defaulting to "./views"
+
+

@@ -1,0 +1,148 @@
+﻿1，脚本的调试方法
+	1，set -x对脚本执行进行跟踪
+		可以在想要跟踪执行情况的地方set -x，想要取消跟踪，set +x，此外还有set -v和它的功能相似，二者的区别在于set -x跟踪
+		的是执行的脚本，而set -v显示的则是源脚本，例如if语句，set -v会
+		显示整块if-else
+	2，echo和print
+		用法一，用于显示脚本运行时期的变量值
+		用法二，用于显示脚本的执行逻辑流程，若执行则打印相应的语句
+		小技巧：这些插入的调试语句不要按照一般脚本编写进行缩进，否则将来很难删除了
+	3，实现调试层
+		方法脚本头设置一个调试变量，根据调试变量的值打开或关闭调试
+		实例：
+			#! /bin/bash
+			debug=1
+			test $debug -gt 0 && echo "you are in debuging mode"
+		扩展：实现多层次的调试层
+			这样可以根据调试变量的值进行多个层级的调试输入，例如可以划分为严格，宽松，关闭这几个调试层级
+			debug 3
+			test $debug -gt 0 && echo "you are in debuging mode0"
+			test $debug -gt 1 && echo "you are in debuging mode1"
+			test $debug -gt 2 && echo "you are in debuging mode2"
+		改进：使得调试变量通过命令行输入，这样避免每次更改调试层级而修改脚本
+		缺陷：test判断增加了额外的处理时间，多层级的调试需要花精力去设计
+	4，$?
+		$?这个特殊的变量是最近命令执行后的返回结果，非零则说明命令执行出错，故可以借此来写一个函数用于调试
+		脚本中的函数
+		alert(){
+		#usage:alert $? "debug descript"
+		if [ "$1" -ne 0 ]
+		then
+			echo "WARNING: $2 did not complete successfully."
+		else
+			echo "INFO: $2 completed successfully."
+		fi
+		}
+2，用户权限
+	操作系统通过用户、组概念来管理使用计算机的人
+	用户代表一个使用计算机的使用者，操作系统通过用户概念限制一个使用者能够访问的资源
+	组用来组织管理用户
+	
+	用户具有以下概念：
+	每个用户有一个用户名和一个用户ID（UID)，用户ID是操作系统真正用来管理标识用户的，UID为32位长，从0开始，最大一般到60000。
+
+	用户分为：root用户（uid为0）、系统用户（uid 1~499）、普通用户（uid 500+）
+
+	每个用户有一个家目录，用来保存用户私有数据，root用户的家目录为/root，普通用户家目录为/home下与用户名相同的目录
+
+	每个可登陆用户拥有一个指定的shell
+
+	一个用户可以属于一个主组，可以属于一个或多个附属组
+
+	用户、组信息保存在以下三个文件中：
+
+
+	/etc/passwd   用户信息
+
+	/etc/shadow   用户密码
+
+	/etc/group     组信息
+
+	命令id用以显示当前用户的信息，命令passwd用以修改当前用户的密码
+
+	以下命令用以显示登陆用户信息：
+
+	whoami  显示当前用户
+
+	who      显示登陆的用户的信息   
+
+	w          显示登陆的用户的详细信息
+
+	命令useradd用以添加一个用户：
+
+	useradd 用户名
+
+	-d   指定用户家目录 
+
+	-s   指定用户登陆shell
+
+	-u   指定用户uid
+
+	-g   指定用户所属主组
+
+	-G  指定用户所属附属组
+
+	命令usermod用以修改一个用户的信息：
+
+	usermod 参数 用户名
+
+	-l   修改用户名（注：修改用户名后，对应的家目录名并不会改变）
+
+	-u   修改uid
+
+	-g   修改用户主组
+
+	-G  修改用户附属组
+
+	-L   锁定用户
+
+	-U   解锁用户
+
+	命令userdel用以删除一个用户：
+
+	userdel 用户名
+
+	userdel -r 用户名     删除用户的同时删除该用户家目录
+
+	命令groupadd用以创建一个组：
+
+	groupadd 组名
+
+	命令groupmod用以修改一个组信息：
+
+	groupmod -n  新组名 旧组名
+
+	groupmod -g 新组ID 旧组ID
+
+	命令groupde用以删除一个组
+3，权限
+	权限是操作系统用来限制用户、组、进程对操作系统资源（文件、设备等）的访问的机制
+
+	权限分为：读、写、执行，一般表示为 r、w、x
+
+	每个文件或文件夹拥有一个所属用户和所属组，并且设置对应的权限
+
+	每个进程在运行的时候均以一个用户的身份运行，同时继承该用户的权限
+
+	Linux使用UGO权限模型，U代表所属用户、G代表所属组、O代表其他，每个文件的权限基于UGO模型设置
+
+	命令ls -l可以查看文件的权限
+
+	命令chown可以修改一个文件的所属用户：
+
+	chown 用户 文件
+
+	chown linuxcast  testfile
+
+	命令chgrp用以修改一个文件的所属组：
+
+	chgrp 组  文件
+
+	chgrp linuxcast-group testfile
+
+	命令chmod用以修改一个文件的权限：
+
+	chmod 权限 文件
+
+	chmod u+w linuxcast-file
+		

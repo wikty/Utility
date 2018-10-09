@@ -1,0 +1,540 @@
+﻿1，页面加载完成后再操纵DOM
+$(document).ready(function(){} or myfunc);
+页面没有加载完成就操纵未定义的DOM会发生异常，该函数可以确保页面完全加载后再执行，常常用来给页面元素添加事件。
+备注：这里的页面完全加载指的是，html css js 文档都加载完成，此时内存中的DOM树构建完成，但是这个时候图片等DOM结构无关的资源还没有加载，要检测图片等资源的加载使用.load();至于该函数的详情留待以后补充。$(document).ready()函数的简写形式$(function (){}  or myfunc)。
+ready可以有多个，而传统的window.onload则只能添加一个
+
+2，关于加载jquery文件的若干意见
+常规加载直接用script src，一般加载的是min版的，我看到有关vsdoc版的那个可以开启vs的智能键入功能，这样对于开发时很方便，而且上面还提到了，如何在发布时用min版的代替vsdoc版的方法，值得研究。
+google服务器加载，好处在于如果第一次浏览的用户缓存了这个文件（毕竟很多网站使用jquery，只要用户到过别的网站，而别的网站恰好也使用google方法加载jquery）
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js">
+还可以使用google的ajax libraies api加载
+<script src="http://www.google.com/jsapi">
+<script >google.load("jquery","1.6.3");</script></script>
+
+3，添加事件和卸载事件
+$(element).bind('eventname',callback);
+添加单个事件
+$(element).bind(event1:callback1,event2:callback2);
+添加多个事件
+$(element).unbind('eventname');
+卸载事件，如果无参数，则卸载所有事件
+$(element).eventname(function() {}  or myfunc);
+添加单个事件，通过事件名而非bind函数
+$(element1).bind(eventname1,function(){$(element2).eventname2()});
+事件触发事件，为element1添加了一个事件，当element1发生了这个事件时，会引起element2的另一个事件发生，就好像现实世界中的事情，没有事情是孤立的，一件事情总会影响另一件。这句话有可能正确，要注意的是eventname2()只能是无参数的事件名函数
+
+4，常用事件
+focus  blur  load  unload   click dblclick  scroll  mousedown mouseup
+mousemove mouseover mouseout keypress keydown keyup  select 
+change reset submit
+
+5，live事件添加
+bind虽然很强大了，可是bind并不能为刚刚新建的添加到页面的元素绑定事件，这时轮到live登场了。live还支持给未来将要创建的元素绑定事件，此外常用的事件快捷方式也不能给未来的元素添加事件
+对应的卸载函数是$(element).die(eventname)  or .die()
+
+6，表单处理
+$(submitelement).click(function(){
+$(thisform).submit(function(){do-something for confirm});
+or $(thisform).submit()直接提交
+});
+do-something for confirm中是对表单的验证，如果验证失败return false可以阻止表单提交，或者function(event){do-something for confirm
+if(failed) event.preventDefault()});
+
+7，检测缺失图片
+其实质就是error事件，给img添加error事件，该事件在图片加载失败时发生，所以可以在该事件中$(this).replaceWith("<img src=''>");替换另一个图片
+
+8，select选择多个option
+参见TP312PH240.3  P14
+
+9，鼠标事件
+hover捕获鼠标移进，移出
+$(element).hover(myfunc1,myfunc2);
+myfunc1指定鼠标移入时的处理
+myfunc2指定鼠标移出时的处理
+这里的hover实质上是触发了mouseleave  mouseenter
+$(element).mousemove(function(e){});
+注意这里这个e用来捕获鼠标事件对象
+
+10，关于event
+鼠标坐标event.pageX event.pageY
+键盘按键event.which
+检测组合按键的技巧
+为alt等按键设置一个全局bool变量以确认它们是否按下，该变量随着keydown和keyup被反复赋值
+检测上述变量，即在确认alt键按下的前提下再检测普通键并作出响应
+如果想要函数接受参数event，函数的定义必须在ready块中
+
+11，drag
+如果你要拖动一个元素，显然你必须将其设置为absolute类似的属性值，
+但这里有个问题是，你要拖动一个元素，则意味着，只有你在拖动它时你才觉得它应该是可移动的，所以你若在style中提前设置absolute，并无益，所以这里的建议是，在你的mousemove事件处理函数中通过函数css()来设置position属性为absolute
+另外，我发现position属性优先级高于float属性，因为设置position为absolute后，float失效了。
+
+12，代码的添加位置
+将javascript代码放在head，导致脚本未加载完成则页面不会开始显示，如果将脚本放在body结束之前的话，不会有这个问题了
+
+13，
+ajax
+$.ajaxSetup({});
+设置ajax 等请求的默认选项，之后$.ajax可以覆盖默认值
+jquery中的ajax是对javascript的优化
+$.get(url,data,callback,datatype)
+$.post(url,data,callback,datatype)
+$.ajax(
+{
+url:'my.php',
+method:'get or post', put delete
+data:querystring | json,
+dataType:xml html script json text jsonp,
+success:function(data,textstatus,xmlhttprequest){},
+error:function(xmlhttprequest,textstatus,errorthrown){}
+dataFilter:对返回数据无害处理
+}
+);
+//对post和get的合体,在错误处理时很有用处
+只有第一个必选
+data可以是字符串或值对形式的{ lang: 'en'}
+在jquery使用post和get语法上没有任何差异，但是底层实现时，post使用POST方法（内容长度不受限制且包含在http头部，且不会被浏览器缓存）
+
+
+14，提取表单内容
+将表单内容以name value形式提取出来（经过url编码可直接用于url尾部）
+提取出来的内容可以直接应用在get post函数的第二个参数中
+.serialize()//所有值对组成一个字符串
+.serializeArray()//每个值对是一个对象
+使用这两个函数要注意，不能够提取submit和file的值，每个想要提取值得form控件必须要有name属性
+
+15，php中检测是否是来自浏览器的ajax请求
+if(isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&$_SERVER['HTTP_X_
+REQUESTED_WITH']=='XMLHttpRequest');
+为true则是ajax请求
+原理，为了区别ajax请求，浏览器会在http头部发送一个x-requested-with：
+XMLHttpRequest；的值对，而php中可以通过$_SERVER变量来检测头部
+但是，这里有一个问题，既然可以在头部添加一个值对来说明是ajax，那完全可以冒仿ajax，因为在头部添加值对不是难事
+
+16，将挂起的请求终止
+想象一下这样的场景，你打开浏览器想要看视频，可是由于网速或者什么别的原因，你的网页打开太慢了，你不甘于无聊一直在那里点击之播放按钮，这样显然服务端会受到不止一次请求播放的消息，这时要采用的策略就是，将那些挂起的请求kill，只响应当前的请求
+实现很简单，jquery中每个关于ajax请求函数都会返回xmlhttprequest对象，用一个全局变量储存当前的xmlhttprequest对象，每一次发生请求前都要对该全局变量检测是否为空，若不为空，则说明前面已经发生请求，这时调用
+xmlhttprequest对象的.abort()可以结束请求
+
+17，页面的按需加载
+页面太大的话会影响用户体验可以给用户提供伪链接来动态扩展页面内容
+jquery提供的方法.load(url, data, callback)url是必选的，可以将下载的页面添加到元素中
+例：<div id="insert"><a href="#"  id="load">download </a></div>
+在脚本中,$("#load").click(function(){
+$("#insert").load("something.html");
+});
+
+18，错误处理
+ajax函数请求出错时报告：
+$.ajax(
+url:'my.php',
+method:'get or post',
+data:,
+dataType:,
+success:function(){},
+error:function(){}
+);
+error:function(xmlhttprequest, errortype, unexpection)
+errortype= timeout  error  notmodified null parsererror
+将ajax请求出错聚集在一处：
+$("#collectionerror").ajaxError(function(){$(this).html("error");});
+页面中的任何一个ajax请求出错都会引起上面的事件发生
+
+19，消除get方法的缓存问题
+$.ajax(
+url:'my.php',
+method:'get ',
+cache:false
+);
+jquery的默认get是缓存的，所以通过cache项false可以消除缓存，底层实现的机制是，为url的尾部添加一个下划线和随机的数字
+
+20，脚本按需加载
+许多脚本是沉重的加载负担，所以不要在页面打开时加载那些暂时不用的脚本
+可以通过在事件处理函数中调用jquery定义的专门加载js文件的函数$.getScript(url,callback);  callback一般用于确定加载成功
+$.ajax也可以完成这项任务
+$.ajax(
+url:'my.php',
+method:'get ',
+dataType:'script',
+success：callback
+);而且ajax还有getscript没有的错误处理功能
+
+21，更细致的添加事件
+$("div").delegate("span","click",function(){});
+这里的delegate跟live一样可以为不存在的元素添加事件，同时第一个参数是过滤条件，这在控制父元素的子元素行为时很有用。
+
+22，jquery中对xml文档的处理
+$.ajax(
+{
+type:"xml";
+success:function(data){
+$(data).find("tag").each(function(){
+$(this).find("child").each(function(){
+$(this).find('attr').text();
+}
+}
+}
+});
+
+23，关于JSON
+意为javascript对象表示法，它采用十分简单的方式来描述数据，属用于数据结构不复杂的情况，灵活方便，所以有些时候可以用来取代xml来进行数据描述。
+要注意的是虽然json意为javascript对象表示法，但是json并不等同于javascript对象表示法，其中很重要的一点就是json的字符串不可以使用双引号，json要求的字符集是utf-8
+格式
+{
+name1:value1,
+name2:value2,
+...
+}
+其中name是字符串，value可以是字符串 数字 数组 bool  json等
+数组形式[value1,value2,value3,...]
+
+24，php对json的支持（仅供php5.3以上版本）
+echo json_encode($data);
+为了保证返回的是json，在头部添加header("content-type:text/json");
+将php中的对象或数组以json方式返回
+$obj=json_decode($data);可选的另外参数assoc和 depth
+将json数据读取为数组 对象，返回的$obj可以用标准访问对象方法来访问内容，$obj->name1;  $obj->name2[0]->name;
+print_r(json_decode(json_encode($mytravel)));
+
+25，php对json的错误处理机制（仅供php5.3以上版本）
+函数json_last_error();
+捕获json解析过程产生的错误，并返回错误代码，可以用switch语句来检测错误情况，并做出对应的响应。
+返回值:
+JSON_ERROR_NONE 无错误
+JSON_ERROR_SYNTAX 语法错误
+JSON_ERROR_DEPTH  json太大，超过php配置的栈空间
+JSON_ERROR_CTRL_CHAR  无效控制字符
+
+26，jquery对json的支持
+从服务器端加载json数据
+函数：$.getJSON(url,callback);
+同时可以通过.[]访问json的内容
+可以通过get  post  ajax函数代替getJSON函数，但要注意返回类型为json
+当然只有ajax函数有错误处理能力
+在本地将json字符串转换为javascript对象
+函数：$.parseJSON('{"city":"xinzhou"}');
+注意json字符串必须用双引号，也可以用javascript全局函数eval替代它，但是eval功能更为强大，它可能会将json中的一些东西做额外的解读，因此不建议使用。
+
+27，replace和replaceWith
+replace在字符串中用于将匹配正则表达式的内容替换
+replaceWith在jquery中用于替换结果集
+
+28，find  each
+find在jquery中用于按指定条件在结果集中筛选子元素
+each遍历结果集
+
+29，表单验证
+技巧一，为那些必须填写的域添加一个class，这样在进行验证时jquery很容易遍历必填项目
+技巧二，函数去除空格,$.trim(value);
+技巧三，遍历必填项时，如果未填写则在该项的后面插入一个span类的东西用以提示用户，但是要注意，先前填写不正确的span还在，所以先要移除每个必填项的span，再根据填写情况添加span提示信息。对应的函数,$(this).next("span").remove(); $(this).after("<span class='error'>fill it </span>");
+技巧四，将验证表单的php代码放在表单页面，这样提交后页面重载验证开启
+
+30，服务端验证
+相较于客户端的验证服务端的验证要简单一点，因为php提供了函数
+filter_var(myvar, )第二个参数可以验证很多类型的值，在服务端除了可以对用户输入数据进行验证还可以对输入数据重写，这样可以保证用户不会恶意写入数据，对应的函数是fiter_var()与上面的函数一样，不过两者作用的区别就在于第二个参数。
+
+31，关于jquery的$冲突问题
+方案1：使用jQuery.noConflict()让出$
+方案2：在jQuery(document).ready(function(anothername){});anothername为ready函数中可用的新名字
+
+32，关于selector:filter
+selector
+p.foo  和p, .foo的区别，前者与的关系，后者或的关系
+p span和p>span的区别，前者选取p的所有后代span，后者选取p的直接孩子span
+p+span和p~span的区别，前者选取p的下一个兄弟，这里的span算作是要求下一个兄第要满足的条件，后者返回之后的所有满足条件的兄弟
+filter
+:first :last :even :odd :eq() :gt() :lt() 下标0开始，odd指奇数 
+:not(selector:filter)可以进行二次筛选，出去满足selector的剩余部分
+:has(selector:filter)从结果集中将那些拥有子元素selector的结果筛选出来，注意与not的区别，not通过结果集元素自身条件筛选而has通过元素的子元素进行筛选
+:contains(text)对有text的元素过滤，这里的contains函数大小写敏感，要想使用不敏感的访问jquery网站的contians-selector相关内容，至于当前使用的jquery版本是否敏感因情况而异，注意筛选的是元素的内容，而不是has那样筛选元素的子元素
+:empty  
+空元素是指那些既没有子元素又没有文本内容的元素
+:parent
+筛选那些拥有子元素（文本内容）的元素，其实就是empty的补集
+:hidden
+过滤那些不可见的，这里注意的一点是，hidden并不是对应css中visiiblity的属性值hidden（这属性只会不可见，并不会将元素从页面移除），这里的hidden是指那些出页面移除的元素，即css属性display为none的元素
+:visible
+筛选css属性display不为none的元素
+关于hidden和visible要说些东西
+我们在实际的应用中总会碰到要移除或添加到页面一些元素，jquery提供的这两个过滤器是基于dom的，而非css的可视性，还有就是对应的jquery函数hide和show也都是修改display属性，可以笼统的理解只要提到jquery的可视性问题就是针对dom的，关于页面布局，组成的。
+属性过滤器（不推荐使用）
+$("[href=bai.com]")  $("[class!=foo]")等
+子元素过滤器（索引开始1）
+其实我觉得跟子元素没有很大的关系，这些过滤器也是对结果集的位置过滤
+:nth-child(odd | even | index)
+:only-child
+:first-child
+:last-child它们与first last的区别，用一个例子来说明，假设这里有很多个p，每个p中又有很多的span，p span:first返回值是第一个p的第一个span，而p span:first-child
+返回的是每个p中的第一个span。
+表单过滤器
+:text :button :radio :submit :checkbox :select :password :file :image :input注意这里的input可以匹配所有的表单元素，包括select textarea
+:enabled  :disabled
+:selected :checked
+:animate过滤动画
+:header过滤h1-6
+
+33，jQuery对象的方法
+要注意的是，jQuery对象指的是通过selector返回，或者别的途径创建的对象，要与dom对象有一个区分开来的意识，对象不一致则方法也就不能随便调用。
+含有就是，这里介绍的是对象的方法，对于jQuery的全局方法来说访问方式是$.trim()
+
+通过位置和父子兄弟关系来遍历dom
+.eq() .gt() .lt()这三个家伙在filter时出现过，正如看到的那样，它们既可以当成filter同时jquery还提供了同名函数，可以接受负值，-1表示最后一个，但是经过我验证当以filter使用时不能为负值
+.filter(selector:filter)
+该函数提供了二级筛选的功能，从结果集再次筛选
+.not(selector:filter)
+.has(selector:filter)
+.first()
+.last()
+上面的函数功能与同名的filter功能无异
+.slice(start,end)
+可正负，end可无，不包括end，无论正负start<end，截取一段结果集
+.children(selector:filter)
+返回结果集每个元素的符合条件的直接孩子，无selector:filter表示返回所有元素的直接孩子，注意是直接孩子
+.closest(selector:filter)
+筛选符合条件的最近的上级元素，注意这里符合条件是首要条件，也就是说筛选出来的元素不一定是直接父元素，这不同于.next()的用法，.next以下一个为首要条件，选择器用来重复确认。
+.find(selector:filter)
+可以认为find是children的增强版，因为find没有直接子元素的限制，而这分别对应filter的find=>祖先 后代，children=>father>children
+.next(selector:filter)
+返回结果集中每个元素的下一个兄弟，对于一个元素next只会返回一个一个兄弟可对结果集应用next函数时往往会得到一个结果集，selector:filter可选
+.nextAll(selector:filter)
+返回当前元素的后续符合筛选条件的所有兄弟，通常情况我觉得也没有必要对结果集应用该函数吧，不包括当前元素
+.nextUntil(selector:filter)
+返回从当前元素到符合条件的兄弟元素之间的所有兄弟元素，不包含当前元素和until元素
+.prev() .prevAll() .prevUntil()也是用来找兄弟元素的
+.siblings(selector:fliter)
+筛选符合条件的所有兄弟元素，不管前后
+.parent(selector:filter)
+返回直接父元素
+.parents(selector:filter)
+返回当前元素到根元素线上的所有元素
+.parentsUntil(selector:filter)
+返回当前元素到根元素线上的直到被打断的元素
+
+添加jquery对象
+.add(html  or selector);
+将构造的jquery对象添加到当前的jquery对象，注意还没有添加到dom中，只有添加到dom中才可以在浏览器中看见，不过我目前没有学习将add创建的对象可以添加到dom的方法，所以不知道它有什么用处。
+
+.val() 这个一般用于表单元素值的提取，对于一般元素用text返回文本内容
+.text()
+不仅仅能够提取单个元素的文本内容，而且还可以提取整个结果集的文本内容
+.contents()
+将结果集中元素的文本内容和子元素均已元素返回，文本被封装在了<textNode>标记中
+.andSelf()
+将上一步中的结果集一并返回，例：$("#bar").children("span").andSelf();
+.end()
+将上一步的结果集返回，与andSelf的区别在于，end不含本次筛选的结果
+.is(selector:filter)
+结果集中只要有一个元素满足条件selector:filter，该函数就返回true，注意大多数函数返回的是jquery对象。
+
+创建元素
+$("<p>");尖括号必须有不然成了选择器了，也就是说里面的东西必须是html字串，所以添加属性也理所应当了，$("<span class='foo'>xiao</span>");，jquery还提供了json形式新建元素，$("<span>",{"class":"foo","id":"9","text":"xiao"});，要注意的就是这里的text它是专门用来给元素文本节点指定内容的
+
+修改，添加元素到dom中
+在进行学习之前有个观念要明白，1jquery对象，2dom对象，3html文件，1是一般使用jquery函数操纵的对象，可以将其看成是位于dom层之上的，2用于显示的一层，任何浏览器中看都的东西都是由一个dom节点向对应的，也就是说我们常常会在1层对元素进行加工修改后将其放入2dom层进行显示，至于3层可以当成是1和2层行为以及结构的框架，也就是用于元素操纵和dom显示的蓝图，1 2层的该表不会影响到3层，这样搭建的网页就好像用一张简单的蓝图就可以勾勒出美丽的风景画一般。
+
+前后添加
+.append()
+.prepend()
+.after()
+.before()
+上面函数可以接受的参数跟创建dom元素的$()函数一样，常用的做法是var mynew= $("<p>");    $(".foo").append(mynew); 或者是使用另一组函数
+.appendTo()
+.prependTo()
+.insertAfter()
+.insertBefore()
+$("<p>").appendTo('.foo');
+层级添加（包住）
+.wrap()
+参数可以是一个或多个<tag>，或者是一个回调函数
+$("span").wrap("<strong><em></em></strong>");
+$("span").wrap(function(){return $(this).is(".foo")?"<strong>":"<em>";});
+这里当wrap的参数是回调函数时，似乎wrap函数对结果集进行了遍历
+.unwrap();
+无参数，将对像的直接父元素删除
+.wrapAll()
+上面的wrap将结果集中的每个元素用标签包住，而这个函数将结果集所有元素用一次标签就包住，并且将结果集中的元素移动聚集到一起，你将看到它们在页面上会移动，页面的布局被改变了。
+.wrapInner()
+这个函数同wrap的区别就是，它只是包住结果集元素的内部，这在有时候很有用，比如你想用strong包住p，结果呢，就是没有结果，因为strong包住p是不合法的嵌套，所以页面无变化，这是wrapInner就派上用场了。
+
+移除
+.remove(selector:fitler)
+.detach(selector:filter)
+两个函数的区别是，后者不会将附加在dom节点的数据删除，这样打算移动dom节点时就可以重获数据。
+
+获取修改属性
+.attr("id")读
+.attr("id","2")写   或者.attr(json)
+.removeAttr("arrName");
+.css("width")
+.css("width","20px");
+.css(json)注意设置长度时有单位
+.addClass("class1  class2");
+.removeClass("class1 class2");
+.toggleClass("class1 class2");
+.hasClass("classname");注意返回的是bool跟is函数相似
+
+长度
+.height() .height(value)
+.width() .width(value)注意了这两个函数都是数值，无单位
+.innerHeight()
+.outerWidth()
+关于1height 2innerHeight  3outerHeight
+1对应css中的height，2=height+2*padding  3=innerHeight+2*border 这样的话计算外边距的函数就没有了，今天我知道了outerWidth(false)不计算marign但是outerWidth(true)就会计算了。
+
+位置
+.offset()
+获取对象相对于窗口左上角  {top=,left=}
+.position()
+获取相对于父元素 {top=,left=}
+.scrollTop()
+获取，设置对象的滚动
+.scrollLeft()
+获取，设置对象的滚动
+这两个函数虽然挺诱人的，可是我发现我除了document外别的都获取设置失败。
+
+获取修改元素内容
+.text()
+.text("new")
+.html()
+.html("<span>new</span>")
+.val()  .val(newvalue)专用于表单value属性值
+.data()
+.data(name,value)  or .data(json)数据关联到jquery对象
+.removeData(name)
+
+处理结果集
+遍历方法.map(funciont(index,element){}) .each(function(index,element){})
+map和each的不同之处，map返回的不一定是jquery对象，所以不支持链式调用，其返回值受回调函数影响。
+关于参数，那两个参数也可以不用，好像element传入的一个jquery对象，有自己独特的属性值，总之常见的情况是在回调中用this访问当前元素
+
+动画
+下面只是简单的函数，但是回调函数和支持链式调用可以将简单的动画连贯起来
+.show(time,callback)
+.hide(time,callback)
+回调函数可选，time可以使用预定义slow600 fast200字代替，实质是该表元素css的display属性为none，至于消失的过程应该改变了元素颜色和长度值（以左上角为基点）。我想还是使用原生的js实现这个比较好吧，似乎jquery内部干了不少事情。
+.fadeIn(time,callback)
+.fadeOut(time,callback)
+.fadeTo(time,toumingdu,callback)将元素淡化或深化到一定透明度
+.fadeToggle(time,callback)
+改变颜色，最终将设置display，应该不会改变长度
+.slideUp(time,callback)
+.slideDown(time,callback)
+.slideToggle(time,callback)
+通过设置高度，最终设置display
+下面有请重量级嘉宾登场，之前的所有函数内部都调用了它
+.animate(json,time,easing,callback)
+json 设置的样式  easing渐变方式jquery内部支持linear和swing，插件支持更多方式
+例子：$(".box").animate({'width':'200px','height':'200px'},200,'swing',function(){});
+.animate(json1,json2)
+json1 设置样式  json 设置动画参数
+例子：$(".mybox").animate(
+{"width":"800px","height":"500px"},{"duration":"5000","easing":"swing","step":function(){console.log("step")},"specialEasing":{"width":"linear"}}
+);
+.delay(time)
+可以暂替脚本的执行
+一个用于控制动画的例子：$(".mybox").slideUp('slow').delay(2000).slideDown('slow');
+.stop(killqueue,toend)
+停止一个动画，参数均是bool值，清空动画队列，跳到动画终点。
+
+事件
+.error()
+常用与为图片加载失败后寻找替换方案
+.scroll()
+$(window).scroll(myfunc);关联滚动事件处理函数
+$(window).scroll();程序触发滚动事件，至于如何将scroll事件添加到非window对象我不知道
+.ready()
+重夺让出的$，使用jQuery.noConflict()让$后可以通过
+$(document).ready(function($){});夺回来，在这里面使用$代码正常。
+.unload(myfunc);
+事件绑定
+.bind("eventname",myfunc);
+同一事件可以绑定不同处理函数，不过这样事件发生时谁来处理呢？
+.bind("evname1  evname2",myfunc);
+不同事件绑定同一处理函数
+.bind("evename",json,function(event){});
+绑定事件时，为处理函数提供json数据，在处理函数中获取数据方式event.data.name
+.bind(json{
+"evenname1":function(){},
+"evenname2":funcion(){}
+})
+同时为不同事件绑定不同处理函数
+卸载事件处理
+.unbind();卸掉所有事件处理
+.unbind(evenname);卸掉evenname类型的事件处理
+.unbind(evenname,myfunc);更具体的卸载
+.live()
+.die()
+这两个与bind用法相似，唯一的不同的是，它们提供为不存在的元素绑定元素的机制，这很重要，有时候你会发现为什么自己明明绑定了事件处理可却没有反应，这时你应该检查一下你用了bind而非live
+.one()
+与bind完全相同，区别在于触发一次自动卸载
+.toggle()
+多面手
+第一面
+专门给click事件提供的绑定机制，可以为其指定数个事件处理函数，轮流执行，相当于状态切换的意思
+例子:.toggle(function(){},function(){},function{});
+第二面
+.toggle(time)  指定的时间实现动画隐藏，显示
+第三面
+.toggle(true | false);显示 隐藏
+.trigger(evenname,data)
+data传入处理函数的数据,可选，数组的形式[a,as,d,d]，与bind传入的机制不同，不是绑定在event.data上而是作为事件处理函数的第二个参数传入，不能阻止浏览器的默认处理，除非返回false
+.triggerHandler(evename,data)
+阻止浏览器的默认处理
+
+一个遗留者：
+.load()
+该函数有$.get $.post函数的功能，但注意他不是全局函数，而是可以应用于任一个jquery对象的方法，而且它内置的回调函数可以将服务器返回的数据填充当前对象
+
+34，jquery的事件对象event
+属性
+type
+target
+currentTarget  事件处理流中当前处理事件的对象=this
+relatedTarget  鼠标移入移出关联对象
+data  bind时的附加数据
+result  上一个事件的return值
+timeStamp  发生事件时间戳
+pageX
+pageY
+方法
+preventDefault()
+isDefaultPrevented()
+stopPropagation()
+isPropagationStopped()
+stopImmediatePropagation()
+isImmediatePropagationStopped()
+有immediate的函数特别的地方，不仅仅可以打断事件流，如果一个事件有多个事件处理函数，只要有一个函数调用了该方法别的处理函数不会执行
+
+35，资源
+visualjquery.com是jquery实战作者之一维护的jquery介绍网站
+plugins.jquery.com是jquery的官方插件库
+
+36，jquery诞生的意义：使得开发人员以简单的方式创建高交互性web应用，也就是说jquery注重两点，交互性和简单使用，使得开发人员不必以
+高级javascript角度而是以css和简单javascript的角度开发出高级功能
+
+37，理想的html页面设计原则是，将页面结构，页面表现样式以及页面行为分开区域来写，通过html过时的标记添加样式或者是在页面中通过属性
+添加事件处理（行为）都是过时的编程实践
+
+38，jQuery怎么用
+	大部分情况下，jQuery的使用过程是，选择页面元素对其进行处理：jQuery().method().method1();
+		这里选择页面元素是通过css和jquery自定义选择器实现的，返回的结果是包含了Dom元素数组的特殊jquery对象，我们称其为wrapper
+		，wrapper含有许多用来处理dom元素的方法，并且这些方法几乎全部返回处理过的原wrapper，因此jquery可以为复杂的逻辑实现链式
+		调用，并且wrapper对象提供数组下标访问结果集中dom元素的方法，这样实现了wrapper对象到dom元素的转变
+		
+	此外jquer还有一些工具函数，例如jQuery.trim();
+	
+	添加行为，要实现良好的编程实践，将行为与页面结构分开则需要有一个时机将行为关联到页面相应的元素，传统的window对象上的onload
+	事件是在页面完全加载之后触发的，完全加载指的是等页面上的视频图片资源加载完成后触发onload事件，这就有一个问题，如果资源太大，
+	加载耗时，在资源没有加载完成之前因为行为没有添加，用户就不能与页面发生交互，想想如果是我碰到一个点了半天都没有反应的页面，
+	我一定会选择关闭这个页面的，另一个问题是使用传统的onload只能触发一次，尤其是当你使用的第三方库中使用了onload时，只能触发一个
+	onload，出现的错误会让你抓狂，然而使用jquery可以解决这两个问题，$(document).ready(function(){});jQuery(funcition(){});
+	不仅仅可以在页面加载（除了图片视频等资源）时开始触发添加行为，而且每次的ready都不会发生覆盖，会按照顺序依次进行触发
+	
+	创建dom，$("<p>hello ! wrold !</p>");
+	
+	$(selector,context)context可以是dom元素集，wrapper集或者仅仅是一个选择器字符串，默认为整个dom树
+	
+
+
+
+

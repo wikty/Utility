@@ -1,0 +1,3132 @@
+1. python启动时自动导入的模块
+	1. __builtin__
+		1. apply(functionname, [args, [kwargs]]) Deprecated since release 2.3
+			将放在tuple和dict中的参数打散后传递给函数，并调用该函数
+			example：
+				将子类构造收到的参数传递到基类
+				class Rectangle:
+					def __init__(self, width=30, height=40):
+						print("width", width)
+						print("height", height)
+				clase RoundRectangle(Rectangle):
+					def __init__(self, **kwargs):
+						print("radius", kwargs['radius'])
+						apply(Rectangle.__init__, (self,), kw)
+			现在的方法：
+				functionname (*args, **kwargs)
+				args是收集所有普通参数组成的tuple
+				kwargs是收集所有关键字参数组成的dict
+		2. __import__()
+	2. exceptions
+2. 操作系统接口模块
+	1. os
+		文件和进程的处理
+	2. time/datetime
+		时间和日期的处理
+	3. 网络和线程模块
+3. 类型支持模块：用于支持内建数据类型的处理
+	1. string
+	2. math
+	3. cmath
+4. 正则表达式模块
+5. 语言支持模块：对python语言内部核心的访问
+	1. sys
+		访问解释器的相关参数
+	2. gc
+		提供了垃圾回收机制
+	3. operator
+		提供了语言操作符等效的函数
+
+
+Python Standara Library Examples(source code: www.doughellmann.com/books/byexample)
+1. Text
+	1. string module
+		After python v1.4 most functions about process string add to like-string
+		object, so string module has few useful constants and classes for working
+		with string and unicode objects.
+		string.capwords(string)
+			doc: capitalizes all words in a string
+			example:
+				import string
+				print(string.capwords('xiao wen bin')) => Xiao Wen Bin
+			instead method: str.split,str.capitalize(),list.join()
+		string.maketrans(charsset1, charsset2)
+			doc: creates translation tables that can be used with translate() method to
+				change one set characters to another more efficiently than repeated calls
+				to replace() method
+			example: 
+				cs2cs = string.maketrans('abc', '123')
+				'xiao wen bin'.translate(cs2cs) => 'xi1o wen 2in'
+		string.Template(string)
+			doc: intend as an alternative to the built-in interpolation syntax, 
+				variables are indentified by prefixing the name with $ or ${varname}
+			example:
+			 	built-in interpolation syntax:
+			 	s = "%(var)s %% %(var)siable" % {"var":"value"}
+			 	string.Template syntax:
+			 	t = string.Template("$var $$ ${var}iable")
+			 	t.substitute({"var":"value"})
+			addition:
+				1. t.safe_substitute(kvs)
+					it is possible to avoid exceptions if not all values the template
+					needs are provided in argument kvs
+					example:
+						t = string.Template("$var $missing")
+						t.subsititute({"var":"value"}) => will be raised KeyError exception
+						t.safe_subsititute({"var":"value"}) => get "value $missing"
+				2. Template Advanced
+					Change the default syntax for string.Template(use another syntax to
+					indentify variable name)
+					using a child class, inherit from string.Template and change class
+					attribute: delimiter, idpatern, pattern
+					t.pattern.pattern can see default variable name match regexp syntax
+					example1:
+						import string
+						class MyTemplate(string.Template):
+							delimiter = '%' # using % indentify variable name delimiter
+							idpattern = '[a-z]+_[a-z]+' # variable name should match reg
+						t = MyTemplate('%var_1 %% %{var_1}iable')
+						t.safe_substitute({'var_1':'value'}) => return 'value % valueiable'
+					example2:
+						import string
+						class MyTemplate(string.Template):
+							delimiter = '{{'
+							# you can see variable name rule in t.pattern.pattern
+							# modify variable name rule by class attribute pattern
+							pattern = r'''
+							\{\{(?:
+							(?P<escaped>\{\{) |
+							(?P<named>[_a-z][_a-z0-9]*)\}\} |
+							(?P<braced>[_a-z][_a-z0-9]*)\}\} |
+							(?P<invalid>)
+							)
+							'''
+							if you want to know more about this, please check in manual
+	2. textwrap module
+		formating text by adjusting where line breaks occur in a paragraph,
+		it offers programmatic functionality similar to the paragraph wrapping or 
+		filling features found in many text editors and word processors
+		textwrap.fill()
+			doc: function takes text as input and produces formatted text as output
+			example:
+				# paragraph width
+				import textwrap
+				print(textwrap.fill(sample_text, width=50)) => print
+				left justified, first line retains its indent, and restrict width
+			example1:
+				# control lines indent
+				import textwrap
+				dedented_text = textwrap.dedent(sample_text).strip()
+				print(textwrap.fill(dedented_text,
+									initial_indent='', # indent char can be non-wihtespace
+									subsequent_indent=' ' * 4,
+									width=50
+				)) => first line no indent, sublines indent ' '*4
+		textwrap.dedent()
+			doc: remove existing indentation
+			example:
+				import textwrap
+				print(textwrap.dedent(sample_text)) => print text that remove indent
+			example1:
+				import textwrap
+				dedented_text = textwrap.dedent(sample_text).strip()
+				for width in [45, 70]:
+					print('%d Columns:\n' % width)
+					print(textwrap.fill(dedented_text, width=width))
+	3. re module
+		re.search(pattern, text)
+			doc: search substring
+			example:
+				import re
+				match = re.search(pattern, text) # return None or Match object
+				# Match object holds information about the nature of the match,
+				# including the original input string, the regual expression 
+				# used, and the matched substring location information
+				print('Found %s in %s from %d to %d' % match.re.pattern, match.string,
+				match.start(), match.end())
+		re.match(pattern, text)
+			doc: if pattern at the start of the input text, will return Match object
+				or return None. you can instead of using '^' in the pattern
+		re.compile(pattern)
+			doc: default re using regular expressions as text string, if program uses
+				regular expressions frequently, compile to RegexObject object will be
+				more efficient
+			example:
+				import re
+				pattern = 'this'
+				text = 'Does this text will be matched?'
+				p = re.compile(pattern)
+				# p.pattern will get regular expression
+				p.search(text) => return Match object
+				# p.search(text, start, end) define search start and end index position
+			notice:
+				1. actully default re module maintain a cahce of compiled expressions, how-
+				ever, the size of the cache is limited, and using compiled expressions
+				directly avoids the cache lookup overhead
+				2. you should precompile all regular expressions when the module is loaded,
+				the compilation work is shifted to application start time, instead of to 
+				a point when the program may be responding to a user action
+		re.findall(pattern, text)
+			doc: find all substrings of the input that match the pattern
+			example: 
+				import re
+				text = 'abbbaba'
+				pattern = 'ab'
+				for match in re.findall(pattern, text):
+					print('Match: %s' % match)
+		re.finditer(pattern, text)
+			doc: returns an interator that produces Match instances instead of the
+				strings returned by re.findall(pattern, text)
+		turn off Greed match
+			append with '?': 
+				'ab*' will match 'abbb', but 'ab*?' will match 'a'
+				'ab+?' 'ab??' 'ab{3}?' 'ab{2,3}?' is working good
+		re module escape codes:
+			\d => a digit
+			\D => a nondigit
+			\s => whitespace(tab, space, newline, etc.)
+			\S => nonwhitespace
+			\w => alphanumeric
+			\W => nonalphanumeric
+			notice: because escape char is '\', itself be escaped in normal Python
+				strings, so you better prefixing the pattern with r
+		to match the characters that are part of the regular expression syntax, using
+		'\' to escape characters in the regular pattern
+			example:
+				import re
+				re.search(r'\\.\+', r'\d+ \D+ this is text content')
+		anchoring codes:
+			^ => start of string, or line
+			$ => end of string, or line
+			\A => start of string
+			\Z => end of string
+			\b => word border
+			\B => non-word-border
+		group match:
+			'ab(ab)' the (ab) is a group
+			Match.groups() 
+			returns a sequence of strings in the order of the groups within the expression 
+			that matches the string
+			Match.group(number)
+			return one matched group, 0 represents the string matched by the entire
+			expression, and subgroups are bumbered starting with 1 in the order their
+			left parenthesis appears in the expression
+		Python named groups syntax:
+			using names to refer to groups makes it easier to modify the pattern overtime,
+			without having to also modify the code using the match results
+			(?P<name>pattern)
+			example:
+				import re
+				text = 'this is some text'
+				regex = re.compile(r'^(?P<first_word>\w+)')
+				match = regex.search(text)
+				match.groups() => return a list holding every groups
+				match.groupdict() => return a dict holding every groups
+				# like this {'first_word':'this'}
+		pipe char: a | b, match a or b
+		Noncapturing group:
+			noncapturing groups can be used to describe repetition patterns or
+			alternatives, without isolating the matching portion of the string
+			in the value returned
+			(?:pattern)
+		search options:
+			re.compile(pattern, re.IGNORECASE) # turn on ignorecase
+			re.compile(pattern, re.MULTILINE) # turn on multiline
+			re.compile(pattern, re.DOTALL) # turn on . can match newline char
+			re.compile(pattern, re.UNICODE) # turn on unicode match(chinease is matched)
+			# Python 3 uses Unicode for all strings by default, so the flag is no-necessary
+		verbose mode:
+			allow comments and extra whitespace to be embeded in the pattern, so this is
+			a better way than named pattern
+			example:
+				match e-mail address
+				oridnary version:
+				address = re.compile(r'[\w\d.+-]+@([\w\d.]+\.)+(com|org|edu)', re.UNICODE)
+				verbose version:
+				import re
+				# a pattern match e-mail address
+				address = re.compile(
+				'''
+				[\w\d.+-]+		# username
+				@
+				([\w\d.]+\.)+	# domain name prefix
+				(com|org|edu)	# Todo: support more top-level domains
+				''',
+				re.UNICODE | re.VERBOSE)
+				extend verbose version:
+				# match person name and e-mail address
+				address = re.compile(
+				'''
+
+				# A name is made up of letters, and may include "."
+				# for title abbreviations and middle initials.
+				((?P<name>
+				([\w.,]+\s+)*[\w.,]+)
+				\s*
+				# Email addresses are wrapped in angle
+				# brackets: < > but only if a name is
+				# found, so keep the start barcket in this
+				# group.
+				<
+				)? # the entire name is optional
+
+				# The email address itself: username@domain.tld
+				(?P<email>
+				[\w\d.+-]+		#username
+				@
+				([\w\d.]+\.)+	# domain name prefix
+				(com|org|edu)	# limit the allowed top-level domains
+				)
+
+				>? # optional closing angle bracket
+				''',
+				re.UNICODE | re.VERBOSE)
+		embedding flags in patterns:
+			if flags cannot be added when compiling an expression, you can embed flags
+			to the beginning of the expression
+			example:
+				pattern = r'(?i)\bT\w+' => (?i) turn on case-insensitive
+				re.IGNORCASE <=> (?i)
+				re.MULTILINE <=> (?m)
+				re.DOTALL	 <=> (?s)
+				re.UNICODE   <=> (?u)
+				re.VERBOSE   <=> (?x)
+			notice:
+				embedded flags can be combined, like: (?imu)
+		condition match:
+			it is useful to match a part of a pattern only if some other part will
+			also match. For example, optional angle bracket < >, if < is matched,
+			> must match
+			syntax: 
+				positive look-ahead assertion: (?=pattern)
+				negative look-ahead assertion: (?!pattern)
+				negative look-behind assertion: (?<!pattern)
+				positive look-behind assertion: (?<=pattern)
+			example:
+				# match person name and e-mail address and make sure bracket pair
+				address = re.compile(
+				'''
+
+				# A name is made up of letters, and may include "."
+				# for title abbreviations and middle initials.
+				((?P<name>
+					([\w.,]+\s+)*[\w.,]+
+				 )
+				\s+
+				) # name is require
+
+				# look ahead
+				# Email addresses are wrapped in angle
+				# brackets: < > but only if they are both present or neither is.
+				(?= (<.*>$) # remainder wrapped in angle brackets
+					|
+					([^<].*[^>]$) # remainder *not* wrapped in angle brackets
+				)
+
+				<? # optional opening angle bracket
+
+				# The email address itself: username@domain.tld
+				(?P<email>
+				[\w\d.+-]+		#username
+				@
+				([\w\d.]+\.)+	# domain name prefix
+				(com|org|edu)	# limit the allowed top-level domains
+				)
+
+				>? # optional closing angle bracket
+				''',
+				re.UNICODE | re.VERBOSE)
+			example1:
+				# email recogniton pattern ignore noreply mailing addresses
+				# automate systems commonly use that
+				import re
+				address = re.compile(
+				'''
+				^
+				# E-mail addresses: username@doamin.tld
+
+				# Ignore noreply addresses
+				(?!noreply@.*$)
+
+				[\w\d.+-]+		# username
+				@
+				([\w\d.]+\.)+	# domain name prefix
+				(com|edu|org)	# limit the allowed top-level domains
+
+				$
+				''',
+				re.UNICODE | re.VERBOSE
+				)
+			example2:
+				# email recogniton pattern ignore noreply mailing addresses
+				# automate systems commonly use that
+				import re
+				address = re.compile(
+				'''
+				^
+				# E-mail addresses: username@doamin.tld
+
+				[\w\d.+-]+		# username
+
+				# look-behind
+				# Ignore noreply addresses
+				(?<!noreply)
+				@
+				([\w\d.]+\.)+	# domain name prefix
+				(com|edu|org)	# limit the allowed top-level domains
+
+				$
+				''',
+				re.UNICODE | re.VERBOSE
+				)
+				notice:
+				look behind must use a fixed-length pattern, repetitions are allowed, as
+				long as there is a fixed number(no wildcards or ranges)
+			example3:
+				# positive look-behind
+				import re
+				twitter = re.compile(
+				'''
+				# A twitter handle: @username
+				(?>=@)
+				([\w\d_]+)	# username
+				''',
+				re.UNICODE | re.VERBOSE)
+		self-referencing expressions:
+			matched values can be used in later parts of an expression
+			syntax: 
+				oridnary group reference: \number
+				named group reference: (?P=name)
+			example:
+				# reference groups
+				import re
+				address = re.compile(
+				r'''
+				# The regular name
+				(\w+)			# first name
+				\s+
+				(([\w.]+)\s+)?	# optional middle name
+				(\w+)			# last name
+				\s+
+
+				<
+				# The addresses: first_name.last_name@doamin.tld
+				(?P<email>
+				\1 				# first name
+				\.
+				\4 				# last name
+				@
+				([\w\d.]+\.)+	# domain name prefix
+				(com|edu|org)
+				)
+				>
+				''', re.UNICODE | re.VERBOSE)
+				notice:
+					Although the syntax is simple, creatng back-references by numerical id
+					has a couple of disadvantages. From a pratical standpoint, as the
+					expression changes, the groups must be counted again and every 
+					reference may need to be updated. The other disadvantages is that only
+					99 references can be made this way, because if the id number is three 
+					digits long, it will be interpreted as an octal character value instead
+					of a group reference. On the other hand, if an expression has more than
+					99 groups more serious maintenance challenges will arise than not being
+					able to refer to some groups in the expression
+			example:
+				# reference named groups
+				import re
+				address = re.compile(
+				r'''
+				# The regular name
+				(?P<first_name>\w+)			# first name
+				\s+
+				(([\w.]+)\s+)?	# optional middle name
+				(?P<last_name>\w+)			# last name
+				\s+
+
+				<
+				# The addresses: first_name.last_name@doamin.tld
+				(?P<email>
+				(?P=first_name) 			# first name
+				\.
+				(?P=last_name) 				# last name
+				@
+				([\w\d.]+\.)+	# domain name prefix
+				(com|edu|org)
+				)
+				>
+				''', re.UNICODE | re.VERBOSE)
+		Chooses a different pattern based on whether a previous group matched:
+			syntax: (?(id)yes-expression|no-expression)
+				id is group reference number or name, if the group matched, the pattern
+				is yes-expression or is no-expression
+			example:
+				import re
+				address = re.compile(
+				'''
+				^
+
+				# A name is made up of letters, and may include "."
+				# for title abbreviations and middle initials
+				(?P<name>
+					([\w.]+\s)*[\w.]+
+				)?
+				\s*
+
+				# Email addresses are wrapped in angle brackets, but
+				# only if a name is found.
+				(?(name)
+					# remainder wrapped in angle brackets because
+					# thers is name
+					(?P<brackets>(?=(<.*>$)))
+					|
+					# remainder does not include angle brackets without name
+					(?=[^<].*[^>]$)
+				)
+				# only look for a bracket if the look-ahead assertion
+				# found both of them
+				(?(brackets)<|\s*)
+
+				# The address itself: username@domain.tld
+				(?P<email>
+					[\w\d.+-]+		# username
+					@
+					([\w\d.]+\.)+	# domain name prefix
+					(com|edu|org)	# limit the allowed top-level domains
+				)
+
+				# only look for a bracket if the look-ahead assertion
+				# found both of them
+				(?(brackets)>|\s*)
+				$
+				''', re.UNICODE | re.VERBOSE)
+		replace matched content:
+			example:
+				# replace using number group
+				import re
+				bold = re.compile(r'\*{2}(.*?)\*{2}')
+				text = 'Make this **bold**. This **too**.'
+				print('Text: %s' % text)
+				print('Bold: %s' % bold.sub(r'<b>\1</b>', text))
+			notice:
+				you can reference matched group by \number
+			example1:
+				# replace using name group
+				import re
+				bold = re.compile(r'\*{2}(?P<bold_text>.*?)\*{2}')
+				text = 'this is **bold**.'
+				print(bold.sub(r'<b>\g<bold_text></b>', text))
+			notice:
+				you can reference matched group by \g<groupname>
+			example2:
+				# limit the number of substitutions performed
+				import re
+				bold = re.compile(r'\*{2}(.*?)\*{2}')
+				text = 'this is **bold**, **boldtoo**.'
+				print(bold.sub(r'<b>\1</b>', text, count=1)) => return 
+				'this is <b>bold</b>, **boldtoo**.'
+			example3:
+				# regex.subn() works just like regex.sub(), except that it returns both 
+				# the modified string and the count of substitutions made. return a tuple
+				# like this: ('modified string', number)
+				import re
+				bold = re.compile(r'\*{2}(.*?)\*{2}')
+				text = 'this is **bold**.'
+				bold.subn(r'<b>\1</b>', text) => return ('this is <b>bold</b>.', 1)
+		Spiltting with patterns:
+			str.split() is one of the most frequently used methods for breaking apart
+			strings to parse them. It only supports using literal values as separators,
+			though, and sometimes a regular expression is necessary.
+			example:
+				# split paragraph
+				text = '''Paragraph one
+				on two lines.
+
+				Paragraph two.
+
+
+				Paragraph three.'''
+				for num, para in enumerate(re.findall(r'(.+?)(\n{2,}|$)',
+													  text,
+													  flags=re.DOTALL)
+											):
+					print(num, repr(para))
+			example1:
+				for num, para in enumerate(re.split(r'(\n{2,})', text)):
+					print num, repr(para)
+	4. difflib module (compare sequences, especially lines of text)
+		difflib.Differ class like UNIX commandline diff, output includes the original input
+		values from both lists, including common values, and markup data to inicate
+		what changes were made
+			doc: about the output markup
+				Lines prefixed with - indicate that they were in the first sequence,
+				but not the second
+				Lines prefixed with + were in the second sequence, but not the first
+				If a line has an incremental difference between versions, an extra
+				line prefixed with ? is used to highlight the change within the new
+				version
+				If a line has not changed, it is printed with an extra blank space on
+				the left column so that it is aligned with the other output, which
+				may have differences
+			advice:
+				because Differ compare text by line, so first you should str.splitlines(),
+				or Differ compare text in large strings
+			notice:
+				default Differ not ignore any lines or characters
+			example:
+				# Differ::compare(liststr1, liststr2)
+				import difflib
+				d = difflib.Differ()
+				diff_content = d.compare(['first version'],['second version'])
+				print('\n'.join(diff_content))
+		difflib.ndiff(liststr1, liststr2)
+			notice:
+				default ndiff() ignore space and tab characters
+			example:
+				# difflib.ndiff(liststr1, liststr2) is equal to Diff::compare
+				import difflib
+				diff_content = difflib.ndiff(['first version'],['second version'])
+				print('\n',join(diff_content))
+		difflib.unified_diff(liststr1, liststr2, lineterm='')
+			example:
+				# output look like version control tools'
+				import difflib
+				diff_content = difflib.unified_diff(['first version'], ['second version'])
+				print('\n'.join(diff_content))
+				=> will print
+				---
+				+++
+				@@ -1 +1 @@
+				-first version
+				+second version
+				notice:
+					the argument lineterm is used to tell unified_diff() to skip appending
+					newlines to the control lines it returns because the input lines do not
+					include them
+		difflib.context_diff(liststr1, liststr2)
+			doc: is similar to difflib.unified_diff()
+		Ignore Junk Data
+			while compare different between versions, some lines should be ignored and
+			some characters should be ignored
+			difflib.SequenceMatcher
+				doc: Compares two sequences of any type, as long as the values are
+				hashable.
+				It uses an algorithm to *identify the longest contiguous matching* 
+				blocks from the sequences, *eliminating junk data* that do not contribute
+				to the real data
+				example:
+					import difflib
+					s1 = [1, 2, 3, 5, 6, 4]
+					s2 = [2, 3, 4, 6, 5, 1]
+					matcher = difflib.SequenceMatcher(None, s1, s2)
+					for tag, i1, i2, j1, j2 in reversed(matcher.get_opcodes()):
+						# tag: "delete", "replace", "insert", "equal"
+
+2. Data Structures
+	1. collections module (includes container data types)
+		collections.Counter
+			A Counter is a container that tracks how many times equivalent value are added
+			. In other language called bag or multi-set
+			doc: 
+				four forms of initialization:
+					import collections
+					# a sequence of items
+					collections.Counter(['a', 'b', 'a', 'a', 'b', 'c'])
+					# a string
+					collections.Counter('abaabc')
+					# a dictionary containing keys and counts
+					collections.Counter(a=3, b=2, c=1)
+					# using keyword arguments mapping string names to counts
+					collections.Counter({'a':3, 'b':2, 'c':1})
+					# same result:
+					# 	Counter({'a':3, 'b':2, 'c':1})
+					# notice: you can no arguments, get a empty Counter
+				add data to Counter:
+					c = collections.Counter({'a':1, 'b':1})
+					c.update('ab') # {'a':2, 'b':2}
+					c.update(['a', 'b']) # {'a':3, 'b':3}
+					c.update({'a':2, 'b':2}) # {'a':5, 'b':5}
+					c.update(a=1, b=2) # {'a':6, 'b':7}
+					# notice: The count values are increased based on the new data,
+					# rather than replaced
+				retrive the count:
+					c = collections.Counter('ababc')
+					c['a'] => is 2
+					c['e'] => does not raise KeyError for unknow items, return 0
+					c['z'] = 0 => count is writable
+					# return an iterator that produces all items know to the Counter
+					# the order of elements is not guaranteed, and items with counts less
+					# than or equal to zero are not included
+					list(c.elements()) => return ['a', 'a', 'b', 'b', 'c']
+					# produce a sequence of the most frequently encountered
+					c.most_common(2) => return [('a', 2), ('b', 2), ('c', 1)]
+				Counter instance support arithmetic:
+					import collections
+					c1 = collections.Counter('abbbcc')
+					c2 = collections.Counter('aabc')
+					c1 + c2 => combine: {'a':3, 'b':4, 'c':3}
+					c1 - c2 => substraction: {'b':2, 'c':1}
+					c1 & c2 => intersection: taking positive minimums {'a':1, 'b':1, 'c':1}
+					c1 | c2 => Union: taking maximums {'a':2, 'b':3, 'c':2}
+					notice: if the result count is 0, the item is discard
+		collections.defaultdict
+			doc: set a default value if the dict have no the key
+			example:
+				import collections
+				def default_factory():
+					return 'default value'
+				d = collections.defaultdict(default_factory, foo='loo')
+				d['foo'] => return 'loo'
+				d['bar'] => return 'default value'
+			notice: the built_in dict's method setdefault() can do this too.
+		collections.deque
+			doc: a double-ended queue, supports adding and removing elements from
+				either end
+			example:
+				import collections
+				d = collections.deque('cd')
+				len(d) => return d length
+				d[0] => return d's first item
+				d[-1] => return d's last item
+				d.remove('c') => remove item by index
+				# add to the right
+				d.extend('efg') => deque(['d', 'e', 'f', 'g'])
+				d.append('h') => deque(['d', 'e', 'f', 'g', 'h'])
+				# add to the left
+				d.extendleft('ab') => deque(['b', 'a', 'c', 'd', 'e', 'f', 'g', 'h'])
+				# notict extendleft convert sequence
+				d.appendleft('0')
+				# remove item from double-end
+				try:
+					print(d.pop())
+				except IndexError:
+					print('No Item!')
+				try:
+					print(d.popleft())
+				except IndexError:
+					print('No Item!')
+			example1:
+				# deque is thread-safe, the contents can even be consumed from both
+				# ends at the same time from separate threads
+				import collections
+				import threading
+				import time
+				 candle = collections.deque(xrange(5))
+				 def burn(direction, nextSource):
+				 	while True:
+				 		try:
+				 			next = nextSource()
+				 		except IndexError:
+				 			break
+				 		else:
+				 			print '%s: %s' % (direction, next)
+				 			time.sleep(0.1)
+				 	print('%s is done' % direction)
+				 	return
+				 left = threading.Thread(target=burn, args=('Left', candle.popleft))
+				 right = threading.Thrad(target=burn, args=('Right', candle.pop))
+				 left.start()
+				 right.start()
+				 left.join()
+				 right.join()
+			example2:
+				# rotate items
+				import collections
+				d = collections.deque(xrange(5))
+				d.rotate(2) => deque([3, 4, 0, 1, 2])
+				d.rotate(-2) => deque([0, 1, 2, 3, 4])
+		collections.namedtuple
+			doc:
+				1. the standard tuple uses numerical indexes to access its members,
+				namedtuple can use both of indexes and names to access its members.
+				2. Each kind of namedtuple is represented by its own class, created by
+				using the namedtuple() factory function. The arguments are the name
+				of the new class and a string containning the names of the elements.
+			example:
+				import collections
+				Person = collections.namedtuple('Person', 'name age gender')
+				bob = Person(name='bob', age=24, gender='female')
+				# access the fields of the namedtuple by dotted notation as well
+				# as using the positional indexes of standard tuple
+				bob.name => return 'bob', equal to bob[0]
+			example1:
+				# Field names are invalid if they are repeated or conflict
+				# with Python keyword
+				import collections
+				try:
+					# using Python keyword, fail
+					Person = collections.namedtuple('Person','name age gender class')
+				except ValueError err:
+					print(err)
+				try:
+					# repeated field name, fail
+					Person = collections.namedtuple('Person', 'name age gender age')
+				except ValueError err:
+					print(err)
+				notice:
+					sometimes you can control the fields name, for example field names
+					come from database, so you should allow namedtuple to rename the
+					repeated or keyword field name, it is so simple:
+					Person = collections.namedtuple('Person', 
+													'gender name age class',
+													rename=True)
+					the new names for renamed fields depend on their index in the tuple,
+					so you will get ('gender', 'name', 'age', '_3')
+		collections.OrderedDict
+			doc: a dictionary subclass that remembers the order in which items are added
+				a regular dict does not track the insertion order, and iterating over it
+				produces the values in order based on how the keys are stored in the hash
+				table.
+				an OrderedDict, the order in which the items are inserted is remembered
+				and used when creating an iterator
+				a regular looks at its contents when testing for equality, an OrderedDict
+				also considers the order the items were added
+			example:
+				import collections
+				d = collections.OrderedDict()
+				d['a'] = 'A'
+				d['b'] = 'B'
+				d['c'] = 'C'
+				# iterate by the insertion order
+				for k, v in d.items():
+					pirnt(k, v)
+	2. array module(sequence data structure,items are same primitive type)
+		array.array(datatype, initialdata)
+			doc: array initialization function
+		      datatype: 
+				'c' => character         'b' => signed integer   'B' => unsigned integer
+				'u' => unicode character 'h' => signed integer   'H' => unsigned integer
+				'i' => signed integer    'I' => unsigned integer 'l' => singned integer
+				'L' => unsigned integer  'f' => floating point   'd' => floating point
+			example:
+				import array
+				a = array.arrray('c', 'this is a string')
+				b = array.array('i', xrange(3))
+				b.extend(xrange(2)) => array('i', [0, 1, 2, 0, 1])
+				b[2:4] => array('i', [2, 0])
+				list(enumerate(b)) => return [(0, 0), (1, 1), (key, value)...]
+			example1:
+				# The contents of an array can be writen to and read from files
+				import array
+				import binascii
+				import tempfile
+				a = array.array('i', xrange(5))
+				output = tempfile.NamedTemporaryFile()
+				# writen to a file
+				a.tofile(output.file) # must pass an *actual* file
+				output.flush()
+				# read from a file
+				with open(output.name, 'rb') as input:
+					raw_data = input.read()
+					print 'Raw Contents:', binascii.hexlify(raw_data)
+					input.seek(0)
+					b = array.array('i')
+					b.readfrom(input, len(a))
+			example2:
+				# swap byte order
+				import array
+				a = array('i', xrange(2))
+				a.byteswap() => a converted to array('i', [0, 16777216])
+				a.itemsize => return item bytes number
+	3. heapq module(implements a min-heap sort algorithm)
+		heapq.heapify(list)
+			doc: convert unordered list to min-heap ordered list
+			example:
+				import heapq
+				data = [4, 2, 1, 6]
+				heapq.heapify(data) => data is [1, 2, 4, 6]
+		heapq.heappush(list, newitem)
+			doc: add new item to a list and make sure the list's items
+				is min-heap order
+			example:
+				import heapq
+				heap = []
+				for n in [9, 6, 7, 12]:
+					heapq.heappush(heap, n)
+				# heap's items are min-heap order => [6, 7, 9, 12]
+		heapq.heappop(list)
+			doc: pop the smallest item
+			example:
+				import heapq
+				data = [2, 1, 4, 3]
+				heapq.heapify(data)
+				smallest = heapq.heappop(data) => return 1
+		heapq.heapreplace(list, item)
+			doc: remove smallest and add the item
+			example:
+				import heapq
+				data = [2, 4, 1, 6]
+				heapq.heapify(data)
+				heapq.heapreplace(data, 3)
+		heapq.nlargest(n, list)
+			doc: return largest n items
+			example:
+				import heapq
+				data = [1, 2, 4, 5]
+				heapq.heapify(data)
+				heapq.nlargest(2, data) => return [5, 4]
+		heapq.nsmallest(n, list)
+			doc: return smallest n items
+	4. bisect module(maintain list sorted order while add new item)
+		bisect.insort(list, item)
+			alias for bisect.insort_right(list, item)
+			doc: insert new item into sorted order list
+			example:
+				import bisect
+				data = [1, 5, 6]
+				bisect.insort(data, 3) => data is [1, 3, 5, 6]
+		bisect.bisect(list, item)
+			alias for bisect.bisect_right(list, item)
+			doc: return the item position which if item is inserted(don't add the item)
+			example:
+				import bisect
+				data = [1, 3, 4]
+				bisect.bisect(data, 2) => return 1
+		bisect.insort_left(list, item)
+			doc: when item duplicated, will insert the same item's left
+		bisect.bisect_left(list, item)
+			doc: when item duplicated, will assume insert to left, return that index
+	5. Queue module(provides a thread-safe FIFO)
+		It can be used to pass messages or other data safely between producer and 
+		consumer threads
+		Queue.Queue()
+			doc: return Queue instance
+		Queue.put(item)
+			doc: add to one item end of the sequence
+			example:
+				import Queue
+				q = Queue.Queue()
+				q.put(4)
+		Queue.get()
+			doc: remove one item from the other end of the sequence
+			example:
+				import Queue
+				q = Queue.Queue()
+				for i in range(3):
+					q.put(i) # put order 0, 1, 2
+				while not q.empty():
+					print(q.get()) # get order 0, 1, 2
+		Queue.empty()
+			doc: check whether queue is empty
+		Queue.LifoQueue()
+			doc: last putin first out(stack data structure)
+			example:
+				import Queue
+				q = Queue.LifoQueue()
+				for i in range(3):
+					q.put(i) # put order 0, 1, 2
+				while not q.empty():
+					print(q.get()) # get order 2, 1, 0
+		Queue.PriorityQueue()
+			doc: retrieve don't base on add order but on characteristics of those items
+			example:
+				import Queue
+				import threading
+
+				class Job(object):
+					def __init__(self, priority, description):
+						self.priority = priority
+						self.description = description
+						print('New Job: %s' % description)
+						return
+					# PriorityQueue base on this method order items(jobs)
+					def __cmp__(self, other):
+						return cmp(self.priority, other.priority)
+
+				def process_job(q):
+					while True:
+						next_job = q.get()
+						print('Processiong job: %s' % next_job.description)
+						# un-lock the PriorityQueue
+						q.task_done()
+
+				workers = [ threading.Thread(target=process_job, args=(q,)),
+							threading.Thread(target=process_job, args=(q,))
+							]
+				q = Queue.PriorityQueue()
+				q.put(Job(3, 'Mid-level job'))
+				q.put(Job(10, 'Low-level job'))
+				q.put(Job(1, 'Import-level job'))
+				for worker in workers:
+					worker.setDaemon(True)
+					worker.start()
+				q.join()
+	6. struct module(convert between strings(numbers) and binary data)
+		convert between binary string of bytes and native Python data types, 
+		such as numbers and strings
+		Fucntion vs Struct Class
+			there is set of module-level fucntions for working with structured values,
+			and there is also the Struct class, you should use Struct class, because
+			Struct instance is compiled(like re objcet) is more efficient
+		Packing and Unpacking
+			specifier made up of characters representing the data type and optional
+			coutn and endianness indicators, like, '@I 2s f'
+			example:
+				import binascii
+				import struct
+
+				values = (1, 'ab', 2.9)
+				s = struct.Struct('I 2s f')
+				packed_data = s.pack(*values)
+				print(s.format) =>'I 2s f'
+				print(s.size) => encoded bytes
+				print(binascii.hexlify(packed_data))
+				packed_data = binascii.unhexlify('010002000616cdcc0040')
+				print(s.unpack(packed_data))
+		Endianness
+			by default, values are encoded using the native C library notion of
+			endianness, you can override this
+			example:
+				import struct
+				import binascii
+				values  = (1, 'ab', 3.9)
+				endiness = [
+					('@', 'native order'),
+					('=', 'native C library standard'),
+					('<', 'little-endian'),
+					('>', 'big-endian'),
+					('!', 'network order'),
+				]
+				for code, name in endianness:
+					s = struct.Struct(code+' I 2s f')
+					packed_data = s.pack(values)
+					print(name, binascii.hexlify(packed_data))
+		Using preallocated buffer
+			pack data is typically reserved for performance-sensitive situations
+			or when passing data into and out of extension modules. there cases
+			can be optimized by avoiding the overhead of allocating a new buffer
+			for each packed, using the preallocated buffer directly
+			example:
+				import ctypes
+				import struct
+				import array
+				import binascii
+				s = struct.Struct('I 2s f')
+				values = (1, 'ab', 4.4)
+				# using ctypes string buffer
+				b = ctypes.create_string_buffer(s.size)
+				print('Before store Buffer: ', binascii.hexlify(b.raw))
+				s.pack_into(b, 0, *values)
+				print('After store Buffer: ', binascii.hexlify(b.raw))
+				print('Unpack: ', s.unpack_from(b, 0))
+
+				# using array as buffer
+				a = array.array('c', '\0'*s.size)
+				print('Array before Store: ', binascii.hexlify(a))
+				s.pack_into(a, 0, *values)
+				print('Array after store: ', binascii.hexlify(a))
+				print('Unpack: ', s.unpack_from(a, 0))
+	7. weakref module(weak reference object)
+		a normal reference increment reference count on the object and prevents it
+		from being garbage collected, but this is not always desirable, a weak reference
+		is handle to an object that does not keep it from being garbage cleaned up
+		weak reference
+			example:
+				import weakref
+				class ExpensiveObject(object):
+					def __del__(self):
+						print('__del__')
+				obj = ExpensiveObject()
+				r = weakref.ref(obj)
+				print(obj) => original object
+				print(r) => weak reference object self
+				print(r()) => access original by reference object
+				del obj
+				# if delete original object, reference object can access origianl object
+				r() => return None
+		reference callback
+			when original is deleted, invoke the callback
+			example:
+				class ExpensiveObject(object):
+					def __del__(self):
+						print('__del__')
+				def mycallback(ref):
+					return 'invoke callback'
+				obj = ExpensiveObject()
+				r = weakref.ref(obj, mycallback)
+				del obj
+		proxy
+			proxy is more convenient to access original and is a weak reference,
+			proxy is like original object accessiable
+			example:
+				class ExpensiveObject(object):
+					def __init__(self, name):
+						self.name = name
+					def __del__(self):
+						print('__del__')
+				obj = ExpensiveObject('xiao')
+				p = weakref.proxy(obj)
+				obj.name => 'xiao'
+				p.name => 'xiao'
+				del obj
+				# if the proxy is accessed after the referent object is removed, a
+				# ReferenceError exception is raised
+				p.name
+		cyclic reference
+			weak references is to allow cyclic references without preventing
+			garbage collection
+			please see book example, Page151
+		caching objects
+			using weak references to the values(keys) it holds, allowing them
+			to be garbage collect when other code is not actually using them
+			weakref.WeakkeyDictionary
+			weakref.WeakValueDictionary
+				please see book example, Page156
+	8. copy module(shallow and deep copy)
+		Shallow copy
+			the shallow copy created by copy() is a new container populated with
+			references to the contents of the original object
+			example:
+				import copy
+				class MyClass(object):
+					def __init__(self, name):
+						self.name = name
+					def __cmp__(self, other):
+						return cmp(self.name, other.name)
+				a = MyClass('a')
+				l = [a]
+				d = copy.copy(l)
+				d == l => return True, because MyClass::__cmp__
+				d is l => return False
+				d[0] is l[0] => retur True
+		Deep copy
+			d = copy.deepcopy(l)	
+			d == l => return True
+			d is l => return False
+			d[0] is l[0] => return False
+		Custom class copy
+			customizing class should have __copy__(), __deepcopy__()
+			example:
+				import copy
+				class MyClass(object):
+					def __init__(self, name):
+						self.name = name
+					def __cmp__(self, other):
+						return cmp(self.name, other.name)
+					# should return a shallow copy object
+					def __copy__(self):
+						return MyClass(self.name)
+					# should retur a deep copy object
+					# will pass in memo dictionary
+					# memo is used to track of the values 
+					# that have been copied alread, to avoid recursive copy
+					def __deepcopy__(self, memo):
+						return MyClass(copy.deepcopy(self.name, memo))
+		Avoid recursive copy
+			when deep copy, may be there is a self-reference, the copy will be recursive
+			to avoid recursive copy, a dictionary is track objects that have already
+			been copied is passed to __deepcopy__method, your duty to examine
+				please see book example, Page162
+	9. pprint module(pretty print data structures)
+		the formatter produces representations of data structures that can be parsed
+		correctly by the interpreter and are also easy for a humman to read
+		simple print to data stream
+			pprint.pprint(local_data)
+		format and return
+			mystr = pprint.pformat(local_data)
+		print customizing class
+			pprint.pprint will invoke class::__repr__ method
+		represent recursive reference
+			pprint.pprint(local_data)
+			=> ['xiao','wen','bin',<Recursion on list with id=3939494>]
+		Limiting nested output
+			# the omit part is like:(..)
+			pprint(data, depth=1)
+		Controlling output width
+			default output width if 80 columns
+			pprint(data, width=50)
+
+3. Algorithms
+	1. functools module(opearate other functions)
+		the functools module provides tools for adapting or extending functions and
+		other callable objects
+		Decorators
+			functools.partial(object_callable, *args, **kwargs)
+			wrap a callable object with default arguments, return the wrapped function
+			example:
+				import functools
+				
+				def myfunc(a, b=2):
+					print(a, b)
+				# modify myfunc's default argument
+				p1 = functools.partial(myfunc, b=8)
+				# provide a default argument for myfunc
+				p2 = functools.partial(myfunc, 'amisa', b=9)
+			the wrapped function does not have __name__ or __doc__ attributes by default,
+			using functools.update_wrapper() copies or adds attributes from the original
+			function to the wrapped function
+			example:
+				import functools
+
+				def myfunc(a, b=2):
+					"this is document for this function"
+					print(a, b)
+
+				p1 = functools.partial(myfunc, b=9)
+				# this holds attributes name will be added to the wrapper
+				print(functools.WRAPPER_ASSIGNMENTS)
+				# this holds attributes name will be updated
+				print(functools.WRAPPER_UPDATES)
+				# add original function's attributes to wrapped function
+				functools.update_wrapper(p1, myfunc)
+			example1:
+				# using decorator syntax
+				import functools
+				def simple_decorator(f):
+					# functools.wrap decorator is used to
+					# add into the original function properties
+					@functools.wrap(f)
+					def decorated(a='default', b=9):
+						# a, b all have default value
+						f(a, b=b)
+					return decorated
+				# using by invoke decorator
+				wrapped_func = simple_decorator(myfunc)
+				# using by decorator syntax
+				@simple_decorator
+				def myfunc(a, b=1):
+					print(a, b)
+			callable objects is not only the regular funciton
+			example:
+				import functools
+				class MyClass(object):
+					def method1(self, a, b=2):
+						'''this is method1's document'''
+						print(a, b)
+					def method2(self, c, d=5):
+						'''this is method2's document'''
+						print(c, d)
+					wrapped_method2 = functools.partial(method2, 'xiao', d=9)
+					functools.update_wrapper(wrapped_method2, method2)
+					def __call__(self, e, f=9):
+						print(self, e, f)
+
+				o = MyClass()
+				# wrap the instance's method
+				p1 = functools.partial(o.method1, b=9)
+				functools.update_wrapper(p1, o.method1)
+				# wrap the wrapped method
+				p2 = functools.partial(o.wrapped_method2, 'wen', d=8)
+				# wrap the instance
+				p3 = functools.partial(o, f=3)
+		Comparison(decorator add methods to support compare )
+			under Python2 classes can be compared by method __cmp__() return -1, 0, 1,
+			but after Python2.1 support __lt__, __le__, __eq__, __ne__, __gt__, __ge__
+			return boolean, and in Python3 the __cmp__ is deprecated, so if you want to
+			compare Python3 class with Python2, there is a problem, but functools can
+			help you
+			example:
+				# the functools.total_ordering decorator
+				import functools
+				@functools.total_ordering
+				class MyClass(object):
+					def __init__(self, value):
+						self.value = value
+					def __eq__(self, other):
+						return self.value == other.value
+					def __gt__(self, other):
+						return self.value > other.value
+				# now you can using ==, !=, >, <, >=, <=
+				# the total_ordering will add implementations of the rest
+				# of the methods that work by using the comparisons provided
+				notic: your class must provide __eq__ and one other comparison method
+			the cmp argument to functions like sorted() is also no longer supported, so 
+			you should using functools.cmp_to_key() to convert the compare function to
+			one object which has rich comparison method
+				import functools
+				def compare_obj(a, b):
+					return cmp(a, b)
+				get_key = functools.cmp_to_key(compare_obj)
+				sorted(objs, key=get_key)
+	2. itertools module(functions for working with sequence data)
+		itertools are inspired by similar features of functional programming
+		languages such as Clojure and Haskell, since data is not produced 
+		from the iterator until it is needed, all data does not need to be
+		stored in memory at the same time, for large data sets imporving performance
+		itertools.product(*iter)
+			doc: equivalent to nested for-loops
+			example:
+				product(A, B) same as ((x, y) for x in A for y in B)
+				product('ab', range(3)) return (('a', 0),('a',1),('a',2),('b',0)...)
+				product((0,1),(0,1),(0,1)) return (0,0,0),(0,0,1),(0,1,0)...
+				product(A, repeat=4) return (A, A, A, A)
+		itertools.chain(*args)
+			doc: takes several iterators as arguments and returns a single iterator
+				that produces the contents of all them as though they came from a
+				single iterator
+			example:
+				import itertools
+				for i in itertools.chain([1, 3, 9], ['a', 'b', 'c']):
+					print(i)
+		itertools.izip(*args)
+			doc: returns an iterator that combines the elements of several interator
+				into tuples, like built-in zip(), but zip() return a list
+			example:
+				import itertools
+				for name, age in itertools.izip(['xiao', 'wiky'], [2, 34]):
+		intertools.islice(sequence, [start], stop, [step])
+			returns an iterator that returns selected items from the input sequence by index
+			like list.slice
+			example:
+				import itertools
+				for i in itertools.islice(range(9), 3, 7, 2):
+					print(i)
+		itertools.tee(iter, n=2)
+			returns several indepent iterators(defaults to 2) based on a single
+			original input, the iterators returned by tee() can be used to feed
+			the same set of data into multiple algorithms to be processed in parallel
+			example:
+				import itertools
+				r = itertools(range(9), 9)
+				iter1, iter2 = itertools.tee(r)
+			notice: the iterators returned by tee() share input data with input iter,
+					so if after tee(), you inpur iter be used the returned iterators'
+					items will reduce
+			example1:
+				import itertools
+				r = itertools(range(9), 9)
+				iter1, iter2 = itertools.tee(r)
+				for i in r:
+					if i > 3:
+						break
+				# now iter1 and iter2 become to [5..9]
+		itertools.imap(func, seq1, seq2...)
+			returns an iterator that calls a function on the values in the input
+			iterators and returns the results, like built-in map(), but it stops
+			when any input iterator is exhausted(instead of inserting None values
+			to completely consume all inputs)
+			example:
+				import itertools
+				for i in itertools.imap(lambda x,y:x, range(5), range(10)):
+					print(i)
+				# just 0..4
+		itertools.starmap(func, list_tuple)
+			like itertools.imap, just the argument format is different, 
+			list_tuple = zip(seq1, seq2...)
+		itertools.count([start])
+			returns an iterator that produces consecutive itegers, default start with 0,
+			there is no upper bound argument
+		itertools.cycle(iter)
+			returns an iterator that indefinitely repeats the contents of tha arguments
+			it is given, since it has to remember the entire contents of the input
+			iterator, it may consume quite a bit of memeory if the input iterator is long
+			from itertools import izip, cycle
+			for i, item in izip(xrange(7), cycle(['a','b','c'])):
+				print(i, item)
+		itertools.repeat(content, [times])
+			returns an iterator that produces tha same value each time it is accessed
+			it keeps returning data forever unless the optional times argument is 
+			provided to limit it
+			import itertools
+			for i in itertools.repeat('xiao', 5):
+				print(i)
+		itertools.dropwhile(func, iter)
+			returns an iterator that produces elements of the input iterator after
+			a condition becomes false for the first time
+			example:
+				import itertools
+				def myfunc(item):
+					print('myfunc: %d', item)
+					return item<1
+				for i in itertools.dropwhile(myfunc, [-1, 0, 1, 2, 3, -2]):
+					print('for: %d', i)
+				#the output:
+					myfunc: -1
+					myfunc: 0
+					myfunc: 1
+					for: 2
+					for: 3
+					for: -2
+				notice: after the condition is false the first time, all remaining items
+						in the input are returned(not be iterated)
+		itertools.takewhile(func, iter)
+			returns an iterator that returns items from the input iterator, as long as
+			the test function returns true(after first test false, stops)
+		itertools.ifilter(func, iter)
+			returns an iterator that works like the built-in filter(), test every items
+		itertools.ifilterfalse(func, iter)
+			returns an iterator that includes only items where the func returns false
+		itertools.groupby(iter, attr)
+			returns an iterator that produces sets of values organized by a common
+			key
+			exmaple:
+				from itertools import *
+				import operator
+				from pprint import pprint
+				class Point(object):
+					def __init__(self, x, y):
+						self.x = x
+						self.y = y
+					def __repr__(self):
+						return '(%s, %s)' % (self.x, self.y)
+					def __cmp__(self, other):
+						return cmp((self.x, self.y), (other.x, other.y))
+				
+				data = list(imap(Point, cycle(islice(count(), 3)), islice(count(), 7)))
+				print('Data:')
+				pprint(data, width=69)
+				print('')
+				print('Grouped, unsorted:')
+				for k, g in groupby(data, operator.attrgetter('x')):
+					print(k, list(g))
+				print('')
+				print('Grouped, sorted:')
+				data.sort()
+				for k, g in groupby(data, operator.attrgetter('x')):
+					print(k, list(g))
+	3. operator module(functional interface to built-in operators)
+		Logical operators
+			from operator import *
+			a = -1
+			b = 2
+			not_(2) => return False
+			truth(a) => return True
+			is_(a, b) => a is b, return False
+			is_not(a, b) => a is not b, return True
+		Comparison operators
+			from operator import *
+			a = 1
+			b = 2
+			for func in (lt, le, eq, ne, ge, gt):
+				print('%s(a, b):' % func.__name__, func(a,b))
+		Arithmetic operators
+			from operator import *
+			a = -1
+			b = 2
+			abs(a) same as abs(a)
+			neg(a) same as -a
+			pos(a) same as +a
+			add(a, b)
+			sub(a, b)
+			div(a, b) same as a/b
+			floordiv(a, b) same as a//b
+			truediv(a, b) same as a/b
+			mod(a, b) same as a%b
+			mul(a, b) same as a*b
+			pow(a, b) same as a**b
+			and_(a, b) same as a&b
+			or_(a, b) same as a|b
+			xor(a, b) same as a^b
+			invert(a) same as ~a
+			lshift(a, b) same as a<<b
+			rshift(a, b) same as a>>b
+		Sequence operators
+			a = [1, 3, 5]
+			b = [2, 4, 6]
+			# constructive
+			concat(a, b) not in-place
+			repeat(a, 3) not in-place
+			# searching
+			contains(a, 1) => return True
+			countOf(a, 1) => return 1
+			indexOf(a, 5) => return 2
+			# access items
+			getitem(b, 1) => return 4
+			getslice(a, 1, 3) => return [3, 5]
+			setitem(b, 1, 'newone') in-place
+			setslice(a, 1, 3,[2,3,4,5]) in-place
+			delitem(b, 1) in-place
+			delslice(a, 1, 3) in-place
+		In-place operators
+			many types of objects support in-place modification through special
+			operator such as +=, there are equivalent functions
+			a = operator.iadd(a, b)
+			a = operator.iconcat(a, b)
+			please api for more functions
+		Attributes access operators
+			getters are especially useful when working with iterators or generator
+			sequences, where they are intended to incur less overhead than a lambda
+			or Python fucntion
+			attrgetter can get object's attribute
+			itemgetter can get dict's(by key) and sequence's(by index) item
+			example:
+				import operator
+				class MyClass(object):
+					def __init__(self, arg):
+						super(MyClass, self).__init__()
+						self.arg = arg
+					def __repr__(self):
+						return '%s' % self.arg
+				l = [MyClass(i) for i in xrange(9)]
+				# get object's attribute
+				mygetter = operator.attrgetter('arg')
+				vals = [mygetter(o) for o in l]
+				# using getter to sort
+				sorted(l, key=mygetter)
+				l = [dict(value=2*i) for i in range(4)]
+				# get dict's item
+				mygetter = operator.itemgetter('value')
+				vals = [mygetter(d) for d in l]
+				# using getter to sort
+				sorted(l, key=mygetter)
+				l = [(i*2-1, i) for i in range(5)]
+				# get sequence's item
+				mygetter = operator.itemgetter(1)
+				vals = [mygetter(t) for t in l]
+				# sort by mygetter
+				sorted(l, key=mygetter)
+		Support custom classes
+			example:
+				from operator import *
+				class MyCalss(object):
+					def __init__(self, val):
+						super(MyClass, self).__init__()
+						self.val = val
+					def __str__(self):
+						return '%s' % self.val
+					def __add(self, other):
+						return MyClass(self.val+other.val)
+					def __lt__(self, other):
+						return self.val < other.val
+				a = MyClass(1)
+				b = MyClass(2)
+				lt(a, b) # automatically inovke __lt__
+				add(a, b) # automatically invoke __add__
+		Type checking operators
+			operator.isMapingType(o)
+			operator.isNumberType(o)
+			operator.isSequenceType(o)
+			tests are not strictly test, but they do provide some idea of what is supported
+	4. contextlib module(working with context managers)
+		context managers are tied to the with statement, before Python2.6 you should
+			import from __future__ to support with statement
+		context manager is responsible for a resource within a code block, possibly 
+			creating it when the block is entered and then cleaning it up after the
+			block is exited, like: with open('') as f, the resource must support the
+			context manager API
+		Context Manager API
+			example:
+				class Context(object):
+					def __init__(self):
+						pass
+					# run when execution flow enters the code block
+					# inside the with, it returns an object to be used
+					# within the context
+					def __enter__(self):
+						print('enter')
+					# when execution flow leaves the with blokc, be called
+					# to clean up any resources being used
+					def __exit__(self, exc_type, exc_val, exc_tb):
+						print('exit')
+				with Context():
+					print('in with statement')
+			example1:
+				class WithinContext(object):
+					def do_something(self):
+						print('do-something')
+				class Context(object):
+					def __enter__(self):
+						return WithinContext(self)
+					def __exit__(self, exc_type, exc_val, exc_tb):
+						print('exit')
+				with Context() as c:
+					c.do_something()
+			example2:
+				# in the with block, you can omit the try-finally statement
+				# because __exit__ always be invoked even raise exception in block
+				class Context(object):
+					def __enter__(self):
+						return self
+					def __exit__(self, exc_type, exc_val, exc_tb):
+						print('exception type: ', exc_type)
+						print('exception value: ', exc_val)
+						print('exception traceback: ', exc_tb)
+				with Context():
+					raise IndexError()
+				notice: if the context manager can handle the exception, __exit__
+						should return a true to indicate that the exception does not
+						need to be propagated, return false causes the exception to
+						be raised afte __exit__ reutrns
+		Convert generator to context-manager
+			example:
+				import contextlib
+				@contextlib.contextmanager
+				def make_context():
+					# equivalent the __enter__ code
+					print('entering...')
+					try:
+					 	# equivalent the code block in the with statement
+						yield {}
+					# equivalent the __exit__ code to capture exception
+					except RuntimeError, err:
+						print('ERROR: ', err)
+					finally:
+					# equivalent the __exit__ code
+						print('exiting...')
+
+				print('Normal')
+				with make_context() as value:
+					print('inside with statement')
+				prit('Handled error')
+				with make_context() as value:
+					raise RuntimeError('showing example of handling an error')
+				print('Unhandled error')
+				with make_context() as value:
+					raise ValueError('this exception is not handled')
+		Multiple context
+			sometimes you may want using multiple contexts in with block(i.e., a input
+			file and a output file), you can do this by nest with statements, but there
+			is a better way to do that
+			example:
+				# contextlib.nested is deprecated in Python2.7 and later
+				import contextlib
+				@contextlib.contextmanager
+				def make_context(name):
+					print('entering..., name: %s' % name)
+					yield name
+					print('exiting..., name: %s' % name)
+				with contextlib.nested(make_context('A'),
+										make_context('B')) as (A, B):
+					print('inside the with statement:', A, B)
+			example1:
+				# the best way
+				with make_context('A') as A,make_context('B') as B:
+					print('inside the with statement:', A, B)
+		Closing open handle
+			the file handle provide context manager API, but some other handle don't
+			provide context manager API, those classes oridinary has close() method
+			,to ensure those handles close, contextlib.use closing()
+			example:
+				# handle is closed whether there is an error in the with block or not
+				import contextlib
+				class Door(object):
+					de __init__(self):
+						print('__init__')
+					def close(self):
+						print('close')
+				print('Normal example')
+				with contextlib.closing(Door()) as door:
+					print('inside with statement')
+				print('Handle error example')
+				try:
+					with contextlib.closing(Door()) as door:
+						print('inside with statement')
+						raise RuntimeError()
+				except RuntimeError, err:
+					print('capture exception')
+
+4. Date and Time
+	1. time module(functions for mainpulating clock time)
+		exposes the time-related functions from the underlying C library,
+		it includes functions for retrieving the *clock time* and the 
+		*processor runtime*, as well as *basic parsing* and 
+		*string-formatting* tools
+		Clock time
+			time.time()
+				returns the number of seconds since the start of the epoch as a 
+				floating-point value, precision is platform dependent
+			time.ctime([timestamp])
+				return a human-readabel representations for current(in english)
+		Processor time
+			time.clock()
+				returns processor clock time, should be used for performance testing
+				, benchmarking, etc..
+				the processor clock does not tick if a program is not doing anything
+				example:
+					import time
+					# the loop does very little work
+					# so the time.clock() is same
+					for i in range(6):
+						print '%s %0.2f %0.2f' % (time.ctime(), time.time(), time.clock())
+						time.sleep(i)
+		time components
+			some functions in time module can return struct_time that holding
+			date and time values with components
+			Get components
+				example:
+					import time
+					def show_struct_time(s):
+						print('tm_year: ', s.tm_year)
+						print('tm_mon: ', s.tm_mon)
+						print('tm_mday: ', s.tm_mday)
+						print('tm_hour: ', s.tm_hour)
+						print('tm_min: ', s.tm_min)
+						print('tmm_sec: ', s.tm_sec)
+						print('tm_wday: ', s.tm_wday)
+						print('tm_yday: ', s.tm_yday)
+						print('tm_isdst: ', s.isdst)
+					show_struct_time(time.gmtime()) # show UTC time
+					show_struct_time(time.localtime()) # show locla time
+			Convert components to timestamp
+				time.mktime(time.localtime())
+		time zone
+			to change the time zone, set the environment variable TZ, and then
+			call tzset()
+			example:
+				import time
+				import os
+				def show_zone_info():
+					print('TZ: ', os.environ.get('TZ', '(not set)'))
+					print('tzname: ', time.tzname)
+					print('zone: ', time.timezone)
+					print('DST: ', time.daylight)
+					print('Time: ', time.ctime())
+
+				zones = ['GMT', 'Europe/Amsterdam']
+				for zone in zones:
+					os.environ['TZ'] = zon
+					time.tzset()
+					print(zone, ':')
+					show_zone_info()
+		parsing and formatting times
+			strptime() and strftime() convert between struct_time and string 
+			representiations of time values.(the specifier instructions look up manual)
+			# convert a string to struct_time object
+			time.strptime(time.ctime())
+			# convert struct_time to string
+			time.strftime('%a %b %H:%M:%S %Y', time.localtime())
+	2. datetime module(provide times arithmetic, comparison)
+		provides a higher-level iterface for date, time, and combined values. the
+		classes in datetime support arithmetic, comparison and time zon configure
+		Time class
+			example:
+				import datetime
+				# if not provide arguments, default is 0
+				t = datetime.time(11, 32, 48)
+				# instance attributes
+				t.hour
+				t.minute
+				t.second
+				t.microsecond
+				t.tzinfo
+				# class attributes
+				datetime.time.min # valid range of times in a single day
+				datetime.time.max
+				datetime.time.resolution # precise for microsecond
+		Date class
+			example:
+				import datetime
+				# create by constructor
+				d = datetime.date(2002, 3, 29)
+				# create
+				d1 = d.replace(year=2008)
+				# class method, create a instance using current date
+				d = datetime.date.today()
+				# class method, create a instance from ordinal
+				d = datetime.date.fromordinal(733114)
+				# class method, create a instance from timestamp
+				d = datetime.date.fromtimestamp(time.time())
+				# date valid range
+				datetime.date.min # 0001-01-01
+				datetime.date.max # 9999-12-31
+				datetime.date.resolution # 1 day, 0:00:00
+				# instance attributes
+				d.year
+				d.month
+				d.day
+				d.toordinal() 
+				d.ctime()
+				# return struct_time object
+				tt = d.timetuple()
+				tt.tm_year
+		arithmetic, comparison
+			a timedelta can be added or substraced from a date to produce anther date
+			timedelta are stored in days, seconds, and microseconds
+			example:
+				# about timedelta object
+				import datetime
+				datetime.timedelta(microseconds=1)
+				datetime.timedelta(milliseconds=1)
+				datetime.timedelta(seconds=1)
+				datetime.timedelta(minutes=1)
+				datetime.timedelta(hours=1)
+				datetime.timedelta(days=1)
+				delta = datetime.timedelta(weeks=1)
+				delta.total_seconds() # reture the delta by seconds
+			example1:
+				# arithmetic
+				import datetime
+				today = datetime.date.today()
+				one_day = datetime.timedelta(days=1)
+				yesterday = today - one_day
+				tomorrow = today + one_day
+				tomorrow - yesterday
+			example2:
+				# comparison
+				import datetime
+				import time
+				t1 = datetime.time(12, 55, 0)
+				t2 = datetime.time(13, 5, 0)
+				t1 < t2 # return True
+				d1 = datetime.date.today()
+				d2 = d1 + datetime.timedelta(days=1)
+				d1 < d2 # return False
+		combining date and time
+			create datetime instances from other common values, the datetime instance
+			has all attributes of both a date and a time object
+			example:
+				import datetime
+				datetime.datetime.now()
+				datetime.datetime.today()
+				d = datetime.datetime.utcnow()
+				# d has: year, month, day, hour, minute, second, microsecond
+				datetime.datetime.combine(datetime.date.today(), datetime.time(1, 2, 3))
+		parsing and formatting
+			default format using the ISO-8601(YYYY-MM-DDTHH:MM:SS.mmmmmm), alternate
+			formats can be generated using strftime()
+			import datetime
+			format = '%a %b %d %H:%M:%S %Y'
+			today = datetime.datetime.today()
+			print('Default format(ISO): ', today)
+			s = today.strftime(format)
+			print('Using datetime instance.strftime: ', s)
+			d = datetime.datetime.strptime(s, format)
+		timezone
+			within datetime, time zones are represented by subclasses of tzinfo,
+			since tzinfo is an abstract base class, application need to define a
+			subclass and provide appropriate implementation for a few methods to
+			make it useful
+	3. calendar module
+		creates formatted representations of weeks, months, and years. it can also
+		be used to compute recurring events, tha day of the week for a given date,
+		and other calendar-based values
+		calendar module has some classes: Calendar, TextCalendar, HTMLCalendar
+		example:
+			# format output calendar
+			import calendar
+			# configures start weeks on Sunday
+			c = calendar.TextCalendar(calendar.SUNDAY)
+			# print formatt text for month
+			c.prmonth(2011, 7)
+			# print formatt text for year
+			print(c.formatyear(2011, 2, 1, 1, 3))
+			c.HTMLCalendar(calendar.SUNDAY)
+			# html output format for month
+			c.formatmonth()
+		example1:
+			# custom style output calendar
+			import calendar
+			c = calendar.Calendar(calendar.SUNDAY)
+			# c.weekheader()
+			# c.monthcalendar()
+			data = c.yeardays2calendar(2011, 3)
+			# list[month_row, month_row...]
+			# month_row is [month1, month2, month3]
+			# month* is [week1, week2, week3, week4[, week5]]
+			# week* is [(0, 23), (1, 24), (2, 25)...]
+			print(data)
+		there are some module attributes for formatt output configures
+			calendar.day_name, calendar.day_abbr, calendar.month_name
+			calendar.month_abbr
+			they are automatically configured correctly for the current locale
+		Calculating date for a recurring event
+			example:
+				# get the second Thuraday of every month
+				import calendar
+				year = 2014
+				for month in range(1, 13):
+					cal_month = calendar.monthcalendar(year, month)
+					first_week = cal_month[0]
+					second_week = cal_month[1]
+					third_week = cal_month[2]
+					if first_week[calendar.THURSDAY]:
+						dating = second_week[calendar.THURSDAY]
+					else:
+						dating = third_week[calendar.THURSDAY]
+					print(calendar.month_abbr[month], ' : ', dating)
+
+5. Mathematics
+	1. decimal module(using fixed and floating-point numbers)
+		a decimal instance can represent any number exactly, round it up or down,
+		and apply a limit to the number of significant digits
+		Decimal class
+			Constructor
+			example:
+				import decimal
+				fmt = '{0:<25} {1:25}'
+				print(fmt.format('Input', 'Output'))
+				print(fmt.format('-'*25, '-'*25))
+				# construct from integer
+				print(fmt.format(3, decimal.Decimal(3)))
+				# construct from str
+				print(fmt.format('3.14', decimal.Decimal('3.14')))
+				# construct from float
+				f = 0.1
+				print(fmt.format(repr(f), decimal.Decimal(str(f))))
+				print(fmt.fomat('%.23g' % f, str(decimal.Decimal.form_float(f)))[:25])
+				# construct from tuple(flag, (num, num...), exponent)
+				# flag: 0 for positive, 1 for negative
+				# (num, num...) is a tuple of digits
+				# does not lose precision
+				decimal.Decimal((1, (2, 9, 8), -3)) => -0.298
+			Arithmetic operators
+			example1:
+				# overload the arithmetic operators
+				import decimal
+				a = decimal.Decimal('3.14')	
+				b = decimal.Decimal('2.45')
+				c = 4
+				d = 3.5
+				+ / - * can using with decimal and integer
+				decimal cannot operate with floating-point, should convert float to decimal
+				a.log() # base 10
+				a.ln() # base e
+			Special values
+			example:
+				import decimal
+				special_values = ['Infinity', 'NaN', '0']
+				for value in special_values:
+					print(decimal.Decimal(value), decimal.Decimal('-' + value))
+					# print: Infinity -Infinity NaN -NaN 0 -0
+				decimal.Decimal('Infinity') + 3 # return NaN
+				decimal.Decimal('-Infinity') + 9 # return NaN
+				decimal.Decimal('NaN') == decimal.Decimal('NaN') # return False
+		Configure decimal
+			Current context
+				import decimal
+				context = decimal.getcontext()
+				context.Emax # 999999999
+				context.Emin # -999999999
+				context.capitals # 1
+				context.prec # 28 percision
+				context.rounding # ROUND_HALF_EVEN
+				context.flags # is a dict
+				context.traps # is a dict
+			configure thread-local
+				# precision
+				decimal.getcontext().prec = 20
+				# rounding
+				# ROUND_CEILING always round up toward infinity
+				# ROUND_DOWN always round toward zero
+				# ROUND_FLOOR always round down toward negative infinity
+				# ROUND_HALF_DOWN
+				# ROUND_HALF_EVEN 
+				# ROUND_HALF_UP
+				# ROUND_UP round away from zero
+				# ROUND_05UP round away from zero if the last digit is 0 or 5
+				please see book example, Page245
+			configure code block
+				with decimal.localcontext() as c:
+					c.prec = 4
+			inherit configure context
+				c = decimal.getcontext().copy()
+				c.prec = 4
+				pi = c.create_decimal('3.14156')
+			threads
+				each thread can potentially be configured using different values
+				please see book example, Page247
+	2. fractions moduel(rational numbers)
+		Fraction class
+			constructor
+			example:
+				import fractions
+				n = 1
+				d = 3
+				# numerator and denominator
+				f = fractions.Fraction(n, d)
+				print(f) # '1/3'
+				# string by n/d
+				f = fractions.Fraction('1/3')
+				# string by i.f
+				f = franctions.Fraction('2.345')
+				# from float
+				f = fractions.Fraction(9.345)
+				# from decimal
+				f = fractions.Fraction.from_decimal(decimal.Decimal('2.34'))
+			arithmetic
+			example:
+				# all standard operators are supported
+				f1 = fractions.Fraction(1, 2)
+				f2 = fractions.Fraction(1, 3)
+				f1 - f2
+				f1 + f2
+				f1 * f2
+				f1 / f2
+			approximating values
+			# convert the floating-point number to an approximating rational value
+			example:
+				import math
+				import fractions
+				print('PI: ', math.pi)
+				f = = fractions.Fraction(str(math.pi))
+				print('No limit PI: ', f)
+				for i in [1, 6, 11, 70, 90, 100]:
+					limited = f.limit_denominator(i)
+					print('{0:8} = {1}'.format(i, limited))
+	3. random module(pseudorandom number generator)
+		based on the Mersenne Twister algorithm, has a very large period
+		before it repeats any numbers, every time is different
+		Generating random
+		example:
+			import random
+			random.random() # return value within the range 0.0<= n <1.0
+		Specific range
+		example:
+			random.uniform(1, 100) # min + (max-min)*random()
+		Produces expected set of values
+		example:
+			# with same seed will return same sequence values
+			# argument for seed() can be any hashable object
+			random.seed(1)
+			for i in range(9):
+				print(random.random())
+		saving state
+		example:
+			# run this script twice, you will get you want
+			import random
+			import pickle
+			import os
+			if os.path.exists('random_state.dat'):
+				print('Found random state data, initializing random module')
+				with open('random_state.dat', 'rb') as f:
+					state = pick.load(f)
+				random.setstate(state)
+			else:
+				print('No random state data, seeding')
+				random.seed(1)
+			print('Before save state')
+			for i in range(5):
+				print(random.random())
+			with open('random_state.dat', 'wb') as f:
+				pickle.dump(random.getstate())
+			print('After save state')
+			for i in range(5):
+				print(random.random())
+			print('')
+		get integer
+		example:
+			random.randint(1, 100)
+			random.randint(-5, 5)
+		get integer by step
+		example:
+			# it is like range(0, 101, 5)
+			# but it is more efficient, because it not actually constructed
+			random.randrange(0, 101, 5)
+		random picking items(can repeat picking item)
+		example:
+			# to select a random item from a sequence of enumerated values
+			import random
+			outcomes = {'heads':0, 'tails':0}
+			sides = outcomes.keys()
+			for i in range(1000):
+				outcomes[random.choic(sides)] +=1
+			print('Heads: ', outcomes['heads'])
+			print('Tails: ', outcomes['tails'])
+		random shuffle sequence
+		example:
+			import random
+			import itertools
+
+			FACE_CARDS = ('J', 'Q', 'K', 'A')
+			SUITS = ('H', 'D', 'C', 'S')
+			def new_deck():
+				return list(
+					itertools.product(
+						itertools.chain(xrange(2, 11), FACE_CARDS),
+						SUITS
+					)
+				)
+
+			def show_deck(deck):
+				c_deck = deck[:]
+				while c_deck:
+					row = c_deck[:13]
+					c_deck = c_deck[13:]
+					for i in row:
+						print('%2s%s' % i)
+					print('')
+
+			deck = new_deck()
+			print('Initial deck: ')
+			show_deck(deck)
+			# shuffle the deck to randomize the order
+			random.shuffle(deck)
+			print('Shuffled deck: ')
+			show_deck(deck)
+
+			hands = [[], [], [], []]
+			for i in xrange(5):
+				for h in hands:
+					h.append(deck.pop())
+			print('Hands: ')
+			for n, h in enumerate(hands):
+				print('%d:' % (n+1))
+				for c in h:
+					print('%2s%s' %c)
+				print('')
+			print('Remaining deck: ')
+			show_deck(deck)
+		random sample, without repeating values and without modifying the
+		input sequence
+		example:
+			# random.sample(input_values, sample_count)
+			import random
+			with open('/home/somebody/words', 'r') as f:
+				words = f.readlines()
+			words = [r.rstrip() for r in words]
+			for w in random.sample(words, 5):
+				print(w)
+		Random class, all of the functions described earlier are avaiable
+		as methods as the Random instances, and each instance can be initialized
+		and used separately, without interfering with other instances
+		example:
+			import random
+			import time
+			r = random.Random()
+			seed = 3 # seed = time.time()
+			r = random.Random(seed)
+			r.random() # return 0.0 ~ 1.0
+			# to ensure that the generators produce values from different parts of
+			# the random period
+			seed = time.time()
+			r1 = random.Random(seed) # r1 and r2 with same seed, so produce same random
+			r2 = random.Random(seed)
+			# force r2 to a different part of the random period than r1
+			r2.setstate(r1.getstate())
+			r2.jumpahead(1024)
+		SystemRandom class, has the same API as Random but uses system(os.urandom())
+		to generate the values
+		There have many other useful functions, please look up manual
+
+
+
+
+		
+	4. math module
+		Special constants
+			import math
+			math.pi
+			math.e
+		is*
+			math.isnan()
+			math.isinf()
+		Convert float to integer
+			math.trunc() # same as int(), discard the decimal part
+			math.floor()
+			math.ceil()
+		Alternate representations
+			math.modf(3/2.0) # return (0.5, 1.0)
+			math.frexp(0.1) # return (0.8, -3) 0.8 * (2**-3)
+			math.ldexp(0.8, -3) # return 0.1
+		Positive and Negative sign
+			calculate the absolute value of a floating-point number
+				math.fabs(-1.0)
+			set sign
+				math.copysign(x, y)	# return x with the sign of y
+		Commonly calculation
+			floating-point number will lose precise in repeated calculations, so 
+			math module provide some functions for floating-point calculation
+			example:
+				import math
+				# Sum
+				values = [0.1] * 10
+				sum(values) # return 0.999999
+				math.fsum(values) # return 1.0
+				
+				# Factorial
+				# math.factorial can integer and float(as long as they can be converted
+				# to integer without losing value)
+				math.factorial(4.0) # return 4*3*2*1
+				# gamma is like factorial, except that it works with
+				# real numbers and the value is (n-1)!
+				math.gamma(0) # raise error
+				# lgama(i) same as math.log(math.gamma(i))
+				math.lgama(2.2)
+				# float mod
+				math.fmod(5.1 % 2.1)
+		Exponents and Logarithms
+			example:
+				import math
+				math.pow(2, 1/2.0)
+				math.sqrt(2)
+				math.log(value[, base=math.e])
+				# when base is 10, log10 is more accurate
+				math.log10(value)
+				# when x very close to zero is more accurate
+				math.log1p(x) # same as log(x+1), but more accurate
+				# e**x
+				math.exp(x)
+				# the inverse of log1p, e**x - 1
+				math.expm1(x)
+		Angles
+			example:
+				import math
+				# convert degree to radian
+				math.radians(180)
+				# convert radian to degree
+				math.degrees(3.14)
+				math.sin()
+				math.asin()
+				math.cos()
+				math.acos()
+				math.tan()
+				math.atan()
+				# (x**2 + y**2) ** (1/2.0)
+				math.hypot(3, 4) # return 5
+				# distance between two points
+				math.hypot(x1-x2, y1-y2)
+		Hyperbolic
+			example:
+				import math
+				math.sinh
+				math.asinh
+				math.cosh
+				math.acosh
+				math.tanh
+				math.atanh
+		Special functions
+			example:
+				import math
+				math.erf
+				math.erfc
+
+6. File System
+	1. os.path(paltform-independent manipulation of filenames)
+		Parsing paths
+			example:
+				import os
+				# os constants
+				os.sep # path separator, '\' or '/'
+				os.extsep # filename and extension separator, '.'
+				os.pardir # tree up one level, '..'
+				os.curdir # current directory, '.'
+				# split path string into two parts return as a tuple
+				os.path.split('/home/wikty/') # return ('/home/wikty/', '')
+				os.path.split('/home/wikty') # return ('/home', 'wikty')
+				# basename, is equivalent to the seconde part of the os.path.split
+				os.path.basename('/home/wikty') # return 'wikty'
+				#dirname, return the first part of the os.path.split
+				os.path.basename('/home/wikty') # return '/home'
+				#splitext, works like split, but divides the path on the extension
+				# separator, rather than the directory separator
+				os.path.splitext(/home/test.txt') # return ('/home/test', '.txt')
+				#commonprefix, takes a list of paths as an argument and returns a
+				# single string that represents a common prefix present in all paths
+				paths = ['/one/two/three/four',
+						'/one/two/threehome',
+						'/one/two/three/'
+				]
+				os.path.commonprefix(paths) # return '/one/two/three'
+		Building paths
+			example:
+				import os
+				#join, if any argument to join begins with os.sep
+				# ,all previous arguments are discarded
+				os.path.join('one', 'two', 'three') # one/two/three
+				os.path.join('/', 'one', 'two', 'three') # /one/two/three
+				os.path.join('/one', '/two', '/three') # /three
+				#users path
+				# user's home directory can be found
+				# convert to user's home directory, unless return unchanged
+				os.path.expanduser('~wikty')
+				#expands any shell environment variables
+				os.environ['MYVALUE'] = 'myvalue'
+				os.path.expandvars('/path/to/$MYVALUE') # /path/to/myvalue
+		Normalizing paths
+			example:
+				import os
+				#convert special separator to normal path
+				os.path.normalpath('one//tow/three') # one/two/three
+				os.path.normalpath('one/./two/./three') # one/two/three
+				os.path.normalpath('/one/../alt/two/three') # alt/two/three
+				#convert relative path to absolute path
+				os.path.abspath() # result starting at the top of file system tree
+		File basic informations
+			example:
+				import os
+				os.path.getatime()
+				os.path.getctime() #creation time
+				os.path.getmtime()
+				os.path.getsize()
+		Testing files
+			example:
+				import os
+				# Is absolute path ?
+				os.path.isabs()
+				os.path.isfile()
+				os.path.isdir()
+				os.path.islink()
+				# mountpoint ?
+				os.path.ismount()
+				os.path.exists()
+				# Is link exists ?
+				os.path.lexists()
+		Traversing directory
+			example:
+				import os
+				os.path.walk('adir', func, arg)
+				def func(arg, curdir, curdir_list)
+	2. glob module(use UNIX rules to match filenams)
+		Wildcard
+			example:
+				# *
+				import glob
+				# without recursing further into subdirectory
+				for name in glob.glob('dir/*'):
+					print(name) # get every item in dir/
+				for name in glob.glob('dir/*/*'):
+			example1:
+				# ?
+				for name in glob.glob('dir/file?.txt'):
+					print(name) # ? match single character
+			example2:
+				# [a-z]
+				for name in glob.glob('dir/file[1-3].txt'):
+					print(name)
+	3. linecache module(read text file efficiently)
+		this module is used within other parts of the Python standard library when
+		dealing with Python source files
+		Read specific line
+			example:
+				import linecache
+				linecache.getline(filename, row_number) # row_number start from 1
+				# the result with newline character, if the line is empty, only return newline
+		Error handling
+			if the requested line number falls out of the range of valid lines
+			in the file, getline() returns an empty string
+			if the file doesn't exist, never raises an exception, return empty string
+		Python module path
+			example:
+				import linecache
+				import os
+				# if file doesn't exist in current dir,
+				# will find by sys.path, so can get Python
+				# module source
+				module_line = linecache.getline('linecache.py', 3)
+				file_src = linecache.__file__
+				if file_src.endswith('.pyc'):
+					file_src = file_src[:-1]
+	4. tempfile module(temporary file)
+		Create temporary file
+			temporary file is unlinked immediately, makes it impossible
+			for another program to find or open the file, temp file is
+			removed automatically when it is closed, whether by calling
+			close() or by using context mangager API and with statement
+			example:
+				import os
+				import tempfile
+				# default mode is 'w+b'
+				temp = tempfile.TemporaryFile()
+				# in text mode
+				# temp = tempfile.TemporaryFile(mode='w+t')
+				temp.write('some data')
+				temp.seek(0)
+				temp.read()
+				temp.close()
+		Named temporary file
+			example:
+				import os
+				import tempfile
+				with tempfile.NamedTemporaryFile() as temp:
+					print(temp.name) # a unique name
+		Temporary directory
+			example:
+				dir_name = tempfile.mkdtemp()
+				os.removedirs(dir_name)
+		Predicting names
+			file/dir name made up of: dir + prefix + random + suffix
+			all values except random can be passed as arguments to TemporaryFile(),
+			NamedTemporaryFile(), mkdtemp()
+			example:
+				with tempfile.NamedTemporaryFile(
+					suffix='_suffix', prefix='prefix_', dir='/tmp',
+					) as temp:
+					print(temp.name)
+		Temporary file location
+			if an explicit destination is not given using the dir argument, the path
+			used for the temporary files will vary based on the current platform and
+			settings, tempfile module can querying and setting this
+			location look up list
+				1. environment variable TMPDIR
+				2. environment variable TEMP
+				3. environment variable TMP
+				4. a fallback, based on the platform(RiscOS uses wimp$ScrapDir,
+					Windows uses C:\TEMP, C:\TMP, other platform /tmp, /temp..)
+				5. if no other directory can be found, the current working directory is used
+			example:
+				tempfile.gettempdir() # default directory that will hold temp files
+				tempfile.gettempprefix() # string prefix for filename and directory name
+	5. shutil module(high-level file operations)
+		file operations such as copying and setting permissions
+		Copying files
+			if no permission to write to the destination file, raise IOError
+			example:
+				import shutil
+				# copyfile
+				# just copy the contents of source file to destination file
+				# copyfile regardless of file type, special files(such as UNIX 
+				# device nodes) cannot be copied by copyfile
+				shutil.copyfile(source_name, destiantion_name)
+				
+				# copyfileobj(input_handle, output_handle, buffer_len)
+				# buffer_len, a buffer length to use for reading in blocks,
+				# -1 means read once time
+				copyfileobj(input, output, 256)
+
+				# copy(source_name, destination)
+				# copy content and permission
+				# interpret the destination name like UNIX commond line tool cp
+				copy('test.txt', '/tmp')
+
+				# copy2(source_name, destination)
+				# copy content, permission, and file metadata(access, modification time..)
+				copy2('test.txt', /tmp)
+		Copying file metadata
+			# permission
+			copymode(source, destination)
+			# other metadata
+			copystat(source, destination)
+		Working with directory tree
+			# copytree, it recurses through the source directory tree, copying
+			# files to the destination, the destination directory must not exist
+			# in advance
+			# the argument: symlinks default False, so source directory link copy
+			# to a file, if symlinks=True, copy to as a link
+			copytree('/home/wikty', '/tmp')
+
+			# rmtree, remove directory and its contents
+			# errors are raised as exceptions by default, but can be ignored if the
+			# second argument is True, a special error-handler function can be provided
+			# in the third argument
+			rmtree('/tmp/wikty')
+
+			# move, move a file or directory
+			# like UNIX, if the source and destination are withint the same file,
+			# the source is renamed, otherwise, the source is copied to the destination
+			# and then the source is removed
+			move('/tmp/wikty', '/tmp/home/')
+	6. mmap module(memory-map files)
+		memory-maping file uses the operating system virtual memory system to access
+		the data on the file system directly, improves I/O performance
+		memory-maping file can be treated as mutable strings or file-like objects,
+		depending on the need, supports file API and string API
+		Creat memory-mapping file
+			The caller is responsible for opening the file before invoking
+				mmap() and closing it after is no longer needed
+			Use the mmap() function to create a memory-mapped file, the first
+				argument is a file descripor, either from the fileno() method of a
+				file object or from os.open(), the second argument is a size in bytes
+				for the portion of the file to map, if the value is 0(windows not 
+				support), the entrie file is mapped, if the size is larger than the 
+				current size of the file, the file is extended, an optional keyword
+				argument, access, is supported by both platforms, ACCESS_READ for 
+				read-only access, ACCESS_WRITE for write-through, ACCESS_COPY for
+				copy-on-write
+			examle:
+				# reading
+				import mmap
+				import contextlib
+				with open('test.txt', 'r') as f:
+					with contextlib.closing(mmap.mmap(f.fileno(), 0,
+														access=mmap.ACCESS_READ)
+											) as m:
+						# the file and string API has indepent track point
+						# so the following return same result
+						# file API
+						print(m.read(10))
+						# string API
+						print(m[:10])
+			example1:
+				# writing
+				import mmap
+				import contextlib
+				# mode 'r+' is must
+				with open('test.txt', 'r+') as f:
+					with contextlib.closing(mmap.mmap(f.fineno(), o)) as m:
+						loc = m.find('xiao')
+						m.seek(0)
+						m[loc:loc+len('xiao')] = 'this is a username'
+						m.flush()
+						m.seek(0)
+						# memory-mapped file content is replaced
+						m.read()
+						# disk file content is replaced too
+						f.seek(0)
+						f.read()
+			example2:
+				# copy change to memory-map file, but not to disk file
+				import mmap
+				import contextlib
+				# mode 'r+' is must
+				with open('test.txt', 'r+') as f:
+					with contextlib.closing(mmap.mmap(f.fineno(), o,
+														access=mmap.ACCESS_COPY)
+											) as m:
+						loc = m.find('xiao')
+						m.seek(0)
+						m[loc:loc+len('xiao')] = 'this is a username'
+						m.flush()
+						m.seek(0)
+						# memory-mapped file content is replaced
+						m.read()
+						# but disk file is not replaced
+						f.seek(0)
+						f.read()
+		Regular expression
+			since a memory-mapped file can act like a string, it can be used with
+			other modules that operate on strings, such as regular expression
+			example:
+				import mmap
+				import re
+				import contextlib
+				pattern = re.compile(r'hell[a-z]')
+				with open('test.txt', 'r') as f:
+					with contextlib.closing(mmap.mmap(f.fineno(), 0,
+														access=mmap.ACCESS_READ)
+											) as m:
+						for match in pattern.findall(m):
+							print(match)
+	7. codecs module(string encoding and decoding)
+		File interface
+			example:
+				import codecs
+				with codecs.open(filename, mode='wt', encoding='utf-8', error_handle) as f:
+		Byte order
+			codecs has some constants to indicate endianness
+			BOM, BOM_BE, BOM_LE, BOM_UTF8, BOM_UTF16, BOM_UTF16_LE, BOM_UTF16_BE
+			BOM_UTF32, BOM_UTF32_LE, BOM_UTF32_BE
+			example:
+				import codecs
+				if codecs.BOM_UTF16 == codecs.BOM_UTF16_BE:
+					bom = codecs.BOM_UTF16_LE
+					encoding = 'utf_16_le'
+				else:
+					bom = codecs.BOM_UTF16_BE
+					encoding = 'utf_16_be'
+				encoded_text = u'pi:\u03c0'.encode(encoding)
+				with open('test.txt', 'wb') as f:
+					# write the selected byte-order marker
+					# it is not included in the encoded text because
+					# the byte order was given explicitly when selecting the encoding
+					f.write(encoding)
+					f.write(encoded_text)
+		Error handling
+			Error mode 		    Description
+			strict 				raise an exception if the data cannot be converted
+			replace 			substitutes a special marker character
+			ignore 				skip the data
+			xmlcharrefreplace   XML character(only encoding)
+			backslashreplace    escape sequence(only encoding)
+			example:
+				codecs.open('test.txt', 'w', encoding='ascii', errors='strict')
+			please look up manual for more detials
+		Standard I/O stream
+			the most common cause of UnicodeEncodeError exceptions is code that tries
+			to print unicode data to the console or a Unix pipeline when sys.stdout is
+			not configured with an encoding
+			Set the encoding on standard I/O
+			example:
+				import codecs
+				import os
+				wrapped_stdout = codecs.getwriter('UTF-8')(sys.stdout)
+				wrapped_stdout.write(u'a unicode char')
+				# replace sys.stdout
+				sys.stdout = wrapped_stdout
+			example1:
+				# better way
+				import codecs
+				import locale
+				import sys
+				lang, encoding = locale.getdefaultlocale()
+				sys.stdout = codecs.getwriter(encoding)(sys.stdout)
+				sys.stdin = codecs.getreader(encoding)(sys.stdin)
+		Encoding translation
+			example:
+				import codecs
+				# file_encoding is output_ref's encoding
+				# data_encoding is read/write encoding
+				f = codecs.EncodedFile(output_ref, data_encoding='utf-16',
+									file_encoding='utf-8')
+				f.read() / f.write()
+		Non-Unicode encoding
+			like, base-64, bzip2, ROT-13, zip, and other data format
+			example:
+				import codecs
+				from cStringIO import StringIO
+				text = 'abcdefghijklmonpqrstuvwxyx'
+				buffer = StringIO()
+				stream = codecs.getwriter('rot_13')	(buffer)
+				stream.write(text)
+				stream.flush()
+				print('Original: ', text)
+				print('ROT-13: ', buffer.getvalue())
+		Incremental encoding
+			for large data set encoding
+			example:
+				import codecs
+				import sys
+				text = 'abdddllxeojslieo'
+				repetitions = 50
+				encoder = codecs.getincrementalencoder('bz2')()
+				encoded = []
+				for i in range(repetitions):
+					en_c = encoder.encode(text, final = (i==repetitions - 1))
+					if en_c:
+						encoded.append(en_c)
+				bytes = ''.join(encoded)
+				decoder = codecs.getincrementaldecoder('bz2')()
+				decoded = []j
+				for i, b in enumerate(bytes):
+					c = decoder.decode(b, final=((i+1)==len(text)))
+					if c:
+						decoded.append(c)
+		Unicode data and network communication
+			network sockets are also byte stream, and so Unicode data must be encoded
+			into bytes before it is written to a socket
+			please see manual example, page346
+		Custom encoding
+			please see manual page353
+	8. StringIO module(text buffer with a file-like API)
+		provides a convenient means of working with text in memory using
+		the file API(read(), write(), etc..), C version is cStringIO
+		example:
+			try:
+				from cStringIO import StringIO
+			except:
+				from StringIO import StringIO
+			# writing to a buffer
+			output = StringIO()
+			output.write('something content')
+			# retrieve the value written
+			print(output.getvalue())
+			# close, discard buffer memory
+			output.close()
+			# read buffer
+			input = StringIO('inital value for read buffer')
+			input.read()
+			# input.readlines()
+			# input.readline()
+			# input.seek()
+	9. fnmatch module(Unix-style glob pattern)
+		Simple matching
+			example:
+				# case-sensitive depend on file system
+				import fnmatch
+				import os
+				pattern = 'fnmatch_*.py'
+				files = os.listdir('.')
+				for name in files:
+					print(fnmatch.fnmatch(name, pattern)) # return True/False
+				# force to case-sensitive
+				fnmatch.fnmatchcase(name, pattern)
+		Filtering
+			to test a sequence of filenames, returns a list of the names that
+			match the pattern argument
+			example:
+				fnmatch.filter(files, pattern) # return a list of filenames
+		Glob to regular expression
+			internally, fnmatch converts the glob pattern to a regular expression and 
+			uses the re moduel to compare the name and pattern, if you want manually
+			convert glob to regular pattern
+			example:
+				pattern = 'fnmathc_*.py'
+				fnmatch.translate(pattern) # return 'fnmatch\_*\.py\Z(?ms)'
+	10. dircache module(cache directory listings)
+		listing directory contents
+			example:
+				# dircache.listdir(path) return same list object(when path is same)
+				# unless the modification date of the directory changes
+				import dircache
+				path = '.'
+				# dircache.listdir  is wrapper around os.listdir
+				first = dircache.listdir(path)
+				second = dircache.listdir(path)
+				first == second # reutrn True
+				first is second # return True
+				# reset
+				dircache.listdir(path)
+				second = dircache.listdir(path)
+				first == second # return True
+				first is second # return Fasle
+		Add / for directory item
+			contens = dircache.listdir(path)
+			annotated = contents[:]
+			dircache.annotate(path, annotated)
+	11. filecmp module(compare files and directories)	
+		Comparing files
+			example:
+				# compare two files
+				import filecmp
+				# default is to perform a shallow comparison using the information
+				# available from os.stat() without lookint at content
+				filecmp.cmp('test.txt', 'another.txt')
+				# compare file content too
+				filecmp.cmp('test.txt', 'another.txt', shallow=False)
+			example:
+				# to compare a set of files in two directories without recuring
+				import filecmp
+				import os
+				d1_contents = set(os.listdir('example/dir1'))
+				d2_contents = set(os.listdir('example/dir2'))
+				common = d1_contents & d2_contents
+				common = [f 
+						  for f in common 
+						  if os.path.isfile(os.path.join('example/dir1', f))
+						  if os.path.isfile(os.path.join('example/dir2', f))
+						  ]
+				match, mismatch, errors = filecmp.cmpfiles('example/dir1',
+														   'example/dir2',
+														   common)
+				# match, mismatch, errors are all list, hold filename
+				# errors means permission problems or for any other reason)
+		Comparing directories
+			example:
+				# the output is a plain-text report showing the results of just
+				# the contents of the directories given, without recursing
+				filecmp.dircmp('example/dir1', 'example/dir2').report()
+				# recursing comparison
+				filecmp.dircmp('example/dir1','example/dir2').report_full_closure()
+		Using comparing result in a program
+			example:
+				import filecmp
+				# ignore files
+				# dc = filecmp.dircmp('dir1', 'dir2', ignore=['test.txt'])
+				dc = filecmp.dircmp('example/dir1', 'example/dir2')
+				dc.left_list
+				dc.right_list
+				dc.common
+				dc.common_dirs
+				dc.common_files
+				dc.common_funny
+				dc.left_only
+				dc.right_only
+				dc.same_files
+				dc.diff_files
+				dc.funny_files
+				dc.subdirs
+
+7. Data persistence and exchange
+	1. pickle cPickle module(object serialization)
+		Serialization and unserialization
+			example:
+				try:
+					import cPickle as pickle
+				except:
+					import pickle
+					data = [{'username':'wikty','age':99}]
+					# serialization
+					bytes = pickle.dumps(data)
+					# after data is serialized, it can be written to a file, a socket,
+					# or a pipe, etc.
+					# unserilalization
+					data = pickle.loads(bytes)
+		Working with stream
+			example:
+				out_stream = StringIO
+				data = [{'name':'w','age':23},{'name':'h','age':23}]
+				# pickle to stream
+				for o in data:
+					pickle.dump(o, out_stream)
+					out_stream.flush()
+				in_stream = StringIO(out_stream.getvalue())
+				# unpickle from stream
+				while True:
+					try:
+						o = pickle.load(in_stream)
+					except EOFError:
+						break
+		Custom class reconstruct problem
+			when you unpickle custom class's instance, your custom class must appear
+			in that namespace
+		Unpicklable objects
+			sockets, file handles, database connections and other objects with
+			run-time state that depends on the operating system or another
+			process may not be able to be pickled in a meaningful way.
+			nopicklable object and define __getstate__() and __setstate__()
+			to return a subset of the state of the instance to be pickled
+		Circular references
+			pickle module automatically handles circular references between objects,
+			so complex data structures do not need any special handling
+	2. shelve module(persistence storage of object)
+		implements persistence storage for arbitrary Python objects that can
+		be pickled, using a dictonary-like API, underlying using anydbm to 
+		persistence data
+		Create Shelf
+			example:
+				import shelve
+				import contextlib
+				with contextlib.closing(shelve.open('test.db')) as s:
+					# store data
+					s['key1'] = {'name':'wikty','age':23}
+				with contextlib.closing(shelve.open('test.db')) as s
+					# retrieve data
+					value = s['key1']
+				# depend's dbm module does not support multiple app writing to
+				# the same database at the same time, but support multi-read
+				# open shelf with read-only mode
+				with contextlib.closing(shelve.open('test.db', flag='r')) as s:
+		Writeback
+			by default, the contents of an item stored in the shelf are changed, the shelf
+			must be updated explicitly by storing the entire item
+			provide argument writeback=True, make shelf update to database when
+			shelf is closed
+			if the app read data more than write, writeback will impact performance
+			example:
+				import shelve
+				import contextlib
+				with contextlib.closing(shelve.open('test.db')) as s:
+					s['key1']['newvalue'] = 'value'
+				with contextlib.closing(shelve.open('test.db')) as s:
+					# you cannot see changed
+					print(s['key1'])
+			example:
+				with contextlib.closing(shelve.open('test.db', writeback=True)) as s:
+					s['key1']['newvalue'] = 'value'
+				with contextlib.closing(shelve.open('test.db', writeback=True)) as s:
+					# you can see changed
+					print(s['key1'])
+		Specific shelf types
+			DbfilenameShelf, BsdDbShelf, or subclass Shelf
+	3. anydbm module(DBM-style database)
+		anydbm is font-end for DBM-style databases that use simple string values
+		as keys to access records containing strings, it uses whichdb to identify
+		databases, and then opens them with the appropriate module, it is used as
+		a back-end for shelve, which store objects in a DBM database using pickle
+		Database types
+			*dbhash* module is the primary back-end for anydbm, it uses the bsddb
+			library to manage database files, the semantics for using dbhash databases
+			are the same as those defined by the anydbm API
+			*gdbm* is an updated version of the dbm library from the GNU project, it
+			works the same as other DBM implementations described here, with a few
+			changes to the flags support by open()
+				besides  the standard 'r', 'w', 'c', and 'n' flags, gdbm.open() supports
+				'f' to open the database in fast mode, in fast mode, writes to the
+				database are not synchronized
+				's' to open the database in synchronized mode, changes to the database
+				are written to the file as they are made, rather than being delayed until
+				the database is closed or synced explicitly
+				'u' to open the database unlocked
+			*dbm* module provieds an interface to one of several C implementations of the
+			dbm format, depending on how the module was configured during compliation, the
+			module attribute library identifies the name of the library configure was able
+			to find when the extension module was complied
+			*dumbdbm* module is a portable fallback implementation of the DBM API
+			when no other implementations are available, not external dependencies
+			are required to use dumbdbm, but it is slower than most other implementations
+		Creating a new database
+			the storage format for new database is selected by looking for each
+			of these modules in order:
+				dbhash -> gdbm -> dbm -> dumbdbm
+			the open() function takes flags to control how the database file is
+			managed, to create a new database when necessary, use 'c', using 'n'
+			always creates a new database, overwriting an existing file
+			example:
+				import anydbm
+				db = anydbm.open('/tmp/test.db', 'n')
+				db['username'] = 'witky'
+				db['age'] = 23
+				db.close()
+		Get db type
+			example:
+				import whichdb
+				print(whichdb.whichdb('/tmp/test.db'))
+		Opening an existing db
+			to open an existing db, use flags of either 'r'(for read-onlu) or 'w'
+			(for read-write), automatically using whichdb module identify, and 
+			the appropriate db module is used to open it
+			example:
+				import anydbm
+				db = anydbm.open('/tmp/test.db', 'r')
+				try:
+					print(db.keys())
+					for k, v in db.iteritems():
+						print(k, v)
+					# will raise exception
+					db['author'] = 'write into'
+				finnally:
+					db.close()
+		Error cases
+			example:
+				import anydbm
+				# the keys of the database should be strings
+				db = anydbm.open('/tmp/test.db', 'w')
+				db[1] = 'wikty' # raise TypeError
+				# the values must be strings or None
+				db['age'] = 23 # raise TypeError
+	4. whichdb module(identify DBM-style database)
+		this module contains one function, whichdb(), that can be used to examine
+		an existing database file to determine which of the DBM libraries should
+		be used to open it, it returns the string name of the module to use to open
+		the file, or None if there is problem opening the file, if it can open the
+		file but cannot determine the library to use, it returns an empty string
+		print(whichdb.whichdb('/tmp/test.db'))
+	5. sqlite3 module(embeded relational database with SQL)
+		sqlite3 module provides a DB-API 2.0 compliant interface to SQLite(
+		SQLite is a relational database can be embeded in applications)
+		Creating database
+			example:
+				import sqlite3
+				import os
+				db_filename = 'test.db'
+				conn = sqlite3.connect(db_filename)
+				if os.path.exists(db_filename):
+					print('Database exists')
+				else:
+					print('Need to create schema')
+				conn.close()
+		Execute SQL statement
+			example:
+				import sqlite3
+				import os
+				schema = '''
+				create table project (
+					name 		text primary key,
+					description text,
+					deadline    date
+				);
+				create table task (
+					id 			integer primary key autoincrement not null,
+					priority    integer default 1,
+					details     text,
+					status      text,
+					deadline    date,
+					completed_on date,
+					project     text not null references project(name)
+				);'''
+				db_filename = 'test.db'
+				with sqlite3.connect(db_filename) as conn:
+					if not os.path.exists(db_filename):
+						print('Creating schema')
+						conn.executescript(schema)
+						print('Inserting data')
+						conn.executescript('''
+						insert into project (name, description, deadline)
+						values ('myproject', 'description for project', '2011-11-01');
+						''')
+		Retrieving data
+			create a cursor from a database connection to retrieve data
+			example:
+				import sqlite3
+				db_filename = 'test.db'
+				with sqlite3.open(db_filename) as conn:
+					cursor = conn.cursor()
+					cursor.execute('''
+					select id, prority, details, status, deadline from task
+					where project="myproject"
+					''')
+					# cursor.fetchone() return one row
+					# cursor.fetmany(5) return 5 rows
+					for row in cursor.fetchall():
+						id, prority, details, status, deadline = row
+		Query metadata
+			after cursor.execute() has been called, the cursor.description hold
+			information about the data that will be returned by the fetch methods,
+			description should a sequence of tuples containning the column name,
+			type, display size, internal size, precision, scale, and a flag that
+			says whether null values are accepted
+			for colinfo in cursor.description:
+				print(colinfo)
+		Row object
+			by default, fetch* return a row using tuple, the caller is responsible
+			for knowing the order of the columns in the query and extracting 
+			individual values from the tuple
+			there is more smart way, using row object
+			example:
+				import sqlite3
+				db_filename = 'test.db'
+				with sqlite3.open(db_filename) as conn:
+					# change the row factory to use Row class
+					conn.row_factory = sqlite3.Row
+					cursor = conn.cursor()
+					cursor.execute("select * from project")
+					for row in cursor.fetchall():
+						print(row['id'])
+						print(row['name'])
+		Using variables with query
+			avoid using Python variable with SQL statement directly, there
+			is more secure way
+			example:
+				project_name = sys.argv[1]
+				# position placeholder
+				cursor.execute('select * from project where name=?', (project_name))
+				# named placeholder
+				cursor.execute('select * from project where name=:pn', {'pn':project_name})
+		Bluk loading data
+			example:
+				import csv
+				import sqlite3
+				with open('data.csv', 'rt') as csv_file:
+					csv_reader = csv.DictReader(csv_file)
+					with sqlite3.connect('test.db') as conn:
+						cursor = conn.cursor()
+						cursor.executemany('''
+						insert into task (details, priority, status, deadline, project)
+						values (:details, :prority, :status, :deadline, :project))
+						''', csv_reader)
+		Column types
+			sqlite3 module only support a few data types internally(int, unicode..),
+			but you can defining custom types to allow a Python app to store any type
+			of data in a column
+			enable types detect
+				with sqlite3.connect('test.db', detect_types=sqlite3.PARSE_DECLTYPES)
+			register a new type
+				# adapter takes Object as input and return a string represent Object
+				# pickle.dumps
+				sqlite3.register_adapter(MyObj, adapter_func)
+				# converter receives the string from database and return a Object
+				# pickle.loads
+				sqlite3.register_converter('MyObj', converter_func)
+		Transactions
+			conn.commit()
+			conn.rollback()
+		Isolation
+			the isolation level(locking mode) is set by passing a string as the 
+			isolation_level argument when a connection is opened
+			'DEFERRED' 
+			'IMMEDIATE'
+			'EXCLUSIVE'
+		In-memory database
+			in-memory databases are useful for automated testing
+			Create memory database
+				to open an in-memory database, use the string ':memory:' instead
+				of a filename when creating connect, each ':memory:' connection
+				create a separate database instance
+			Exporting database content
+				with sqlite3.connect(':memory:') as conn:
+					conn.row_factory = sqlite3.Row
+					# do-something
+					# export include data content and SQL statement
+					for text in conn.iterdump():
+						print(text)
+		Using Python function in SQL
+			example:
+				import sqlite3
+				db_filename = 'test.db'
+				def encrypt(s):
+					return s.encode('rot-13')
+				def decrypt(s):
+					return s.decode('rot-13')
+				with sqlite3.connect(db_filename) as conn:
+					sqlite3.create_function('encrypt', 1, encrypt)
+					sqlite3.create_function('decrypt', 1, decrypt)
+					cursor = conn.cursor()
+					query = 'update task set details = encrypt(details)'
+					cursor.execute(query)
+					query = 'select id, decrypt(details) from task'
+					cursor.execute(query)
+		Custom aggregation
+			an aggregation function collects many pieces of individual data and
+			summarizes it in some way, examples of built-in aggregation functions
+			are avg(), min(), max()..
+			custom calss should have two methods:
+				step() is called once for each data value as the query is processed
+				finalize() is called one time at the end of the query and should
+							return the aggregation value
+			example:
+				import sqlite3
+				import collections
+				db_filename = 'test.db'
+
+				class Mode(object):
+					def __init__(self):
+						self.counter = collections.Counter()
+					def step(self, value):
+						self.count[value] += 1
+					def finalize(self):
+						result, count = self.counter.most_common(1)[0]
+						return result
+
+				with sqlite3.conect(db_filename) as conn:
+					conn.create_aggregate('mode', 1, Mode)
+					cursor = conn.cursor()
+					cursor.execute('''
+					select mode(deadline) from task where project='myproject'
+					''')
+		Custom sorting
+			example:
+				def collation_func(a, b):
+					return cmp(a, b)
+				conn.create_collation('sortfunc', collation_func)
+				cursor.execute('''
+				select id, date from task order by date collate sortfunc
+				''')
+		Access control
+			example:
+				import sqlite3
+				# authoriz function
+				def authorizer_func(action, table, column, sql_location, ignore):
+					print(action, table, column, sql_location, ignore)
+					response = sqlite3.SQLITE_OK
+					if action == sqlite3.sQLITE_SELECT:
+						response = sqlite3.SQLITE_OK
+					elif action == sqlite3.SQLITE_READ:
+						if column == 'details':
+							response = sqlite3.SQLITE_IGNORE
+						elif cloumn == 'priority':
+							response = sqlite3.SQLITE_DENY
+					return response
+				conn.set_authorizer(authorizer_func)
+	6. xml.etree.ElementTree
+		ElementTree library includes tools for parsing XML using event-based and
+		document-based APIs, searching parsed documents with XPath expressions,
+		and creating new or modifying existing documents
+		C version: xml.etree.cElementTree
+		Loading entrie document
+			with open('test.xml') as f:
+				tree = xml.etree.ElementTree.parse(f)
+		Traversing parsed tree
+			# deepth perfence travsing all nodes
+			for node in tree.iter():
+				print(node.name)
+			# travsing the groups of nodes
+			for node in tree.iter('outline'):
+				# access node attribute
+				name = node.attrib.get('text')
+				url = node.attrib.get('xmlUrl')
+		Find nodes
+			# using XPath syntax to find nodes
+			for node in tree.findall('.//outline'):
+				url = node.attrib.get('xmlUrl')
+		Parse node attributes
+			method iter() and find(), findall() return Element objects, 
+			attbributes in  Element.attrib, which acts like a dictionary
+			node = tree.find('./with_attributes')
+			node.tag
+			node.text
+			node.tail
+			node.attrib.items()
+		Event-based API
+			it is convenient if it is not necessary to manipulate the entire
+			document
+			event types
+				start, a new tag has been encountered
+				end, all the children were already processed
+				start-ns, start a namespace declaration
+				end-ns, end a namespace declaration
+				example:
+					import xml.etree.ElementTree.iterparse as iterparse
+					depth = 0
+					prefix_width = 8
+					prefix_dots = '.' * prefix_width
+					line_template = ''.join([
+						'{prefix:<0.{prefix_len}',
+						'{event:8}',
+						'{suffix:<{suffix_len}}',
+						'{node.tag:<12}',
+						'{node_id}',
+					])
+					events = ['start', 'end', 'start-ns', 'end-ns']
+					# interparse return (event_name, node)
+					# default only return 'end' event, if you
+					# want to return other events
+					# you should pass a list of event names
+					for (event, node) in iterparse('some.xml', events):
+						if event == 'end':
+							depth -= 1
+						prefix_len = depth*2
+						print(line_template.format(
+							prefix=prefix_dots,
+							prefix_len=prefix_len,
+							event=event,
+							suffix='',
+							suffix_len=(prefix_width-prefix_len),
+							node=node,
+							node_id=id(node),
+						))
+						if event == 'start':
+							depth +=1
+page436
+
+
+
+
+
+
+
+
+
+
+
+
+				
+
+

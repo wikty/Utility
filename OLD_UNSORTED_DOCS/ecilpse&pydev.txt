@@ -1,0 +1,15 @@
+安装PyDev的两种方式：
+	1. 在线更新
+		Help -> Software Updates -> Find And Install ->
+		Search for new features to install -> New Remote Site ->
+		http://pydev.org/updates
+	2. 下载pydev源码
+		将pydev解压后的文件夹中含有Plugins和Features文件夹，将其分别
+		放入ecilpse的plugins和features的文件夹中
+
+配置Python解释器的位置：
+	Windows -> Perferences -> PyDev -> interperter python -> 
+	给出解释器的位置
+	也许eclipse可以通过PATH找到python解释器，但最好自己配置一下
+
+

@@ -1,0 +1,260 @@
+What is heroku?
+
+	Heroku lets you *deploy*, *run* and *manage* applications writen in Ruby, Node.js, 
+Java, Python, Clojure and Scala.
+
+
+
+Main Concepts about Heroku
+
+	Application: 
+		your source code + a dependencies description file + Procfile file
+
+	Procfile:
+		list process types and the commands that you want to tell Heroku to execute.
+
+	Slug:
+		it is a bundle of your source, fetched dependencies, the language runtime, and 
+		compiled/generated output of the build system ready for execution.
+
+	Deploy application:
+		 using git to push your source code to Heroku.
+
+	Config variable:
+		contain customizable configuration data that can be changed independently of 
+		your source code. The configuration is exposed to a running application via 
+		environment variables.
+
+	Add-on: 
+		they are third party, specialized, value-added cloud services that can be easily 
+		attached to an application, extending its functionality.
+
+	Release:
+		A release is a combination of a slug (your application), config vars and add-ons. 
+		Heroku maintains an append-only ledger of releases you make.
+	Dyno:
+		Dynos are isolated, virtualized unix containers, that provide the environment required 
+		to run an application, your application’s dyno formation is the total number of 
+		currently-executing dynos, divided between the various process types you have scaled.
+
+	Dyno manager:
+		The dyno manager is responsible for managing dynos across all applications running 
+		on Heroku.
+
+	Dyno sleep:
+		Applications with only a single web dyno sleep after one hour of inactivity by the 
+		dyno manager, scaling to multiple web dynos will avoid this.
+	
+	One-off Dyno:
+		One-off Dynos are temporary dynos that run with their input/output attached to your
+		 local terminal, they’re loaded with your latest release, each dyno gets its own 
+		 ephemeral filesystem with a fresh copy of the most recent release, it can be used as 
+		 temporary scratchpad, but changes to the filesystem are not reflected to other dynos
+	
+	Scale application:
+		Scaling an application involves varying the number of dynos of each process type.
+
+	Logplex:
+		Logplex automatically collates log entries from all the running dynos of your app, 
+		as well as other components such as the routers, providing a single source of activity
+
+
+
+
+An application on the heroku
+
+	An application is a collection of source code written in one of above languages, 
+perhaps a framework, and some dependency decription that instructs a build system
+(heroku's build system) as to which additional dependencies are needed in order to 
+build and run the application(e.g like package.json in Node.js)
+
+	The source code for your application, together with the dependency file, should 
+provide enough information for the heroku platform to build your application, to produce 
+something that can be executed
+
+
+
+
+Dependency description file in various languages
+
+	Ruby:Gemfile; 
+	Python:requirements.txt; 
+	Node.js:package.json; 
+	Java: pom.xml
+
+
+
+
+What is a Procfile file?
+
+	Procfile is a mechanism for declaring what *commands* are run by your application's
+*dybos* on the heroku platform.
+
+	You can use a Procfile to declare various *process types*, such as multiple types 
+of workers, a singleton process like a clock, or a consumer of the Twitter streaming API.
+
+	You must tell heroku, how can run your application(heroku can figure out how to start
+your app,e.g. Node.js search package.json's main field,Ruby on Rails using:rails server),
+so you need a Profile file in you application's *root directory*, in Profile file, you 
+should write *like this*: process-type:command
+	
+	The *process type*(just like PC process), can be such as web, worker,urgentworker, 
+clock, etc.
+
+	Web apps, typically have two(one used to responed requests,the other used to backgroud
+jobs) or more entry points. Each of these entry points can be called a process type.
+
+	The *command* is a command line to launch the process, you can reference some environ-
+ment variables populated by Heroku, most usefully the $PORT variable, in the command.
+    
+    A example `web: node app.js`
+(The web process type is special as it’s the only process type that will receive HTTP 
+traffic from Heroku’s routers. Other process types can be named arbitrarily.)
+
+
+
+
+process type,dyno,scale
+
+	process type is the prototype, dynos are instantiated(just like C++ class and object),
+if you need to scale up your concurrency for the type of work handled by that process type,
+you can add dyno:
+(assume original web=20,worker=10,clock=5)
+`heroku ps:scale web=34 worker=34 clock=10`
+
+	Scale up a dyno(a lightweight container which is the basice unit of composition on 
+Heroku) to run the process type(in your Procfile you had writen web:node app.js,so current
+is web process type)
+`heroku ps:scale web=1`
+	
+	You can also scale the size of a dyno:
+`heroku ps:resize web=2X`
+
+
+
+
+Heroku for Node.js
+
+	To make sure Heroku uses the correct versions of node add this to the package.json
+file(if you no package.json file,please `npm init`, will create basic package.json file
+,you should write depend node and npm version in that file)
+	"engines": {
+	  "node": "0.8.x",
+	  "npm": "1.2.x"
+	}
+
+	To make sure Heroku uses the correct versions of application dependenecies,`npm install
+<pkg> --save`(write depend into package.json)
+
+	It’s important when developing and debugging an application that the local development
+environment is executed in the same manner as the remote environments, foreman can do that
+If your package.json and Procfile are done,You can now start your application locally using 
+*Foreman* by `foreman start` (installed as part of the Heroku Toolbelt),you application will 
+now be running at localhost:5000, if your application some environment variables, the .env file(
+content format like this:RACK_ENV=development) of a project directory will be added to the 
+environment when run by Foreman, Do not commit the .env file to source control–it should only 
+be used for local configuration.
+
+
+
+
+Application configuration
+
+	An application’s configuration is everything that is likely to vary between environments
+(staging, production, developer environments, etc.). This includes backing services such as 
+databases, credentials, or environment variables that provide some specific information to 
+your application.
+
+	Heroku lets you run your application with a customizable configuration, the configuration 
+sits outside of your application code and can be changed independently of it.At runtime, all 
+of the config vars are exposed as environment variables, so they can be easily extracted 
+programatically(ENV["ENCRYPTION_KEY"]).
+
+ `heroku config:add ENCRYPTION_KEY= my_secret_launch_codes`
+
+
+
+
+Deplog your application
+	
+	If locally test your application is success, you should store your app in Git
+`git init`, `git add .`, `git commit -m my message`
+	
+	Login your heroku accunt in command line: `heroku login`
+
+	Then you can use the command line tools to create a site on Heroku and publish it:
+`heroku create`(generate a remote named herku using git)
+`git push heroku master`(push you project to remote)
+
+	You can check the state of the app's dynos: `heroku ps`
+
+	Using browser visit the app(you now see your app in your browser, excatly everyone can 
+see your app in the internet): `heroku open`
+
+	When you wish to do one-off administrative or maintenance tasks for the app, you'll want
+to spin up a one-off dyno using `heroku run bash`(This will spin up a new dyno, loaded with
+your release, and then run the bash command, Once you’ve terminated your session, or after a 
+period of inactivty, the dyno will be removed. Changes to the filesystem on one dyno are not 
+propagated to other dynos and are not persisted across deploys and dyno restarts,that meaning 
+when you session with bash you create a file on that dyno and then you terminate your session, 
+the change is lost)
+
+
+
+Application logs
+	View your app's logs:
+`heroku logs`
+`heroku logs --ps worker`
+
+
+Dyno sleeping and scaling
+
+	Having only a single web dyno running will result in the dyno going to sleep after one 
+hour of inactivity. This causes a delay of a few seconds for the first request upon waking,
+but subsequent requests will be perform normally.
+
+	To avoid your app sleep, you can scale to more than one web dyno. 
+
+	For example, `heroku ps:scale web=2` will running your app at 2 dynos, but Heroku 
+provides only 750 free dyno-hours for each application per month, if you do using 2 dynos,
+that meaning your application can only running 375 dyno hours per month, by the way, 
+although your app is asleep,your dyno hours is used, if you don't want to be used, you 
+should do this `heroku ps:scale web=0`
+
+
+
+Add-ons:
+
+	Applications typically make use of add-ons to provide backing services such as 
+databases, queueing & caching systems, storage, email services and more. Add-ons are provided 
+as services by Heroku and third parties, e.g: 
+`heroku addons:add redistogo:nano`
+
+
+
+Scheduled Jobs and Custom Clock Processes
+
+	Many apps need to run jobs at scheduled times. For example, polling a remote API every 5
+minutes, or sending email reports every night at midnight. Cron(a *nix scheduled application) 
+is historically, in heroku a more powerful, flexible solution is a clock process, for basic 
+scheduling you can use *Scheduler* add-on(a free tool for simple recurring jobs),but if your 
+applications demand the ablity to define a much more specific execution interval, it is 
+necessary to implement a custom *clock process* to schedule jobs, A clock process uses the process model to run a lightweight *singleton*(to avoid scheduling duplicate jobs) process 
+that wakes up at a specified interval and schedules the work to be performed. When paired 
+with background workers it forms a very clean and extensible approach to job scheduling.
+in your Procfile file:
+	`clock: node filename.js` (filename.js used to do some schedule work)
+and you should `heroku ps:scale clock=1`
+
+
+
+
+Releases(source code,config vars,add-ons)
+	
+	All releases are automatically persisted in an append-only ledger, making managing your 
+application, and different releases, a cinch. Use the `heroku releases` command to see the 
+audit trail of release deploys.
+
+	As Heroku contains a store of the previous releases of your application, it’s very easy
+to rollback and deploy a previous release:
+`heroku releases:rollback previousID`

@@ -1,0 +1,1286 @@
+
+pythoner
+python优化，pypy优化
+mongodb，redis，nginx，tornado，mysql，Greenlet
+web开发模式MVC，熟练Django（web开发框架），Twisted（异步网络框架）
+linux和git以及shell和vim/Emacs
+html/css/js
+熟悉Thirf/Protobuf服务化编程
+良好的编程风格和文档习惯
+数据抓取Scrapy
+熟悉python标准模块以及第三方模块
+了解pyQT或者wxPython，熟悉电子书（类似pdf等）格式
+PostreSQL数据库
+阅读英文技术文档无障碍
+灵活应用设计原则和设计模式 
+Mako模板引擎 
+
+零碎：
+交互模式中，最近一个表达式的值赋给变量 _ 
+python函数原则：如果函数没有必要返回有意义的返回值，则返回值为None
+python特点：在条件语句的表达式中不能赋值，这样就避免了=和== 的误用
+python内建函数locals()返回当前作用域定义的所有变量名和变量值组成的字典
+下划线：
+__xxx   模块中不能被import的东西
+__xxx   类的私有变量
+__xxx__ 系统自定义变量
+python缩进区分代码块带来的一个好处是：
+  通过在c语言中嵌套使用if-else时，else总是与最近的那个if组合
+  维护代码时让人搞不明白，通过pyton的缩进的限制，哪个else对应
+  哪个if一目了然，这涉及到一个软件工程的求责问题：应该将哪部分
+  任务交给语言（以及编译器）完成，哪部分交给程序员完成？
+  在这里显然将if-else交给程序员更合适
+pass的用途，有可能编写代码时需要将代码结构定下
+else语句，除了if外在while，for也可以使用else语句，只要是正常循环结束（
+  没有使用break的情况）就会调用else代码块
+
+
+
+Python信息查看：
+  Python之禅:
+    import this
+  Python关键字:
+  import keyword
+    keyword.kwlist
+
+
+Python的编码：
+1. 执行脚本时：
+  python解释器解析python源码文件时假设文件的编码为ascii，在此情况下，
+  如果文件中含有非asscii字符的话，python就会报错
+  如果要告知解析器自己的源码采用了不同的编码的话，需要在文件的开头第一或二行进行编码格式的声明
+  #!/usr/bin/python
+  # -*- coding: <encoding name> -*-
+  或者
+  # coding= utf-8
+  主要是必须在第一行或第二行，此外要匹配 coding[:=]\s*([-\w.]+)，
+  至于采用不同样式的编码声明是为了让editor可以识别罢了
+  注意：添加上面的编码声明只是用于告知解析器你的py文件采用了什么编码方式，至于你的文件到底采用了
+    什么方式和你对文件进行保存时有关
+
+2. 控制台使用的编码:
+  以交互模式输入中文时，在windows下你可以查看你交互工具采用的编码格式，一般为gbk或者gb2312
+  ，此时如果想要使用utf-8的话，要这样：mystr.decode('gbk').encode('utf-8')
+  查看系统使用的编码格式
+  import sys
+  print(sys.getdefaultencoding())
+
+3. Python内部对字符串的编码：
+  Python内部的表示是unicode编码，因此，在做编码转换时，通常需要以unicode作为中间编码，
+  即先将其他编码的字符串解码（decode）成unicode，再从unicode编码（encode）成另一种编码
+  要注意：
+  mystr.decode('gb2312')这里的mystr是gb2312编码的格式，返回unicode编码的字符串
+  mystr.encode('gb2312')这里的mystr是unicode编码的格式，返回gb2312编码的字符串
+  由此可见unicode是python内部使用的编码格式，用于在不同编码格式之间进行转换使用的
+  通常对文本处理时，先根据文本的编码将文本转换为unicode编码格式的字符串，进行处理
+  后再转换输出为想要的编码格式
+
+4. 文件读写时编码：
+  如果操纵的是unicode，则在写入文件之前要指定写入文件使用的编码方式
+  bytes_string = u_string.encode('utf-8')
+  f.write(bytes_string)
+  同样从文件中读取时也要转换成合适的编码格式
+  u_string = f.read().decode('utf-8')
+
+
+启动python解释器：
+  python -c command [arg]			执行命令，建议用单引号包括命令
+  python -m module [arg]			将module当成脚本执行
+  python -i filename [arg]		脚本执行时需要交互
+
+
+缩进：
+  python没有{}定界代码块而是靠缩进分块的
+  虽然python中可以允许单语句这样写if some: print('good')，但是不推荐，因为格式不统一，
+  还有如果将来要添加语句的话还要排版代码
+
+
+传入脚本中的参数：
+  import sys
+  当启动python时，如果没有任何参数则sys.argv[0]为空字符串
+  如果要执行脚本，则sys.argv[0]是脚本全名
+  如果是-c command则sys.argv[0]是'-c'
+  如果是-m module则sys.argv[0]是模块名
+
+
+python解释器的startup文件：
+  使用 Python 解释器的时候，我们可能需要在每次解释器启动时执行一些命令。
+  你可以在一个文件中包含你想要执行的命令，设定一个名为 PYTHONSTARTUP 的环境变量
+  来指定这个文件。如果你想要在某个脚本中使用启动文件，必须要在脚本中写入这样的语句:
+  import os
+  filename = os.environ.get('PYTHONSTARTUP')
+  if filename and os.path.isfile(filename):
+      exec(open(filename).read())
+
+
+本地化python：
+  Python提供了两个钩子（方法）来本地化: sitecustomize 和 usercustomize. 为了见识它们, 你首先需要找到你的site-packages的目录. 启动python执行下面的代码:
+  >>> import site
+  >>> site.getusersitepackages()
+  '/home/user/local/lib/python3.2/site-packages'
+  现在你可以在site-packages的目录下创建 usercustomize.py 文件，内容就悉听尊便了。 这个文件将会影响python的每次调用，除非启动的时候加入 -s 选项禁止自动导入。
+  sitecustomize 的工作方式一样, 但是是由电脑的管理账户创建以及在 usercustomize 之前导入
+
+
+模块文件的结构：
+  1. #/usr/bin/env python，*nix系统中，可以直接输入脚本名执行脚本
+  2. 文件编码字符集的声明
+  3. 模块的文档说明，用于说明模块的大概用途
+  4. import sys，模块导入，导入要使用的其它模块
+  5. 变量定义
+  6. 类定义
+  7. 函数定义
+  8. if __name__ == '__main__' 模块的执行
+
+
+模块__name__:
+  如果模块被导入，则__name__是模块的文件名（除去.py）
+  如果模块被当成脚本执行，则__name__是__main__
+
+
+对象三要素:
+  identify：id(object)返回一个用于标记一个对象的id值
+  type：type(object)返回一个类型对象，用以说明object的类型
+  value：对象的值
+
+
+type对象：
+  数据类型的表示使用一种叫做type的对象完成的
+  因为数据类型信息不能仅仅只是简单的一个描述字符串，而要包含较多的类型信息，所以
+  Python中有专门用于保存类型信息的对象，就是type对象了
+  type(object)  返回对象的类型信息对象
+
+
+对象的引用计数：
+  Python中的数字，字符串等都是对象，例如a = 1，发生的事情是Python创建了一个整数
+  对象，同时该整数对象的引用计数加一，再b = a，这时整数对象的引用计数又加一，
+  也就是说a，b不是对象而仅仅只是对象的引用罢了，为了验证此事可以查看id，id(a)和
+  id(b)返回值相同。（Python会缓存整数对象和字符串对象，所以即便是a = 9, b =9; 得
+  到的id值还是相同，你可以用浮点数试试）
+  判断是否引用着同一个对象if a is b: or if a is not b:
+
+
+标准内建函数：
+  type(object)
+    reture a type object indicate the object's type information
+  cmp(obj1, obj2)
+    可以用于任何对象之间的比较，如果是比较类对象会调用::__cmp__()，返回负数，0，整数
+  str(object)
+    返回可读性较强的字符串
+  repr(object)
+    返回可逆向转变会对象的字符串，即在大多数情况下object = eval(repr(object))
+  `object`
+    是repr的alias
+  isinstance(object, class-or-type-or-tuple)
+
+
+Python数据类型的分类：
+  简单类型和容器类型，可变类型和不可变类型，直接存取和顺序存取和映射存取
+  直接存取类型：所有的简单类型
+  顺序存取类型：str, list, tuple
+  映射存取类型：dict
+  一个类别中的类型往往具有相似的操作方法，这就是分类的目的
+
+
+数字类型：
+  int()
+    discard the after dot part
+  long()
+  float()
+  complex()
+  abs()
+  coerce(x, y) 
+    return a tuple consisting of the two numeric arguments converted to common type
+  divmod(x, y) 
+    return a tuple (m, n), x = y*m + n
+  pow(x, y[, z])
+    with two arguments, equivalent to x**y
+    with three arguments, equivalent to (x**y) % z
+  round(number[,ndigits])
+    floating point number round a number to a given precision in decimal digits(default
+    0 digits), return number is always floating number
+  hex(number)
+    将任意进制的数字转换为hex进制的字符串
+  oct(number)
+    将任意进制的数字转换为oct进制的字符串
+  chr(number)
+    将ascii数字转换为相应的字符串（字符）
+  ord(str)
+    将字符串转换为相应的ascii编码
+  相关的模块
+  decimal 支持十进制浮点数
+  math/cmath 常用的数学函数
+  operator  常用的数字处理函数
+  random  伪随机数
+
+
+序列数据类型：
+  序列类型支持的操作符：
+    object [not] in sequence  判断object是否在sequence中
+    seq * expr  重复序列expr次
+    seq1 + seq2 连接序列（一般建议使用各自的连接方法'-'.join(['xiao','wen','bin']),
+                list.extend）
+    seq[index] index can be negative
+    seq[start:end] excluding end index
+    seq[:end] from 0 to end
+    seq[start:] from start to the seq's end
+    seq[start:end:step] retrieve by step, if step is -1, convert the seq
+    Notice: if start less than 0, will be considerd 0, greater len(seq) will be len(seq)
+    seq[:] or seq[None:] return the entrie seq
+  处理序列的函数：
+  enumerate(iter) 返回enumerate对象（该对象可生成由index和value组成的元组）
+  len(seq)
+  max(iter, callback=None) or max(arg0, arg1..., callback=None)
+    callback是用于比较item的函数，可使用默认的字典顺序比较
+  min(iter, callback=None) or min(arg0, arg1..., callback=None)
+  reversed(seq)
+  sorted(iter, cmp=None, key=None, reverse=False)
+  sum(seq[, start]) return the sum of seq and plus with paramter start(default is 0)
+  zip(seq1[, seq2, seq3...])  return a list of tuples, length with shortest seq
+
+
+类型转换：
+  其实质并不是改变原对象的类型而是拷贝原对象中的内容用于生成新对象
+  list(iter)  将可迭代对象转换为list
+  str(obj)  将obj转换为字符串
+  unicode(obj)  将obj转换为unicode对象
+  tuple(iter) 将可迭代对象转换为tuple
+
+
+字符串：
+  字符串不可变，例如这样str[start:] = 'help'将会引起错误
+  定界符：
+    不同于其他的编程语言（shell，PHP）将双引号和单引号定界的字符串赋予不同的含义，
+    双引号可以转义，Python采取的方式是：除非显式声明字符串不转义否则默认进行转义
+  类型：
+    str，unicode，basestring
+    str，unicode均是继承自basestring的子类，basestring是抽象类不能够进行实例化
+    ''普通字符串
+    r''不转义字符串
+    u''unicode字符串
+  可用的操作符：
+    = < <= != >= > + * == in not in
+    相邻的字符串文本常量会自动连接起来，注意字符串变量或表达式需要用+来实现连接
+  字符串格式化：
+    'format_string' % tuple(var1, var2)
+    or 'format_string' % dict
+    format_string:
+      %c => '%c' % 65 return 'A'; '%c' % 'a' return 'a'; '%c' % 'abc' raise exception
+      %r => 优先使用repr进行字符串转换
+      %s => 优先使用str进行字符串转换
+      %d or %i => 转换为整数
+      %f or %F => 转换成浮点数
+      %u => 转换成无符十进制整数
+      %o => 转换成八进制
+      %x or %X => 转换成十六进制数
+      %e or %E => 转换成科学计数
+      %% => 输出%
+    辅助符号：
+      - 左对齐
+      + 正数前面添加+
+      # 为八进制和十六进制添加前缀'0'和'0x'|'0X'
+      0 数字前面添加0
+      (var) 对应字典参数
+      m.n  m是最小宽度，n是数字精度
+    例子：
+      '%#x' % 16 => '0x10'
+      '%5.3f' % 459330.395893 => '459330.395'
+      '%e' % 1234.567890 => '1.23456789e+03'
+      '%+d' % 4 => '+4'
+      '%2d/%2d/%d' % (2, 5, 67) => ' 2/ 5/67'
+      '%02d/%02d/%d' % (2, 5, 67) => '02/05/67'
+      '%-4d' % 5 => '5   '
+      '%(username)s is %(gender)02d years old.' % {age':8, 'username':'wikty'}
+  原始字符串：
+    r'\n' or R'\n'
+    原始字符串就是说字符串的实际值就是你所看到的值，像上面的r'\n'的实际值就是slash和n，
+    其实原始字符串内部的实现机理很简单，就是对字符串中的转义字符进行转义
+  unicode字符串：
+    u'\u1234' or U'\U1234'
+    ur'hello\nworld' is right, ru'hello\nworld' is wrong'
+  读取用户输入：
+    user_input = raw_input('Please Enter your name: ')
+  字符串和编码间的转换：
+    chr(number),unicode(number),ord(chr)
+  字符串对象的方法：
+    capitalize: 'wikty mouse'.capitalize() => 'Wikty mouse'
+    title: 'xiao wen bin'.title() => 'Xiao Wen Bin'
+    istitle: 'Wikty Mouse'.istitle() => return True
+  
+    center: 'wikty mouse'.center(width[, fillchar])
+    ljust: 'wikty'.ljust(width[, fillchar])
+    rjust: 'wikty'.rjust(width[, fillchar])
+    zfill: ''.zfill(width)
+            pad with zeros on the left to specified width, never be truncated
+    
+    find: 'wikty'.find(sub[, start[, end]])
+          reture the sub first occurance position, if not find will return -1
+    rfind: 'wikty'.rfind(sub[, start[, end]])
+    index: 'wikty'.index(sub[, start, end])
+            like ''.find, but raise ValueError when sub can be found
+    rindex: 'wikty'.rindex(sub[, start[, end]])
+    count: 'wikty mouse'.count(sub[, start[, end]])
+
+    encode: 'wikty'.encode([encoding[, errors]]) => from unicode to encoding
+    decode: 'wikty'.decode([encoding[, errors]]) => from encoding to unicode
+            errors can be 'ignore' or 'replace' and so on.
+    
+    startswith: 'wikty'.startswith(prefix[, start[, end]])
+    endswith: 'wikty'.endswith(suffix[, start[, end]])
+              suffix can be a tuple of strings to try
+    strip: '  wikty  '.strip([chars])
+    lstrip: '   wikty   '.lstrip([chars]) => 'wikty   '
+    rstrip: '   wikty   '.rstrip([chars]) => '   wikty'
+            if given the chars, will remove chars not whitespaces
+
+    isalnum: 'j7'.isalnum()
+              if all of characters are number or alph will be return True
+    isdigit: '4'.isdigit()
+              if all of character are number will be return True
+    islower:  ''.islower()
+    isupper:  ''.issupper()
+    isspace:  ''.issapce()
+              if all of characters are whitespace(including \n \t and tabspace) will return True
+    
+    lower: 'WIT'.lower() => 'wit'
+    uppper: 'wit'.upper() => 'WIT'
+    swapcase: 'wikty'.swapcase() => 'WIKTY'
+
+    join: 'separator'.join(iterable)
+        return a string which is the concatenation of the strings in the interable(the
+        iterable's item must be string, if using dict will concate its keys not values)
+    split: ''.split([sep[, maxsplit]])
+            default sep can be whitespaces
+    rsplit: ''.rsplit([sep[, maxsplit]])
+    splitlines: 'xiao\nwen\nbin'.splitlines(keepends=False)
+                split string by \n, if you want keep \n ,should True pass to
+    partition: 'username&email&download'.partition('&') => ('username', '&', 'email&download')
+              return (head, sep, tail), if not find the sep, will return (string, '', '')
+    rpartition: 'username&email&download'.rpartition('&') => ('username&email', '&', 'download')
+    
+    replace: ''.replace(old, new[, count])
+            if the optional argument is given, only the first count occurences are replaced
+    format: ''.format(*args, **kwargs)
+            return version of substitutions from args and kwargs, identified by {}
+            '{username} is {0} years old.'.format(25, username='wikty')
+            进行特殊处理:
+              '{!a} is a {!s}, {!r}'.format('wikty','male','male') 
+              !a=>ascii() !r=>repr() !s=>str()
+            {}中用:间隔的格式化   '{0:.3f}'.format(math.pi)
+            {}中限制输出宽度 '{0:10} is {1:10d} years old'.format('wikty',24)
+            格式化字典 '{0[wikty]:d},{1[mouse]:d}'.format({'wikty':23449},{'mouse':35844})
+            格式化字典  '{wikty:d},{mouse:d}'.format(**{'wikty':24393,'mouse':353})
+    expandtabs: ''.expandtabs([tabsize])
+              all tab characters are expanded using spaces, if tabsize is not given, assume is 8
+    translate: 'xiao wen bin'.translate(table[, deletechars])
+          all characters occuring in the optional argument deletechars are removed, remaining
+          characters have been mapped through the given translation table, which must be a 
+          string of length 256 or None, if is None, no translation is applied just remove the 
+          characters in the deletechars
+  字符串的转义：
+    除了常见的\n,\t等转义字符外，还可以使用\023,\x45等八进制和十六进制插入转义字符
+  三个引号：
+    如果PHP中的语法，这样在书写html或者sql等需要频繁的使用引号的片段就很方便了
+
+
+字符编码的术语：
+  ASCII   美国标准信息交换码
+    定义了使用8位映射常用字符的规则
+  BMP   基本多文种平面
+  BOM   字节顺序标记
+    用于标记大端，小端
+  CJK/CJKV  中文-日文-韩文（和越南语）的缩写
+  UCS   通用字符集
+    提出使用更多地位来映射全世界可用字符
+  UCS2  UCS的双字节编码方式
+  USC4  UCS的四字节编码方式
+  UTF   Unicode或者UCS的转换格式
+  UTF-8 八位UTF转换格式（长度为1-4字节）
+    是unicode概念的具体实现，该实现使用不定字节的方式，对于ascii仍使用8位，东亚文字一般
+    使用24位，对于特殊文字使用32位，对于程序员看到的只是和ascii一样的一个个字符，至于
+    字符之间如何定界，如何提取都由底层功能负责
+  UTF-16 十六位UTF转换格式（通常2字节长）
+    使用固定16位对所有字符编码，读取简单，未来可能会使用广泛，因为使用2字节所以需要有特殊
+    的标记用于确定字节顺序，BOM为此而用，此外因为UTF-16一律使用16编码字符即便是ascii字符也
+    如此，因其对ascii不兼容所以现在程序实现较少
+
+
+列表
+  是可变的容器类型，可以存放不同类型的item（如果同类型存放请用模块array）
+  创建：
+    list(iterable)
+    l = [1, 3, 4]
+    l = list('xiao') => ['x', 'i', 'a', 'o']
+    l = list({'username':'wikty', 'age':23}) => ['username', 'age']
+  访问：
+    l[start:end:step]
+  更新：
+    l[index] = 'xiao' => update the l[index]
+    l[index]= ['xiao','wen','bin']
+    l[index:index] = 'xw' or ['x', 'w'] or ('x', 'w')
+        insert before index
+    l[:end] = 'xwb' or ['x','w','b'] or ('x','w','b')
+        remove the [:end] and add ['x', 'w', 'b'] to the head
+    l[start:] = 'xwb' or ['x','w','b'] or ('x','w','b')
+        remove the [start:] and add ['x','w','b'] to the tail
+    l[start:end] = 'xwb' or ['x','w','b'] or ('x','w','b')
+      remove the [start:end] and add ['x','w','b'] to after start
+  移除：
+    del l[start:end:step]
+    l.remove(value) => remove first occurence of value, if not find will raise ValueError
+    l.pop()
+  列表比较：
+    列表是可比较的，这还是有点出乎我的意料
+    ==, <=, >=, >, <
+    使用深度优先逐个比较列表的元素，通过内建cmp()比较元素的
+  in:
+    item in[ not] list只会进行浅测试
+  连接：
+    l1 + l2 生成了一个新的列表对象
+    l1 += l2 将l2添加到l1
+    注意：l1 + 'xiao'是不允许的，如果你的意图是添加一个item，l1.append(item)
+  重复：
+    l1*3
+    l1 *=3
+  可用内建函数:
+    cmp,len,sorted,reversed,max,min,sum,enumerate,zip
+  列表与元组：
+    list(),tuple()可以通过浅拷贝实现二者的转换
+  列表模拟队列:
+    因为移除第一项导致列表重新排序，所以不推荐使用列表模拟队列，而应该使用
+    from collections import deque, collections.deque专门为首尾两端快速插入和移除而设计
+  列表循环：
+    for v in mylist:
+    for i, v in enumerate(['xiao','bin']):
+    for q, a in zip(['what is your name?','How old are you?'],['xiao',24]):
+    for x in reversed(range(1, 10, 2)):
+    for x in sorted(['xiao','wen',bin]):
+  列表推导式：
+    [表达式 for子句 零个或多个for或if子句]
+    结果是一个列表，由表达式依据其后面的 for 和 if 
+    子句上下文计算而来的结果构成，表达式可以任意复杂经过任意函数处理
+    例子：[(x, y) for x in [1,2,3] for y in [3,1,4] if x != y]
+        等价于
+      for x in [1,2,3]:
+          for y in [3,1,4]:
+              if x != y:
+                   temp.append((x, y))
+  嵌套的列表推导式：
+    推导式中的表达式部分可以为另一个推导式
+    例子：对一个3x4矩阵交换行列[[row[i] for row in matrix] for i range(4)]
+  列表的方法：
+    append: [].append(object)
+            append a object to list's end
+    extend: [].extend(iterable)
+            extend list by appending elements from the iterable
+            equvilate to [:-1] = iterable
+    insert: [].insert(index, object)
+            insert object before index
+
+    count: [].count(value)
+            return number of occurences of value
+    index: [].index(value[, start[, stop]])
+            return first index of value, not find raise ValueError, you may like test using: in
+
+    pop: [].pop([index])
+            remove and return item at index(default last), raise IndexError if list is
+            empty or index out of range
+    remove: [].remove(value)
+            remove first occurence of value, raise ValueError if not find the value
+
+    reverse: [].reverse()
+            reverse this list *in place*
+    sort: [].sort(cmp=None, key=None, reverse=False)
+            stable sort *in place*
+
+
+元组：
+  元组是不可变的容器类型，同list极为相似
+  创建：
+    t = 'xiao', 'bin', 'wen'
+    t = ('xiao',)
+    tuple(iterable)
+    t = tuple('xiao') => ('x', 'i', 'a', 'o')
+  访问：
+    t[start:end:step]
+  更新：
+    注意tuple不可变，所以这里的更新其实只是重新创建了新tuple罢了
+    t += ('xiao',) 允许的，因为创建了新的tuple赋给t
+    t *= 3 同上
+    t[:2] = ('xiao','wen','bin')不可以，试图改变tuple
+  连接重复：
+    ('xiao','wen') + ('bin',)
+    ('xiao','wen') * 3
+  in:
+    'xiao' in[ not] ('xiao','wen')
+  比较：
+    <,>,<=,>=,!=,==
+  不可变：
+    就像字符串一样不能够使用切片作为左值赋值，tuple的不可变性带来的好处是
+    当传递参数是可以确保不被修改，如果有修改tuple的需要，可以通过浅拷贝生成
+    一个list来处理这种情况
+    注意：不可变只是限制tuple本身，不限制tuple包含的对象，例如t = ([1,2], 'xiao')
+          t[0][0] = 'xiao'就是合法的
+  tuple支持的方法：
+    index: ().index(value[, start[, stop]])
+    count: ().count(value)
+
+
+浅拷贝与深拷贝：
+  person = ['name', ['savings', 100.00]]
+  hubby = person[:] # 通过切片拷贝
+  wifey = list(person) # 通过list()拷贝
+  [id(x) for x in (person, hubby ,wifey)]
+  => [234556, 39302, 394045]
+  从上面看到两种拷贝方式都创建了新对象（不同于赋值时仅仅引用原对象）
+  hubby[0] = 'Jack' => ['Jack', ['savings', 100.00]]
+  wifey[0] = 'Mores' =>['Mores', ['savings', 100.00]]
+  hubby[0][1] = 45.00 => ['Jack', ['savings', 45.00]]
+  同时wifey => ['Mores', ['savings', 45.00]]
+  也就是说生成的新对象中的item-list仍然是对原来对象的引用而不是新的拷贝
+  浅拷贝的意思就是只复制第一层级的简单对象（str，int等）到新对象，至于
+  复杂对象仍然引用原来的对象（注意子对象tuple不管浅深拷贝都是引用原对象）
+序列对象浅拷贝的方式：
+  完全切片：newseq = seq[:]
+  工厂函数：newseq = list(seq) or dict()
+  copy模块的copy函数
+深拷贝：
+  如果你的意图就是让多个对象共享可变子对象的话，浅拷贝正合你意，但是如果你要深拷贝的话
+  可用的方案有：
+    copy模块的deepcopy函数
+
+
+字典：
+  创建：
+    d = {}
+    d = {'username':'wikty','age':34}
+    d = {}.fromkeys(iterable[, value])
+      value default is None
+      {}.fromkeys('wen', 'v') => {'w':'v', 'e':'v', 'n':'v'}
+    d = dict(**kwargs)
+      d = dict(username='wikty', age=23)
+    d = dict(iterable)
+      # for k, v in iterable: d[k]=v;
+      d = dict([('username', 'wikty'), ('age', 23)])
+      d = dict([['username', 'wikty'], ['age', 33]])
+      d = dict((['username', 'wikty'], ['age', 33]))
+    d1 = dict(**d2), the better than it, using d1 =d2.copy()
+  访问：
+    d['name'] 可读写
+    d['noexistkey'] 如果该可以不存在读取的话raise KeyError
+      所以访问前最好使用in[ not]测试，或者使用{}.get('thekey')安全方法
+    如果不存在key写入的话，相当于为d添加新的item
+  循环遍历：
+    for key in d:
+    for key in d.keys(): => equvialent to the above
+    for k, v in d.items():
+  移除：
+    del d['key'] 如果key不存在引起KeyError
+    d.clear() => remove all items form d
+    d.pop(k[, d]) 
+      remove specified key and return the corresponding value, if the key is not found,
+      d is returned if given, otherwise KeyError is raised
+  操作符：
+    <, >, >=, <=, ==, in[ not], is[ not]
+  内建函数支持：
+    type(), str(), sorted, reversed
+    cmp()
+      字典的比较奥不是很有用，cmp()比较字典的算法是：比较字典的items数目，之后
+      比较字典的键，之后比较字典的值，之后说明相等
+    len()
+      对字典也可使用len，会返回items的数目
+    hash(object)
+      返回object被hash后的整数，如果object不可被hash的话raise TypeError，所以
+      可以通过hash(object)来判断哪些对象不能作为dict的键
+      hash的计算是通过对象的值进行的，如果值相同则hash结果相同
+  字典的方法：
+      
+      copy:
+        d.copy()
+        a shallow copy of d
+      fromkeys:
+        d.fromkeys(iterable[, value])
+        new dict with keys from iterable and with same value, default value is None
+
+      setdefault:
+        d.setdefault(k[,v])
+        if k no-exist, set d[k] = v(if v is give, else None), else pass
+      update:
+        d.update([e, ]**f)
+        update/extend d fromm dict/iterable e and f
+        if e.keys() is existed, for k in e: d[k] = e[k]
+        if e.keys() is lacked, for (k, v) in e: d[k] = v
+        the f always, for k in f: d[k] = f[k]
+
+      has_key:
+        d.has_key(key)
+        if has key return True, else False
+      get:
+        d.get(key[, dl])
+        d[key] if key in d, else dl, default dl is None
+      
+      clear: 
+        d.clear()
+        remove all items from d
+      pop:
+        d.pop(key[, dl])
+        remove d[key],and return d[key] if key in d, else dl, default dl is None
+      popitem:
+        d.popitem()
+        remove a item and return the (key, value), if d is empty, raise KeyError
+      
+      items:
+        d.items()
+        return a list of (key, value) pairs
+      keys:
+        d.keys()
+        return list of d's keys
+      values:
+        d.values()
+        return list of d's values
+      iteritems:
+        d.iteritems()
+        return an iterator over the (key, value) items of d
+      iterkeys:
+        d.iterkeys()
+        return an iterator over the key items of d
+      itervalues:
+        d.itervalues()
+        return an iterator over the value items of d
+      viewkeys:
+        d.viewkeys()
+        a set-like object providing a view on d's keys
+      viewvalues:
+        d.viewvalues()
+        a set-like object providing a view on d's values
+      viewitems:
+        d.viewitems()
+        a set-like obejct providing a view on d's items
+  字典键的限制：
+    字典的键只能使用可以hash的对象，例如不可变的数字，字符串等，但是可变的list，dict
+    就不能成为键
+    注意键1和1.0表示的是同一个键
+    有很少的可变对象也是可hash的，可以用作字典键，例如一个定义了__hash__的类的对象
+    元组是否可以作为键呢？
+      之前说过元组虽然不可变但是元组的可变子对象会变化，所以如果元组中仅含有不可变
+      子对象时认为元组是可hash的
+
+
+集合：
+  集合中的成员是无序的，并且是*可hash的对象*
+  注意：下面提到对集合的修改均是针对set创建的集合，frozenset集合不能被修改
+  创建：
+    s = set(iterable)
+    fs = frozenset(iterable)
+    注：上面的iterable可以是文件对象
+    s = {'xiao','wen'}
+  操作：
+    in[ not], is[not], ==, != , 
+    a < b，a是否是b的真子集
+    a <= b，a是否是b的子集
+    a > b， b是否是a的真子集
+    a >= b，b是否是a的子集
+    a & b，求a和b的交集
+    a | b，求a和b的并集
+    a - b，求a和b的差集
+    a ^ b，求a和b的对称差集
+    a -= b 即：a = a-b
+    注意：不支持a +=b，因为集合中没有+运算符，其实你的意图是下面提到的操作符
+    a |= b => a = a|b
+    a &= b => a = a&b
+    a ^= b => a = a^b
+    注意：frozenset和set可以进型运算，fs | set返回fs类型，set | fs则返回set类型
+    len(s)
+  更新：
+    s.add('x')
+    s.remove('x') if not exist, raise KeyError
+    s.update(iterable)
+  集合类型：
+    可变集合（set）集合可以增减成员，不能成为集合的成员
+    不可变集合（frozenset），不能改变集合，可以作为别的集合的成员
+  集合的方法：
+    集合方法中提供的集合运算方法可以通过运算符实现，但是
+    使用的方法的优势在于可以接受任意迭代对象，不想集合运算
+    符仅仅限于集合之间使用
+    copy:
+      s.copy()
+      return a shallow copy of set
+    add:
+      s.add(e)
+      add an element to a set, this is no effect if the element is already present
+    update:
+      s.update(more-sets)
+      updates with the union of itself with other sets
+    
+    clear:
+      s.clear()
+      remove all elements from this set
+    pop:
+      s.pop()
+      remove and return an arbitrary set elemnet, if set is empty, raise KeyError
+    remove:
+      s.remove(e)
+      remove e from s, if e not in s, raise KeyError
+    discard:
+      s.discard(e)
+      remove an element from a set if it is a member, if the element is not
+      a member, do noting
+    
+    difference:
+      s.difference(more-sets)
+      return the difference of two or more sets as a new set, the elements in s but
+      not in the others will be return as new set
+    difference_update:
+      s.difference_update(more-sets)
+      remove the elements in s that  in the another sets too.
+    intersection:
+      s.intersection(more-sets)
+      return a new set containing elements that are common to all of the sets
+    intersection_update:
+      s.intersection_update(more-sets)
+      set s to all of common elements in all sets
+    symmetric_difference:
+      s.symmetric_difference(s1)
+      return the symmetric difference of two sets as a new set, i.e. all elements
+      that are in exactly one of the sets
+    symmetric_difference_update:
+      s.symmetric_difference_update(s1)
+      return the results to s
+    union:
+      s.union(more-sets)
+      return the union of sets as a new set
+    
+    isdisjoint:
+      s.isdisjoint(s1)
+      return True if two sets have a null itersection
+    issubset:
+      s.issubset(parent_set)
+      report whether s is sub-set for parent_set
+    issuperset:
+      s.issuperset(sub_set)
+      report whether s is contain sub_set
+
+
+if-else方案：
+  如果有多个条件选择使用if-elif-else语句也并不难读（因此python没有提供switch
+    关键字）
+  如果判读条件的值是可hash的那就有更加优雅的解决方案：
+    事先将条件写入dict中{'actionname':action1, 'actionname2':action2}
+    action = d.get(condition, defaultaction)
+
+三元运算符：
+  python中没有 c? x: y的语法
+  所以人们想办法要模拟出这样的功能，例如：(c and [x] or [y])[0]
+  鉴于人们提供的解决方案多样易错，所以现在python支持了三元运算：
+  smaller = x if x<y else y
+
+
+迭代器：
+  迭代器为迭代序列对象提供了统一的接口，同时迭代器不仅仅限于序列对象，只要是表现
+    出序列的行为都可以被迭代（例如：字典）
+  迭代器就是一个含有next()方法的对象，当循环下一项是调用next()获取下一项，当迭代完成
+    时通过引发StopInteration异常，告知循环迭代完成（for循环自动处理迭代完成的异常）
+  迭代器不能后退，也不能复制一个迭代器
+  可迭代的对象：
+    序列类型的，字典对象，文件对象
+  迭代时不可修改对象：
+    序列对象中只有list是可变的，当你试图在迭代中移除list的item时会发生有趣的事情
+    ，例如当你移除index为3的item时，迭代器开始迭代4位置item，但是刚刚在4位置的item
+    已经变成了5位置的item
+    不可修改字典，通过for k in d: del d[k]将会引发异常
+  创建迭代器：
+    iter(object)
+    iter(function, sentinel)反复调用function直到遇到sentinel值
+
+
+列表推导式：
+  [expr for iter_var in iterable if cond_expr]
+  expr可以是任意的python表达式，甚至可以使用函数
+  for-in和if子句可以使用多个
+  获取文件中最长一行的长度：
+  f = open('test.txt')
+  longest = max([line.strip() for line in f])
+  f.close()
+  return longest
+
+
+生成器推导式：
+  不同于列表表达式返回结果，生成器表达式只是返回一个可以延迟生成结果的对象
+  (expr for iter_var in iterable if con_expr)
+  返回文件中最长行的长度：
+  return max(len(line.strip()) for line in open('test.txt'))
+
+
+文件：
+  首先要理解这里所说的文件指的不仅仅是常规意义上的文件，还包括类似于文件的数据对象，
+  这些对象常常像文件一样拥有较多的数据，适合于成块或者流式的数据处理
+  打开文件：
+    f = open(filename, mode, buffer_mode=-1)
+    注：在Windows 平台上， 'b' 模式以二进制方式打开文件，因为windows处理文本文件时会
+    自动在文件行末添加换行，对于二进制文件这样做将会引起问题，所以在windows平台时一定
+    要注意对二进制要加b，但是对于like unix系统编二进制文件时不存在添加换行的问题，
+    但是即便你使用了b也没有影响，所以如果你编写的是跨平台的代码的话将b加上是编辑二进制
+    的安全做法（但是b不能作为mode的第一个字符出现）
+    buffer_mode 0表示不缓存，1表示仅缓存一行数据，大于1的任何值用于指定缓存区大小，
+    默认负值仅表示对类电报机使用缓存
+    mode中python提供了一个特殊'U'表示提供通用换行符支持，注意该特性只支持文件读取模式
+    读取后的文件换行符都被统一转换为\n，对于原来文件使用的换行符可以通过f.newlines来
+    访问，如果文件还未读到换行则newlines为None，如果文件中有多种类型的换行则newlines
+    是一个含有各种类型的tuple
+    file()函数提供了和open()完全一致的功能
+  读取文件：
+    f.read([size])
+    该方法读取若干数量的数据并以字符串形式返回其内容,如果没有指定 size 或者指定为负数，就会
+    读取并返回整个文件。当文件大小为当前机器内存两倍时，就会产生问题,如果到了文件末尾，f.read() 
+    会返回一个空字符串
+    f.readline([size])
+    该方法从文件中读取一行内容（会连行尾的\n一并返回，如果最后一行没有\n则最后一行不会返回
+    \n）,到达文件尾时返回空字符串
+    f.readlines([sizehint])
+    返回一个列表，其中包含了文件中所有的数据行，通常用于高效读取大型行文件，避免了将整个文件
+    读入内存。sizehint代表返回的最大字节数
+  写入文件：
+    f.write(str)
+      将字符串写入文件中，返回写入字符的长度，如果想要写入其他非字符串内容，首先要将它
+      转换为字符串
+    f.writelines(list)
+      注意不会自动追加换行符
+  文件指针相关函数：
+    f.tell()返回文件指针的位置
+    f.seek(offset[, from_what])改变文件指针位置，from_what:0 文件头（默认），1 
+    文件指针当前位置，2 文件尾
+    注意：在文本文件中只允许根据文件头定位文件指针，即文本文件的第一个参数只能为0
+  文件迭代：
+    因为文件对象本身是一个迭代器，所以可以使用for迭代file对象，
+    这个迭代文件的方法应该替代遍历f.readlines()，因为后者会读取
+    整个文件，对于大型文件还是使用迭代器为好
+    for line in f:
+  关闭文件f.close()：
+    自动关闭文件with语法，在使用完文件之后python自动关闭文件
+    with open('/tmp/workfile', 'r') as f:
+      read_data = f.read()
+    下面的方法就是不可取的：（因为并不会自动关闭文件）
+    for line in open("myfile.txt"):
+  文件对象别的方法和属性：
+    截取文件：
+      f.truncate([size])
+      截取文件到最大size，如果没有指定size就截取到当前文件指针的位置
+    f.closed() if file closed, return True
+    f.encoding 文件使用的编码
+    f.errors unicode error handler
+    f.fileno() 返回文件描述integer，对于底层的接口，例如:os.read()是有用的
+    f.flush() flush the internal I/O buffer
+    f.isatty() whether refer to a tty device
+    f.mode   file mode 'r','U','w','a', possibly with '+' or 'b'
+    f.name  filename
+    f.newlines  this file's newline
+    f.next()  used by for-in
+    f.softspace  flag indicating that a space needs to be printed
+  各种复杂类型的数据结构以及对象写入文件中：
+    import pickle
+    将对象写入文件pickle.dump(obj, f)
+    从文件中提取对象pickle.load(f)
+    pickle的加强版cPickle使用的方法同pickle，只是用c语言写的罢了
+  跟平台相关的文件系统特性：
+    os.linesep
+    os.sep  文件路径分隔符
+    os.pathsep 系统path变量分隔符
+    os.curdir
+    os.pardir
+  std文件：
+    stdin，stdout，stderr是默认已经打开可供你访问的文件，
+    可以通过os.std*进行访问
+  文件数据的持久化的模块：
+    pickle,marshal用于数据转换以便后续储存到文件中
+    dbhash/dsdbd, dbm, gdbm, dumbdbm, anydom用于数据库存储
+    shelve使用anydbm寻找dbm模块，之后使用cpickle来完成存储
+
+
+文件系统：
+  通过os模块访问文件系统
+  os下的方法：
+    mkfifo()/mknod() 创建管道/创建文件系统节点
+    remove()/unlink() 删除文件
+    rename()/renames() 重命名文件
+    stat() 返回文件的信息
+    symlink() 创建符号链接
+    utime() 更新文件时间戳
+    tmpfile() 创建并打开一个临时文件
+    walk() 返回一个目录下的所有文件名
+    chdir()/fchdir() 改变工作目录/通过文件描述符莱改变工作目录
+    chroot() 改变当前进程的根目录
+    listdir() 返回指定目录的文件名
+    getcwd()/getcwdu() 返回当前的工作目录/返回unicode对象
+    mkdir()/makedirs() 创建目录/创建多级目录
+    rmdir()/removedirs() 删除目录/删除多级目录
+    access() 返回文件权限
+    chmod() 改变文件权限
+    chown()/lchown() 改变owner和group
+    umask() 权限mask
+    open() 底层的操作系统open
+    read()/write() 根据文件描述符读写文件
+    dup()/dup2() 赋值文件描述符
+    makedev() 从major和minor设备创建一个原始设备号
+    major()/minor() 从原始设备获得major/minor设备号
+  os.path下的方法：
+    basename() 返回路径中的文件名
+    dirname() 返回路径中的目录部分
+    join() 将各部分用os.sep连接起来
+    split() 返回tuple(dirname, basename)
+    splitdrive() 返回tuple(drivename, pathname)
+    splitext() 返回tuple(filename, extension)
+    getatime()
+    getutime()
+    getctime()
+    getsize()
+    exists() 文件/目录是否存在
+    isabs() 路径是否是绝对路径
+    isdir() 是否是目录
+    isfile() 是否是文件
+    islink() 是否是符号链接文件
+    ismount() 是否是一个挂载点
+    samefile() 两个路径是否指向同一文件
+
+
+异常和错误：
+异常的继承结构：
+  BaseException
+              |--KeyboardInterrupt
+              |--SystemExit
+              |--Exception
+              |--all other current built-in exceptions
+
+  try:
+    some-thing
+  except IOError as err:
+    some-thing
+  except ValueError:
+    some-thing
+  except: # 等价于 except Exception:，用于捕获所有常规类型的异常
+    some-thing
+    raise
+
+  try:
+    some-thing
+  except (Exception1, Exception2...)[, reason]:
+    一个except处理多个异常
+
+
+  try:
+    some-thing
+  except:
+    some-thing
+  else:
+    if-no-exception-execute-this
+
+  try:
+    raise Exception('spam', 'egg')
+  except Exception as inst:
+    print(type (inst))
+    print(inst.args)
+    print(inst)
+    x, y = inst.args
+    print('x=', x)
+    print('y=', y)
+  finally:
+    some-thing-always-execute
+
+  try:
+    some-thing
+  finally:
+    some-thing # 与try-except的区别在于，前者用于保证无论异常是否发生行为一致
+    不会捕获异常，异常将向上层传递
+  断言
+  assert len(mylist) >=1，如果测试失败抛出AssertionError异常
+
+
+with语句：
+  with context_var [as var]:
+    context_var是支持上下文托管的对象，例如文件对象
+    with open('test.txt') as f:
+      操作文件，在with之后文件对象自动消亡
+
+
+函数：
+  python的函数跟javascript的函数很像，是对象，有闭包的概念
+  python中函数同时也是对象：
+    例如你可以foo.__doc__访问函数的doc，在创建了函数之后你可以通过.方法给函数
+    添加任意的属性
+  函数内定义函数：
+    就如同javascript一样，还有闭包的概念
+  装饰器：
+    python中强大的装饰器语法很好用：
+    @decoratro(decorator_opt_args)
+    def func(func_opt_args):
+      pass
+    多个装饰器可以堆叠使用：foo = deco1(deco_args)(deco2(foo))
+    有参数的装饰器使用：
+      @decomaker(deco_args)
+      def foo(): pass
+      => foo = decomaker(deco_args)(foo)
+    定义一个装饰器函数：
+    def timestamp_decorator(func):
+      def wrapped_func():
+        # dosomething with func
+        pass
+      return wrapped_func
+  参数默认值def func(name, msg='hello world')
+    注：默认值可以是变量，但是变量位置要出现在函数定义之前的位置并且出现在函数定义之后
+        对变量值的改变不会影响参数默认值
+
+  对象类型的默认参数就像c中函数内的staic变量：
+    样例：
+    def f(a, L=[]):
+      L.append(a)
+      return L
+    每次调用都会累积到L中
+    如果不想累积发生
+    def f(a, L=None):
+      if L is None:
+          L = []
+      L.append(a)
+      return L
+
+  调用函数时可以使用key=value形式指定参数值，但是有几点要注意：
+  1，没有默认值的参数一定要传递值
+  2，使用key=value形式传递的值必须出现在正常传递值的后面
+  3，不能使用key=value给某个参数的同时又使用正常方式传递值
+  4，不能使用参数列表中没有的关键字
+
+  特殊参数（其实就是以常规方式以及关键字方式实现了可变参数）
+  当形参这样声明为*arguments或者**arguments具有特殊的含义
+  *arguments可以收集所有在形参没有定义的普通的实参，之后arguments为tuple
+  **arguments可以收集所有在形参中没有定义的关键字参数，之后arguments为dict
+    注：如果一同使用*和**时，注意*在**的前面定义
+
+  Lambda创建匿名函数
+  借鉴在Lisp语言的Lambda方法可以用于创建简单的匿名函数，形式：lambda arg1, arg2: arg1+arg2
+  该语句返回一个函数，lambda语法仅允许使用一个单独的表达式，同时可以访问当前context的变量，
+  也就是说利用Lambda可以构造类似于js中的闭包
+  lambda x, y=2: x+y 允许有默认值
+  lambda *z: sum(z)  允许可变参数
+
+  特殊函数
+  exec(str)可以执行字符串中的python语句
+  eval(str)可以计算字符串中的表达式
+
+函数式编程的支持：
+  apply(func[, *args[, **kwargs]])
+    将要移除该函数
+  filter(func, seq) 
+    迭代seq，func(seq[item])如果true则留下
+  map(func, seq1[, seq2...])
+    迭代序列调用func，并将结果收集成list返回，如果seq们的长度不一则将短seq用None补足
+    如果func为None的话，若仅提供一个seq则直接返回，若提供了多个seq则配对成tuple
+    再返回
+  reduce(func, seq[, init])
+    从序列中出init和seq[0]，调用func生成结果result，之后用result和seq[1]调用func，如此反复
+
+
+生成器：
+  yield 返回一个值给调用者并暂停执行，当生成器的next方法被调用时
+  ，它会从暂停的地方继续执行
+  一个简单的生成器：
+  def test():
+    yield 1
+    yield 'xiao'
+  什么时候要使用生成器？
+    当要迭代一个很大的数据集合时，状态在挂起和在继续的过程中是保留的，所以
+    生成器可以给你一个很安全的数据处理环境
+
+
+模块：
+导入模块：
+  import mymodule 
+  import mymodule, mymodule1, mymodule2
+  from mymodule import func, func2, varname
+  from mymodule import func as fun
+  from mymodule import func, fuc1, \
+                      func2, varname
+      多行导入特性
+  from mymodule import *  
+    导入除了以下划线开头的命名,
+    需要注意的是在实践中往往不鼓励从一个模块或包中使用 * 导入所有，
+    因为这样会让代码变得很难读。不过，在交互式会话中这样用很方便省力)
+  默认情况下每个module只会导入一次，如果你在开发时修改了文件要进行重新导入时，
+  请reload(modulename)
+  如果导入和本地变量冲突可以使用mymodule.varname避免混淆
+  从zip文件导入，将zip文件当成目录处理
+
+
+  查看导入的模块：
+    sys.modules is like {modulename: modulefilepath}
+
+  导入模块时的搜索路径
+  在当前目录中搜索，如果找不到就到sys.path中的目录们中搜索
+
+  编译过的模块文件（出于为了加快加载模块时的速度的目的）
+  一旦mymodule.py编译过了，在模块文件相应的目录下就会生成对应的编译过的二进制版本mymodule.pyc
+  文件，.pyc中记录了.py的最后修改时间，python解释器会据此利用pyc或者重新生成.pyc文件，还有.pyc
+  文件是平台独立的，可以在不同的平台下迁移
+  1，以 -O 参数调用Python解释器时，会生成优化代码并保存在 .pyo 文件中。现在的优化器没有太多帮助；它只是删除了断言（ assert ）语句。使用 -O 参数， 所有 的字节码（ bytecode ）都会被优化； .pyc 文件被忽略， .py 文件被编译为优化代码。
+  2，向Python解释器传递两个 -O 参数（ -OO ）会执行完全优化的二进制优化编译，这偶尔会生成错误的程序。现在的优化器，只是从字节码中删除了 __doc__ 符串，生成更为紧凑的 .pyo 文件。因为某些程序依赖于这些变量的可用性，你应该只在确定无误的场合使用这一选项。
+  来自 .pyc 文件或 .pyo 文件中的程序不会比来自 .py 文件的运行更快； .pyc 或 .pyo 文件只是在它们加载的时候更快一些。
+  3，通过脚本名在命令行运行脚本时，不会将为该脚本创建的二进制代码写入 .pyc 或 .pyo 文件。当然，把脚本的主要代码移进一个模块里，然后用一个小的启动脚本导入这个模块，就可以提高脚本的启动速度。也可以直接在命令行中指定一个 .pyc 或 .pyo 文件。
+  4，对于同一个模块（这里指例程 spam.py －－译者），可以只有 spam.pyc 文件（或者 spam.pyc ，在使用 -O 参数时）而没有 spam.py 文件。这样可以打包发布比较难于逆向工程的 Python 代码库。
+  5，compileall 模块 可以为指定目录中的所有模块创建 .pyc 文件（或者使用 -O 参数创建 .pyo 文件）
+
+  内置模块（即可以在解释器中导入的模块）
+  一些模块内置于解释器之中，这些操作的访问接口不是语言内核的一部分，但是已经内置于解释器了。
+  这既是为了提高效率，也是为了给系统调用等操作系统原生访问提供接口。这类模块集合是一个依赖于
+  底层平台的配置选项
+
+  名称空间下的东西（函数，变量，模块等）
+  dir(mymodule) 返回mymodule模块下定义的东西
+  dir()     返回当前环境（名称空间）中引入的东西（不会显示内置东西，要显示的话dir(__builtins__)
+
+
+包（由各个模块构成）
+例子：
+假设你现在想要设计一个包来统一处理不同格式的声音文件的数据
+包的目录结构：
+sound/                          Top-level package
+      __init__.py               Initialize the sound package
+      formats/                  Subpackage for file format conversions
+              __init__.py
+              wavread.py
+              wavwrite.py
+              aiffread.py
+              aiffwrite.py
+              auread.py
+              auwrite.py
+              ...
+      effects/                  Subpackage for sound effects
+              __init__.py
+              echo.py
+              surround.py
+              reverse.py
+              ...
+      filters/                  Subpackage for filters
+              __init__.py
+              equalizer.py
+              vocoder.py
+              karaoke.py
+包中每个目录都含有文件__init__.py，这个文件用来表明这个一个包目录，最简单的__init__.py文件可以是一个
+空文件，当然你也可以将包的初始化代码放入该文件中
+
+导入包
+导入包中特定模块：import sound.effects.echo(必需通过完整的名称来引用该模块)
+导入包中特定模块：from sound.effects import echo(这样就无需使用完整的名称空间链了)
+使用别名导入模块：import sound.effects.echo as echo
+导入包中特定模块中的特定函数：from sound.effects.echo import testfunc
+导入包中多个模块：from package import * ，如果包中的 __init__.py 代码定义了一个名为 __all__ 
+          的列表，就会按照列表中给出的模块名进行导入，如果没有定义 __all__，并不会导入
+          包中的全部模块
+对包自身中模块的导入：
+绝对导入：假设sound.filters.vocoder要使用sound.effects.echo的话，前者可以这样from sound.effects 
+      import echo 来导入echo模块
+相对导入：假设现在在sound.effects.surrond文件中
+      from . import echo
+      form .. import formats
+      form .. filters import vocoder
+
+文档字符串：
+  可用于包，模块，类，方法，函数
+  '''some doc''', r'''some doc''', u'''some doc'''
+  oneline docstrings
+    开始引号和结束引号在同一行
+    docstring的头尾没有空白
+    描述效果（即做了什么），而不是描述怎么做的
+    不要将参数和返回值的格式写在其中（如果是c函数的话，可以这样做）
+    如果要强调返回值的类型，可以违反上一条
+  multiline docstrings
+    类，在docstrings前面和后面都要插入一个blankline，并且要在'''的前后也要插入空白
+    子类，应该描述与父类的不同点，用override表示重写父类方法，extend表示添加的方法
+    函数和方法，如果body是有许多blankline分割的sections组成的话，docstring像类一样，
+        内容方面，应该描述行为和参数，返回值，副作用，异常等，要将optional参数指出
+        来，如果有**kwargs应该指出
+    脚本，主要写一些usage信息，当脚本调用不正确时就会打印docstrings（或者脚本提供了
+        --help的功能），应该描述简单快速的使用方法
+    模块，列出模块中含有的class，exception，function，只是简单输出它们的基本信息，
+        它们的具体信息可以在响应对象的docstring中找到
+    包，在__init__.py文件中列出模块和子包信息
+  文档字符串的缩进（多行）：
+    第一行docstrings前面的空白移除，剩下所有行的缩进以其中最少的缩进为准
+    算法：
+      def trim(docstring):
+          if not docstring:
+              return ''
+          # Convert tabs to spaces (following the normal Python rules)
+          # and split into a list of lines:
+          lines = docstring.expandtabs().splitlines()
+          # Determine minimum indentation (first line doesn't count):
+          indent = sys.maxint
+          for line in lines[1:]:
+              stripped = line.lstrip()
+              if stripped:
+                  indent = min(indent, len(line) - len(stripped))
+          # Remove indentation (first line is special):
+          trimmed = [lines[0].strip()]
+          if indent < sys.maxint:
+              for line in lines[1:]:
+                  trimmed.append(line[indent:].rstrip())
+          # Strip off trailing and leading blank lines:
+          while trimmed and not trimmed[-1]:
+              trimmed.pop()
+          while trimmed and not trimmed[0]:
+              trimmed.pop(0)
+          # Return a single string:
+          return '\n'.join(trimmed)
+
+
+类：
+  类的方法的self参数（任何方法的第一个参数都是self）
+  该参数是当前对象，有python自动传入，因为类用来定义一组操作这些可以在所有对象中共享，但是
+  对于对象的数据来说每个对象需要有自己私有的数据域，你可以将self看成这个私有的数据域封装对
+  像，之所以python会传入这个对象也是为了让对象的方法可以访问其自身的其他属性
+
+  __init__(self)方法
+  如果你的类定义了这个方法在实例化一个对象时python将会自动调用该方法，对的，该方法就是构造
+  函数了
+  __del__(self)方法
+  这就是析构函数了
+  __str__(self)方法
+  当对象要以字符串形式被转换时调用
+  __repr__(self)方法
+  类似于上面的str，只不过返回机器易读字符串
+  __lt__(self,other)方法
+  对象之间进行<比较时自动调用该方法
+  __getitem__(self,key)方法
+  使用obj[key]方式访问对象属性时调用该方法
+  __len__(self)方法
+  对对象使用len()函数时自动调用该方法
+
+  类变量和对象变量
+  类变量被类的所有实例对象所共有，是在声明类时声明的类成员变量，访问方法ClassName.some
+  对象变量是通过self.为对象添加的属性，是对象私有的，访问方法self.some
+  因为访问引用的方法并不相同，所以即便类变量和对象变量重名也可以正常访问
+
+  __开头的属性
+  好像类属性和对象属性都是这样，如果以双下划线开头的话就会被转换为私有的，待考证
+
+  继承
+  简单的语法class clidclass(parentclass)
+
+  多重继承
+  Python同样有限的支持多继承形式，唯一需要解释的语义是解析类属性的规则。顺序是深度
+  优先，从左到右显然不加限制的使用多继承会带来维护上的噩梦，因为Python中只依靠约定
+  来避免命名冲突
+
+
+python开发图形软件
+  PyQt 这是Qt工具包的Python绑定。Qt工具包是构建KDE的基石
+  PyGTK 这是GTK+工具包的Python绑定。GTK+工具包是构建GNOME的基石
+
+
+可调用对象：
+  callable(obj)
+    判断obj是否可以通过obj()进行调用
+  compile(expr, str, type)
+    用于生成可执行对象，以便exec，eval使用，这样可以做到一次编码多次使用
+    expr 要编码的python代码
+    str 通常为空串，表示执行对象存放的文件名或字符串类型
+    type 代码对象的类型：'eval', 'single','exec'
+  eval(str|compile, globals, locals)
+  exec(str|compile)
+  input() <=> eval(raw_input())

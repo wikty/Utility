@@ -1,0 +1,19 @@
+1. run your virtual machine, click the virtualbox Devices->install guest additions
+# the following operators all in the guest machine
+2. genernal, you can see you a virtual ISO image folder in your desktop
+	(actually, file location is in /media/ folder, there have many file for different 
+	os additions)
+	now copy /media/VBOXADDITIONS-38493.93/VboxLinuxAdditions.run to your home folder, 
+	if you are using 32bit system you should rename this file to VBoxLinuxAdditions-x86.run
+3. make the file is executable, chmod +x VBoxLinuxAdditions-x86.run
+4. install dkms and GNU C Compiler
+	yum -y install dkms gcc
+	# Debian and ubuntu should
+	# apt-get install dkms gcc
+5. now you have to install build and kernel header files for your system
+	like redhat:
+		yun install kernel-devel kernel-headers
+	like Debian and ubuntu:
+		apt-get install linux-headers-$(uname -r)
+6. install guest additions
+	./VBoxLinuxAdditions-x86.run

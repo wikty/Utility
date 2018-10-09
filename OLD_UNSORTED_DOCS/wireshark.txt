@@ -1,0 +1,19 @@
+﻿wireshark is a network packet analyzer:capture network packet,and display packet detail data. analyzer what happened inside a network cable.
+some examples people use wireshark for:
+network administrators usr it to troubleshoot network problems
+network security engineers use it to examine security problems
+developers use it to debug protocol implementatins
+people use it to lear network protocol internals
+only capture packet ,can't send packet
+if you working with a busy network can easily produre huge memory and disk space usage.
+wireshark won't benefit much from Mulitprocessor or Hyperthread, but has exception.
+support network card for capturing: Ethernet, 802.11, other media.
+802.11 may be need special equipment.
+come to: chapter 3 user interface
+
+
+some questions:distribution application use ship,but what's ship?
+cable:电缆  voltmeter:伏特表  advent:到来出现 troubleshoot:排除故障 criteria:标准 detection:检测
+intrusion:入侵 mainpulate:操纵  crash:崩溃 resolution:分辨率 Ethernet:以太网 notify: 通知 
+announce:宣告 patch:补丁 coincide:一致同时  deem:认为视作 dissector:解析器 ongoing:不间断
+subscribe:订阅 archive:存档 annoy:烦恼打扰 involve:牵涉 

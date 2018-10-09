@@ -1,0 +1,60 @@
+1, Creating Simple Tags
+	Jade is whitespace sensitive, so there's no need to close your tags, jade does that for you. you can also nest tags within other tags just by indenting them(any space)
+2, Putting Text inside your tags
+	By default, the content of a tag is parsed as more jade. There are three ways to put plain text inside a tag
+	1,
+		h1  some test text
+	2,
+		p
+			| some test text
+			| some test text
+	3,
+		p.
+			some test text
+			some test text
+3, Adding Attributes to your Tags
+	To add attributes you put them in brackets after the tag name , note that they must be separated by a comma
+	h1(id="pagetitle",class="title")
+4, IDs and Classes
+	Adding IDs and Classes is super common, so we made it super easy to do by adding a simple short hand. Tha syntax is just like that of CSS selectors.
+	h1#pagetitle.title
+5, Javascript
+	1,Outputing Text
+		you can output raw text from Javscript variables. Jade will also helpfully filter the text for you so it's safe from nasty html injection attacks(if you don't want Jade to filter your output, use != instead of =)
+		var jade = require('jade');
+		var fn = jade.complie(jadeTemplate);
+		var htmlOutput = fn({
+			maintainer:{
+				name:'wikty',
+				site:'wikty.com',
+				blog:'blog.wikty.com'
+			}
+		});
+		h1
+			| some text
+			= maintainer.name
+		table
+			tr
+				tb= maintiner.site
+				tb= maintiner.blog
+	2,Seting Attributes
+		h1(name=maintiner.name)
+			| some text
+			= maintiner.name
+		table
+			tr
+				td(style='width:'+(100/2)+'%')= maintiner.site
+				td(style='width:'+(100/2)+'%')= maintiner.blog
+	3,Loop and Conditionals
+		You can use if statements to decide what to display depending on variout factors,Jade's if statements are almost exactly like those present in javascript, except the parantheses are optional, and you don't need braces
+		if user
+  			div.welcomebox
+    			// Filtered inline output
+    			p.
+      				Welcome, #{user.name}
+		else	
+  			div.loginbox
+			    form(name="login", action="/login", method="post")
+			      input(type="text", name="user")
+			      input(type="password", name="pass")
+			      input(type="submit", value="login")

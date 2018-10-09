@@ -1,0 +1,34 @@
+﻿1，为什么要有smarty
+一个应用程序的开发流程如下：在提交计划文档之后，界面设计者[美工]制作了网站的外观模型，然后把它交给后台程序员。程序员使用PHP实现商业逻辑，同时使用外观模型做成基本架构。然后工程被返回到HTML页面设计者继续完善。就这样工程可能在后台程序员和页面设计者之间来来回回好几次。由于后台程序员不喜欢干预任何有关HTML标签，同时也不需要美工们和PHP代码混在一起；美工设计者只需要配置文件，动态区块和其他的界面部分，不必要去接触那些错综复杂的PHP代码。因此，这时候有一个很好的模板支持就显得很重要了。
+The Smarty 3 file structure is similar to Smarty 2:
+/libs/
+  Smarty.class.php
+/libs/sysplugins/
+  internal.*
+/libs/plugins/
+  function.mailto.php
+  modifier.escape.php
+  ...
+
+A lot of Smarty 3 core functionality lies in the sysplugins directory; you do
+not need to change any files here. The /libs/plugins/ folder is where Smarty
+plugins are located. You can add your own here, or create a separate plugin
+directory, just the same as Smarty 2. You will still need to create your own
+/cache/, /templates/, /templates_c/, /configs/ folders. Be sure /cache/ and
+/templates_c/ are writable.
+
+
+However, Smarty 3 works completely different on the inside. Smarty 3 is mostly
+backward compatible with Smarty 2, except for the following items:
+
+*) Smarty 3 is PHP 5 only. It will not work with PHP 4.
+*) The {php} tag is disabled by default. Enable with $smarty->allow_php_tag=true.
+*) Delimiters surrounded by whitespace are no longer treated as Smarty tags.
+   Therefore, { foo } will not compile as a tag, you must use {foo}. This change
+   Makes Javascript/CSS easier to work with, eliminating the need for {literal}.
+   This can be disabled by setting $smarty->auto_literal = false;
+*) The Smarty 3 API is a bit different. Many Smarty 2 API calls are deprecated
+   but still work. You will want to update your calls to Smarty 3 for maximum
+   efficiency.
+
+注释：*comment*

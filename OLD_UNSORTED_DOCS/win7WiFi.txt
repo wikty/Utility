@@ -1,0 +1,4 @@
+netsh wlan set hostednetwork mode=allow 
+netsh wlan set hostednetwork  ssid=您想要的无线网络的名称   key=您想要设置的密码 
+netsh wlan start hostednetwork 
+打开网络共享中心  --  更改适配器设置，右击你的本地连接，也就是你连入网络的有线网  卡，选择属性，点击共享，勾选  “  允许其他网络用户通过此计算机的  Internet  连接还连接  ”  选  项，在下拉菜单中选择刚才建立的虚拟网络，确定。 

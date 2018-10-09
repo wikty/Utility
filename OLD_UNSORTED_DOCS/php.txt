@@ -1,0 +1,1059 @@
+﻿默认参数值机制：同c语言一样
+
+变长参数机制：定义函数时不指定参数，通过内置函数func_num_args() func_get_arg()    func_get_args()来获取参数信息
+
+字符串连接新增内容：
+javascript+=而php是.=   这里+.分别是它们的字符连接运算符
+
+多个返回值机制（其实返回的是一个数组）：
+调用后通过内置函数list($param1,$param2,$param3....);取回结果
+
+php访问空间值：
+对于某些空间在访问前要使用isset();测试
+访问方式$_REQUEST[]$_POST[]$_GET[] []内是空间的name属性的值
+
+php and mysql:
+老式函数
+1.常用函数
+mysql_connect(server,user,pwd,newlink,clientflag)
+在函数前添加@可以使得生成的错误信息简化，这样当网站发布的时候用户就不会见到看不懂的错误提示了，当然在调试阶段程序员是要看到的这些东西的。newlink可以保证每次打开的连接都是新的连接，不设置它的话，后续调用该函数的参数如果和前面参数完全一致则返回前一个连接
+mysql_select_db(databasename,$sv);
+$result=mysql_query($cmd,$sv);
+while($row=mysql_fetch_assoc($result))
+{extract($row);    }or  {foreach($row as $value){}}
+$row=mysql_fetch_row($result);
+仅能通过数字索引来访问返回的数组$row,$row[0,1,2,3...]
+mysql_fetch_array($result,option)
+option可以是MYSQL_ASSOC关联数组，跟上面的返回值一样    
+MYSQL_BOTH  返回两个数组，默认方式
+MYSQL_NUM跟下面的返回值一样
+可知mysql_fetch_array是mysql_fetch_assoc和mysql_fetch_row的合体
+$num=mysql_num_rows($result);
+返回select语句得出的结果集中的行数，对于update insert  delete的需要下面的函数
+$num=mysql_affected_rows($result);不是很准确，因为不同sql命令影响的行数与你以为的不一样，你要想知道准确情况，那你就需要了解一下语句执行的实质了
+mysql_free_result($result);
+仅当返回的结果集很大时，调用它及时释放占用内存
+mysql_close($sv)
+每一个的数据库连接都要耗费系统资源，当连接数很多时这样做是很必要的。
+这个函数只能关闭非持久连接，无参数则关闭上一个连接
+数据库连接句柄和查询结果集都是一种资源类型
+mysql_client_encoding($con)返回mysql当前连接使用的字符集
+mysql_data_seek($result,row)
+对mysql_query返回的结果集$result内的指针移动，移动前确保mysql_num_rows()不为零
+mysql_error()
+mysql_errno();错误的数字代码
+mysql_fetch_field(data,field_offset)
+提取结果集中字段的信息并将信息作为对象返回，field_offset用于指定提取指针，提取第几个字段信息
+mysql_fetch_lengths(data)
+返回一行数据各段内容长度
+mysql_fetch_object(data)
+将一行数据作为一个对象
+mysql_field_fags(data,field_offset)
+返回指定字段的标识，例如auto_increment之类的东西，返回的东西用一个空格间隔开，所以可以通过 explode() 函数把返回的字符串打散到一个数组中。
+mysql_field_len(data,field_offset)
+返回指定字段的长度
+mysql_field_name(data,field_offset);
+返回指定字段的字段名
+mysql_field_seek(data,field_offset);
+设置字段搜索指针，注意与mysql_data_seek()的区别，mysql_filed_seek对那些字段信息查找函数造成影响，而后者则是移动结果集中行指针
+mysql_field_table(data,fileld_offset)
+返回指定字段对应的表名
+mysql_field_type(data,field_offset)
+指定字段的类型
+mysql_get_client_info()
+返回mysql版本号
+mysql_get_host_info()
+返回一个字符串，说明了连接 connection 所使用的连接方式
+mysql_get_proto_info()
+如果成功，则返回 MySQL 协议的版本
+mysql_get_server_info()
+如果成功，则返回 MySQL 服务器的版本号
+mysql_info()
+最近一次查询时，mysql数据库返回的信息，类似recrods :1 warning:0的东西
+mysql_insert_id()
+就是mysql中最后插入id的效果
+mysql_list_dbs()
+等同于show databases;
+mysql_list_processes()
+当前连接线程列表
+mysql_num_fields()
+返回列数目
+mysql_num_rows()
+返回行数目，返回结果集中行的数目。此命令仅对 SELECT 语句有效
+mysql_pconnect()
+创建一个持久连接，与myslq_connect()的区别，创建连接时先尝试寻找可用持久连接，创建的连接不会随脚步的执行完而关闭
+mysql_ping($con)
+存在连接则返回true，否则自动重新连接，该函数适合，长时间中断的脚本，询问以及重连服务器
+mysql_stat(connection)
+不及命令show status返回的内容全面，只是简单的状态信息
+mysql_thread_id($con)
+返回连接线程的id
+mysql_result(data,row,field)
+相当于对结果集的二次挑选
+mysql_real_escape_string(string,connection)
+在使用mysql_query之前先将要查询的字符串，经过上述函数的处理，这样可以使用当前连接的字符集对查询语句的特殊字符进行转义处理，避免数据库攻击
+mysql_unbuffered_query(query,connection)
+查询返回的结果实时的，不像mysql_query返回的结果是在查询完成后返回，这样意味着内存的节省，和查询的实时性，但是反对的结果不能使用mysql_num_rows mysql_
+data_seek函数，这是显然的，东西都没有都到，怎么能了解全局情况，此外这类查询是串行的，前一个查询除非将结果都提走，否则后续查询阻断。
+
+2.常见错误
+   unknow  mysql server host  'localhost'(11001)
+   原因主机名错误或者服务器未启动
+   access  denied for user 
+    原因用户名或密码错误，或别用户未被授权连接mysql
+   call to undefined function mysql_connect()
+   原因php.ini文件中没有开启mysql扩展，extension=php_mysql.dll
+   sql语句出错没能取回结果supplied argument is not valid mysql result resource
+   方案使用print_r  print  echo逐句检查
+   数据乱码
+   原因储存数据和显示数据使用的编码方式不同，或者是虽然方式相同，但在储存时因   为编码方式限制丢弃掉部分数据，致使数据损坏（一般不可恢复），针对前一种解决    方案，mysql_query('set names  gb2312')，这里是设置数据库的编码方式，    gb2312可替代
+    mysql_error()的使用是良好的习惯
+3，一些建议
+传入php查询函数的sql语句建议省略sql语句结束的;标志，主要担心php解析时误以为自己的语句已经结束，省去;对查询没有影响
+新式函数和对象
+传统函数的两点不足，一，mysql新添加的高级功能没有得到支持，二，传统函数是面向过程的不易扩展
+mysqli
+特点：支持语句预先准备，支持事务处理，面向对象和过程等特点
+php5.3之前php通过一个客户端与mysql通信，之后用mysqlnd(mysql native dirver)取代了客户端与mysql通信，mysqlnd支持原始mysql函数，
+mysqli和pdo与mysql进行通信
+PDO
+
+interger   object  resource一些类型
+var_dump();输出变量的类型和值
+gettype();输出变量的类型
+is_xxx();判断变量是否是xxx类型
+php中变量的命名规则：使用regexp来表示
+[a-zA-Z_\0x7f-\oxff][a-zA-Z_0-9\ox7f-\0xff]*
+引入外部文件：
+include
+require两个一样，值得注意的是，引入位置之前出现的变量在包含文件中有效，也就是说，如果之前出现过同名变量的话，会出现冲突，所以最好include之前不要放东西,这里的冲突可能比你想象的还要糟糕，因为对于php来说这不是错误，可以这样理解include只是将一段代码放在了当前位置，所以变量重名的结果就是你不小心就会改掉，include文件中的变量值，这就不是之前之后的问题了，只要重名了都会改变。
+
+全局变量：
+放在所有函数之外，想要引用时用global
+
+常量定义：
+define("NAME","value")建议大写名字
+
+php中有很多预定义的变量：
+编程时总是通过这些预定义的变量进行通信,例：$_GET $_POST $_REQUEST $_SERVER  &_FILES &_ENV  $_COOKIE $_GLOBALS很多。
+$_SERVER['SERVER_ADDR']
+$_SERVER['SERVER_NAME']
+$_SERVER['REQUEST_METHOD']
+$_SERVER['REMOTE_ADDR']
+$_SERVER['REMOTE_HOST']
+$_SERVER['REMOTE_PORT']
+$_SERVER['SERVER_PORT']
+$_SERVER['DOCUMENT_ROOT']
+$_SERVER['SCRIPT_FILENAME']
+值变量化：
+$a='myvar';
+$$a='hello';
+这样的话，就产生了一个$myvar变量，且值是'hello'
+
+变量的引用：
+$a='xiao';
+$b=&$b;
+此后对a b指向同一储存空间
+
+%取余两边自动转换为整数  /返回的总是浮点数
+
+字符串连接：
+.=  和 .
+and <=> && or<=>||
+php是面向对象的语言，支持类，$this指向对象自身，-> new这些配套使用
+
+
+print与echo
+print有返回值且任何情况都返回1，但是一次仅输出一个字符串print('hello');
+echo无返回值，可以一次输出多个字符串，echo 'hello','xiao';
+而这都是语言结构，也都可以用函数的方式调用，echo在性能上更快一点，因为没有返回值，但是只是很小很小的提升
+
+php中检测是否是来自浏览器的ajax请求
+if(isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&$_SERVER['HTTP_X_
+REQUESTED_WITH']=='XMLHttpRequest');
+为true则是ajax请求
+ 
+foreach($myarray as $myvalue)  
+foreach($myarray as $mykey=>$myvalue)
+$mykey值的键值  $myvalue值 $myarray可以是数组或对象,建议使用前用is_array()函数判断是否为数组
+
+：endsome {}
+if($a==0)
+{
+echo 'a is 0';
+}
+等价于
+if($a==0):
+echo 'a is 0';
+endif;
+类似的，endswitch endfor endforeach endwhile
+
+php中设置cookie
+cookie是报头信息，所以要在php最前面调用setCookie(name,value,expire,path,domain,secure)，这跟javascript不太一样，javascript是客户端设置cookie所以没有什么限制。
+
+session
+网站需要一种机制，对那些正在与它进行交互的用户的信息有所记录，这样才能保证用户在页面跳转时服务端知道用户的信息。
+session是储存在服务端的用户信息，浏览器通过发送session id给服务器让其识别用户
+
+php与html的分离
+在一个php逻辑块中要输出html是用开闭标记切换比print和echo来的高效
+<?php?>推荐，但在嵌入xml或xhtml时用<?php ?>多一个空格
+<script language="php"></script>javascript人员惯用
+<%%>asp人员惯用，但还要在php.ini中加入asp_tags
+<??>这种简化记法会与xml冲突，另外还要开启php配置文件的相关项
+后两个不推荐使用
+多了一种注释风格#这是unix下的风格（单行）
+
+关于字符串
+strpos(str1,str2);找到str2在str1中第一次出现的位置
+strlen(str);
+
+表单验证
+进行验证的php代码写到表单页面中，在服务器验证表单的一种好的方式是，把表单传给它自己，而不是跳转到不同的页面。这样用户就可以在同一张表单页面得到错误信息。用户也就更容易发现错误了。form不必指定action，因为提交表单后页面自动重载，当前页面的php代码就可以进行验证。
+
+PHP 的 $_REQUEST 变量包含了 $_GET, $_POST 以及 $_COOKIE 的内容
+get方法的另一个好处是，url包含数据，所以收藏为书签页面时会很有用处
+
+日期
+显示日期函数data(format,timestamp);
+例format为'y-m-d' or 'd.m.y'  除了dmy还有其他
+timestmap 一个时间戳，默认当前时间戳
+生成时间戳mktime(hour,minute,second,month,day,year,is_dst)
+
+可在多个页面重复使用的函数、页眉、页脚或元素
+include('file');//错误警告，脚本继续执行
+require('file');//错误中断，脚本不再执行
+正因为在文件不存在或被重命名后脚本不会继续执行，因此我们推荐使用 require() 而不是 include
+
+文件读写
+$myfile=fopen(filename,moden);
+moden:r | +r | w | +w | a | +a | x | +x
+打开文件不成功提示机制
+$file=fopen("welcome.txt","r") or exit("Unable to open file!");
+$char=fgetc($file);
+$str=fgets($file);逐行读取
+feof($file);
+fclose($file);
+
+上传文件
+form的enctype需要修改
+action指向的服务端脚本并不会控制上传文件保存在上传到临时目录的过程，该脚本要做的是移动，处理，保存上传文件或者做一些错误处理。
+如果php不予保存，则上传到临时目录的文件在结束会话后被移除
+服务端脚本访问上传文件的信息
+$_FILES["file"]["name"] - 被上传文件的名称 
+$_FILES["file"]["type"] - 被上传文件的类型 
+$_FILES["file"]["size"] - 被上传文件的大小，以字节计 
+$_FILES["file"]["tmp_name"] - 存储在服务器的文件的临时副本的名称 
+$_FILES["file"]["error"] - 由文件上传导致的错误代码 
+一般通过上面的这些信息筛选，限制上传文件，以决定是否进行保存
+模块如下
+ if ($_FILES["file"]["error"] > 0)
+    {
+    echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
+    }
+  else
+    {
+    echo "tell something to user , upload file successlly";
+ 
+
+    if (file_exists("myfiledir/" . $_FILES["file"]["name"]))
+      {
+      echo $_FILES["file"]["name"] . " already exists. ";
+      }
+    else
+      {
+      move_uploaded_file($_FILES["file"]["tmp_name"],
+      "myfliedir/" . $_FILES["file"]["name"]);
+ echo "tell something to user , upload file successlly";
+      }
+    }
+
+cookie
+setcookie("user", "Alex Porter", time()+3600);//必须在最前面
+在发送 cookie 时，cookie 的值会自动进行 URL 编码，在取回时进行自动解码（为防止 URL 编码，请使用 setrawcookie() 取而代之）。
+session
+session_start();//用于开始一个会话，这之后可以使用$_SESSION来保存，删除会话信息，必须在最前面
+unset($_SESSION['	name']);//删除一个会话信息
+session_destory();//终止会话
+Session 的工作机制是：为每个访问者创建一个唯一的 id (UID)，并基于这个 UID 来存储变量。UID 存储在 cookie 中，亦或通过 URL 进行传导，显然如果uid储存在cookie中意味着服务器可以使用长时间保存session的策略。
+
+email
+mail(to,subject,message,headers,parameters)
+headers副标题  parameters给邮件系统的参数
+为站点制作反馈系统
+userinput：$subject  $message $useremail
+mail("xiaowenbin_163.com",$subject,$message,$useremail);
+对用户输入的email验证
+$field=filter_var($field, FILTER_SANITIZE_EMAIL);
+if(filter_var($field, FILTER_VALIDATE_EMAIL));
+
+错误处理
+简单提示：
+die("prompt error");给出错误提示并终止脚本
+自定义处理函数：
+可能有必要的传入参数：错误描述，错误level，出错文件，出错行数，出错context
+error_proc(error_level,error_message,error_file,error_line,error_context)
+error_level error_message必须有
+error_level是php内部指定的一些值
+error_context规定一个数组，包含了当错误发生时在用的每个变量以及它们的值
+如何使用自定义的处理函数
+当你的脚本出错时，经常会看到浏览器给出的出错提示，这其实是调用了php默认的错误处理函数，我完全可以用自定义的处理函数来代替它
+set_error_handler(myproc,error_level);
+error_level缺省，表明将所有级别的错误与myproc关联
+触发错误
+triggel_error("prompt",error_level);
+优点是其灵活性，可以根据特定特定错误给出提示，常用于检测用户输入。
+错误写入服务器错误记录
+php.ini 中的 error_log 配置，PHP 向服务器的错误记录系统或文件发送错误记录
+error.log()
+并且还可以将错误发送给网管error_log("Error: [$myerrorlevel] $mymsg",1,
+ "someone@example.com","From: webmaster@example.com");
+
+异常
+异常处理用于在指定的错误（异常）情况发生时改变脚本的正常流程
+异常发生，保存当前运行状态，处理异常，重新定位执行流（有可能回到原来被打断的地方）
+当异常被抛出时，其后的代码不会继续执行，PHP 会尝试查找匹配的 "catch" 代码块。
+如果异常没有被捕获，而且又没用使用 set_exception_handler() 作相应的处理的话，那么将发生一个严重的错误（致命错误），并且输出 "Uncaught Exception" （未捕获异常）的错误消息
+捕获异常
+try{some-thing throw new Exception("error msg");}
+catch(Exception $e)
+ {
+ echo 'Message: ' .$e->getMessage();
+ }
+为了遵循“每个 throw 必须对应一个 catch”的原则，可以设置一个顶层的异常处理器来处理漏掉的错误
+顶层异常处理，所有未被捕获的异常都会由其处理
+function myfunc($myexception){}
+set_exception_handler(myfunc);
+编写自己的异常类，继承自Exception
+class mye extends Exception
+{
+public function myfunc(){}
+}
+使用catch时再次抛出异常，一般用于捕获到程序错误后再catch抛出用户友好的出错消息。
+多个catch可以捕获不同类型的异常
+
+过滤函数
+filter_var()
+filter_var_array()
+filter_input()
+filter_input_array()
+过滤函数很是强大，不仅可以对值进行验证，还可以剔除数据，input主要用来验证表单数据，上面的函数的第三个参数可以使得对数据的检测更为精细化，甚至可以定义自己的验证，剔除函数。
+
+mysql
+$con=mysql_connect(servername,username,password);
+mysql_select_db(dbname,$con);
+mysql_query($cmd,$con)or die(mysql_error());
+mysql_close($con);
+ODBC
+使用这个系列的函数可以使我们连接到任何数据库
+$con=odbc_connect();
+$results=odbc_excu($con,$cmd);
+odbc_fetch_row($results);
+odbc_result($results,keyname);
+
+xml
+基于事件的xml文档处理方法：
+php拥有解析xml文档的基于事件的expat解析器，（此外还有基于树的解析器，基于事件的是面向文档内容的速度更快）
+$parser=xml_parser_create();
+xml_set_element_handler($parser,startfunc,endfunc);//分别定义了处理元素开始和结束时的处理函数
+xml_set_character_data_handler($parser,myfunc);//定义了处理chardata时的处理函数
+xml_parser($parser,$data);//$data来自于fread读取的xml文档
+xml_parser_free($parser);
+xml_error_string()
+xml_get_error_code()
+xml_get_current_line_number();
+基于树的xml文档处理方法：
+dom也是php内部支持
+XML DOM 把 XML 视为一个树形结构：
+Level 1: XML 文档 
+Level 2: 根元素
+Level 3: 文本元素
+一个例子
+$dom=new DOMDocument();
+$dom->load("readxml.xml");
+$root=$dom->documentElement;
+foreach($root->childNodes as $node)
+{
+print $node->nodeName.'='.$node->nodeValue;
+}
+简单的xml文档处理方法：
+与 DOM 或 Expat 解析器相比，SimpleXML 仅仅用几行代码就可以从元素中读取编辑文本数据，php内部支持
+
+php中的array
+支持单维，多维，关联数组，数据库填充数组
+
+关于SimpleXMLDocument对象
+构造函数：__construct(data,options,is_url,ns,is_prefix)
+data可以是xml文档形式的字符串或者xml文档的url
+is_url默认flase，表示data是xml文档形式的字符串，其余的参数不需要关心
+
+服务器配置时的
+AddType application/x-httpd-php-source .phps
+作用是使得服务器浏览phps文件时语法高亮显示
+
+类
+声明属性public $value;
+类中对实例的引用$this
+访问实例属性的方法$this->attri  注意没有属性$符号了
+访问行为的方法$thsi->method();
+同样创建实例要new
+public private protected同c++一样的意思
+类的默认函数（注意下划线是两个）
+function __construct(){}
+function __destruct(){}
+function __toString(){}不定义这个函数的话，将对象转换为字符串会出错
+手动销毁对象unset($obj);
+继承的关键字 ：extends
+同名函数将覆盖父类的方法，想要使用父类方法，parent::fathermethod();
+public static $count=0;
+定义了类的静态变量，所有的实例共享，即便没有实例也可访问它:在外部时，classname::$count;在内部时，self::$count;
+方法也可以是static的
+
+类中默认常量
+__CLASS__
+
+php中有个magic函数
+__autoload()据说能够自动在检测到未定义的类时对类的文件include，这太伟大的，我如果页面中要用到很多类时很是方便，但我用的时候出了问题，经过查阅手册，我知道__autoload不推荐使用了，建议改用spl_autoload_register()来实现自动加载类的功能，可以依然出错，手册又说了如果我的php是cli接口而非cgi接口时自动加载功能就失效，这里的接口指的是php与服务器间的接口，我不懂了，以后解决，现在就多敲几行字吧
+
+时间
+timestamp=mktime(h,m,s,m,d,y,is_dst)
+返回unix时间戳
+参数可以从右到左依次空着，空着的参数会被设为相应的当前 GMT 值
+is_dst已经被废弃
+date(format,timestamp)
+若timestamp无，则以当前时间，将时间戳转换为可读性良好的字符串
+
+使用pdo操作数据库时，出错你也不一定可以找出来，这时将sql语句打印出来是个调试的好方法，我就犯了一个错误，时间2010-01-01 00:00:00没有用引号括起来。
+我又在这个问题上绊倒了，真是可悲，千万要记得，如果将变量放到了查询语句中，而变量又是字符串的话，一定要另外添加括号，否则mysql会抛出这样的错误提示Unknown column 'nihao' in 'field list'，这次还是用老办法调试出的结果，打印查询语句。
+
+<<<heredoc
+heredoc;
+
+当前页面所在目录的url：$_SERVER[REQUEST_URL]
+语法很好用，但是要注意了，这里<<<heredoc和heredoc;后面千万不能有空格，heredoc;的前面也不能有空格或别的字符，里面可以放php变量
+
+页面看成组件集
+一个页面可以看成是由不同的组件构成的，每个组件对应一个功能区，可以将每个组件分别写成独立的文件，在使用的时候include相应的
+组件，根据事实的数据就可以生成不同的页面了，这就是融合了组件思想的动态php网页
+
+PHP的安全核心思想
+在处理用户操作前，先检查用户操作的合理性
+
+magic_quotes_gpc
+在早期的php中，为了解决表单提交的数据要与数据库交互时，提交数据中含有引号的问题（因为数据库中字符串用引号定界，如果提交数据含有引号将会引起sql的解析错误），所以php采用了自动将提交数据中的引号转义的策略，也就是说你从超全局数组中提取的内容实际是已经经过引号转义的数据，这样的话与数据库的交互就不会有问题了，从数据库中提取数据时含有专门的stripslashes函数用于去除转义效果，但是现在这种方法已经不使用了，所以应该在php.ini文件中明确的关掉magic_quotes_gpc项，get_magic_quotes_gpc()可以检测是否开启该项
+
+无权配置php.ini文件时的解决方案
+有时候托管的主机并不提供对php.ini文件的修改，这时可以问询是否提供.htaccess文件进行修改，如果还不行就只好在每个可能发生magic的脚本开头包含预定义文件nuke_magic_quotes.php（这是一本书上写的自定义脚本，其实质就是对数组使用函数stripslashes来去除\），对了还有ini_set也可以修改某些php配置项
+
+虚拟主机
+当网站发布后，你的网站将会被部署到一台服务器上，但是现实的情况是一台服务器可能会部署若干的网站，所以有了虚拟主机的概念，用来在一台物理机上为多个网站服务，Apache虚拟主机的配置参见：foundationphp.com/tutorials/apache22_vhosts.php
+
+错误显示
+开发阶段全面地错误提示是很重要的，这样有利于调试，可是在网站发布阶段，错误显示应该是完全不同的形式，应该友好而又安全，常通过catch来给用户显示一个友好的错误处理方式，还有要记得改变php.ini中的错误配置
+
+弱类型
+$my1="2  xiao";
+$my2="1 xiao";
+$my3="xiao";
+$my1+$my2=3   $my1+$my3=2
+都是合法的，比js的弱类型还要强大
+
+引号中的转义
+单引号仅能转义\\和\'  其余的转义只能在双引号中使用。
+这里要注意一般包含路径为目录时如果采用windows形式的路径，最后的\一定要转义为\\（php允许linux和windows两种路径书写形式）
+不过显然尽量不使用windows的路径书写方式是个明智的选择
+
+当你遇到需要大量使用单双引号和变量解析的场合
+heredoc比双引号更适合你，不过直接将字符串连进一个变量尤其是在循环是很长用的方法，5.3种推出了nowdoc的语法，仅仅当成字面量，不进行解析，类似heredoc的用法，只是开始标记<<<'nowdoc'
+，结束标记不必用单引号
+
+记住上面的各种方法，不解析比解析的高效，所以尽量用简单的方法，不要因为php能干什么，就去干什么
+
+包含文件
+php引擎遇到包含文件标志时将停止php解析，对于包含文件的解析方式取决于其自身的文件内容，文件内容可以是纯html或纯php或者是混搭的，所以包含文件中的php代码必须给出<?php?>标签，这样才能够识别代码是php，此外由于对内容的鉴别取决于php标签，如果没有标签则以文本形式返回，所以包含文件的扩展名是无关紧要的，以前人们会使用.inc，但是该类型文件的问题是服务器将其当作文本文件可以直接被浏览器访问，所以存在安全问题，同理.html也是一个道理，建议取名为.inc.php，这样的话，文件必须经过php引擎才能被浏览，有较高的安全性。
+可以这样想，php脚本到浏览器经过了两层的过滤，首先php引擎决定（是否使用echo等）哪些内容发送给浏览器，之后浏览器按照html代码的解析规则，将符合规则的内容呈现到用户面前，这样的话php解析器就可以过滤掉那些脚本中的敏感信息而只提供给用户允许的内容。
+
+当前脚本
+$_SERVER[PHP_SELF]=>/test.php
+$_SERVER[SCRIPT_FILENAME]=>
+D:/Users/Administrator/Documents/htdocs/test.php
+
+对文件名中使用空格是个坏习惯，建议用下划线代替，在url中空格将会被替换的
+
+getimagesize的返回值
+Array ( [0] => 1024 [1] => 768 [2] => 2 [3] => width="1024" height="768" [bits] => 8 [channels] => 3 [mime] => image/jpeg )
+
+不在php标签中的内容统统发送到浏览器，即使你从逻辑上讲他可能是if语句的内容，也不必手动使用echo等发送，要记住php引擎会自动将php标签之外的内容发送到浏览器
+
+预防式编程
+1，if(!isset($my))
+{$my=default_value;}
+2，function_exists() class_exists()
+if(!function_exists())
+{include "path the function"; }
+
+包含文件可能出现的问题
+1，服务器以安全模式运行php，要求所有的包含文件放在指定目录中，该目录的位置可以通过phpinfo中core的safe_mode_include_dir查询，该特性导致网站需要重新调整组织结构，将来安全模式会移除
+2，open_basedir已经设置，貌似该命令会限制指定目录文件的访问权限，所以也有可能是他导致的问题
+3，包含文件丢失时，如果display_errors会将站点的布局信息流露，所以应该抑制错误显示，@include，也许通过修改display_errors配置命令更好一点，@只能够抑制当前行的错误显示，至于对display_errors的配置，可以通过php.ini文件的访问，apache的话可以通过.htaccess文件添加php_flag display_errors off，或者通过ini_set('display_errors',0)，但是以上都是抑制错误显示的方法，当错误发生时也许更好的做法除了不透露站点的信息外，还应该进行有效的错误处理，通过try catch可以实现错误处理，比如错误时重定向用户，这在一些必须有包含文件支持的页面出错时尤其必要。
+
+php中配置include_path
+修改php.ini
+通过.htaccess文件
+使用set_include_path();仅对当前脚本有用
+set_include_path(get_include_path.PHP_SEPARATOR.$newpath);
+这样就可以将新设置的路径添加到之前的路径搜索中，但使用它有个问题，远程服务器和本地服务器的路径不一样所以在上面的代码前添加如下代码if($_SERVER[HTTP_HOST]=='localhost')
+$newpath="c:/includes/youweb";
+else if($_SERVER[HTTP_HOST]=="www.you.com")
+$newpath="/includes/youweb";
+这种方法主要用于站点包含了很多文件的情形，例如依赖与第三方php库的应用。
+
+路径
+绝对路径c://you/am/
+相对路径./  ../
+相对根路径/不能被include理解，不过可以通过$_SERVER[DOCUMENT_ROOT]来伪造/，
+部署网站时可以完全使用相对路径，可是这里两个问题，一来层次结构较多时，一系列的../../../../会让你困惑不解，编程时还得不停的查看站点目录结构以正确引用包含文件，还有一个问题是致命的问题，一个包含文件中使用的链接（如图片或样式表）必须是相对根目录形式的，因为包含文件你事先并不能够确认将被那个引用，如果其中的链接是相对路径的话，意味着每个引用该包含文件的脚本都能够理解其链接，如果链接不采用相对于根的形式，那就出现了限制，就是说包含文件事先需要知道什么脚本会引用它，然后按照相对引用脚本的路径写链接，这样使用相对路径写出的链接才能保证是肯定有效的，而且产生的限制是该包含文件只能用于引用脚本的同一层级。你可以采取的方式是，include时使用相对路径，但是包含文件中的链接一定要写成相对于根目录或者是绝对路径，除非你写的包含文件不是面向有所脚本可用的。
+
+早期的表单提交数据
+可以直接通过$+控件name属性访问，这样导致只要浏览过源码的人都可以伪造传递给php脚本的数据，安全性较差，老版的启用方式是
+更改php.ini中的register_globals，现在该老方法已经废弃不用，极不安全，$_REQUEST比get post的安全性要差些，所以使用get和post是正确的选择
+
+判断页面的请求方式
+$_SERVER[REQUEST_METHOD]
+也可以通过表单中传递的特殊值来判断
+现在有发现一个if($_POST)该方法也很好用，如果不是post方法那么数组为空，好像要比$_SERVER[REQUEST_METHOD]更深入一点，不过使用该方法前最好对$_POST数组是多久清空一次有所了解，我先在还不了解
+
+自处理表单的好处是：可以将错误信息反馈到当前页面上，而且可以使得表单出错时具有粘性
+
+htmlentities(string,ENT_COMPAT|ENT_QUOTES,charset);
+表单粘性涉及到实体转换问题，如果直接将用户输入的值填充在value属性中，倘若输入值中含有引号，因为单双引号问题value属性值将会被截断，所以返回前实体转换一下
+
+避免不良居心的人利用网站的想别人发送垃圾邮件的有效方法是检测，传入信息中有无Content-Type:  Cc:  Bcc:这些字符串
+
+使用filter_input验证email是总是出错，只好换用filter_var
+filter_input除了可以验证数据外还可以验证数据的请求方式
+
+支持强制类型转换
+() array int integer bool boolean float double real object string unset它对应的是null
+
+linux服务器上的php代码运行的身份是nobody或者apache，注意的是，不同的身份运行的代码所具有的权限是不同的，对于nobody和apache的权限配置决定了代码的权限，如果可以的话，以自定义的用户权限运行代码更为灵活，权限尤其与php代码中的文件函数密切相关。
+
+使用文件来存储数据信息，有其优势，尤其是当服务器运行数据库的条件不充分时，虽然使用数据库一来降低了安全风险，二来不需要考虑数据的组织关系，但是当数据存储需求量较小时选择文件存储数据是明智的选择，至于文件又可分为特定格式约束的文件和一般的文本文件，例如xml属于前者，常见的.txt属于后者，对于xml文件来说其优势就是已经有一套健全的读写文件的快捷方式，所以可以认为xml是中型数据需求时的首选，对于一般的文本文件来说，没有任何指定的格式可供参考，文件的读写完全由自己对格式进行约定，所以它很适合小规模数据的存储，尤其利用php提供的强大的文件以及字符串函数对文本文件的解读很高效，常用的函数有file file_get_contents
+trim explode implode array_slice等等，所以不见得网站就得用数据库，不用数据库照样跑的很好。
+
+文件读写
+x模式提供的意义在于，防止写文件时对原有同名文件的清空，因为它总是创建新文件，若文件已存在则调用失败
+PHP_EOL是跨平台的换行标志符，window代表\r\n，mac代表\r，linux中代表的是\n
+rewind($hf)将文件指针移动到文件的开头
+fseek($hf,offset,position_mark)
+文件位置标志常量position_mark:SEEK_END等常量，可以实现定位到文件的任意位置
+
+目录的读取
+方案一，
+$hd=opendir()
+while($item=readdir($hd))
+{//$item可能是目录名(包括. .. 这两个特殊目录)或者文件名}
+方案二，
+$myarray=scandir()
+返回目录下的所有项目为数组，可能是目录名(包括. .. 这两个特殊目录)或者文件名
+
+关于php文件访问的权限
+默认情况下php又apache用户(nobody或apache)来执行脚本，也就是说默认的php文件权限同这个用户在服务器上的权限有关，此外php的文件配置项也会影响脚本的文件权限，allow_url_open 打开可以读取外部信息，例如rss的资源  allow_url_include默认关闭，因为随便包含外部的文件是不安全的行为 open_basedir限制php对指定目录才有权限进入  safe_mode关于设置特殊权限的 safe_mode_include_dir等配置项，注意的是safe_mode_include_dir和open_basedir项的值由两种形式，若为
+/my/document/则可进入其下的所有子目录，若为/my/doc则是可以进入以doc为前缀的子目录
+
+使用类进行目录文件处理，类DirectoryIterator
+$files=new DirectoryIterator(dirA);
+$files是SplFileInfo对象数组，dirA每一个直接子文件或目录对应一个SplFileInfo对象
+SplFileInfo的主要方法有：
+getFileName()返回dirA中的直接子目录和子文件（包含.. .）
+getPath()返回dirA的全路径
+getPathName()返回dirA中直接子目录和文件的全路径（包含.. .）
+getRealPath()也是返回直接子的全路径，与getPathName的差异在于 . ..这两个特殊目录已经经过处理
+getSize()
+isDir()
+isFile()
+isWritable()
+isReabable()
+
+如果仅仅想显示目录中的部分项目时，类RegexIterator派上用场了
+$files=RegexIteratro($files,$pattern)
+$pattern为正则表达式，返回的$files为过滤后的内容
+
+如果想要递归的遍历目录所有子项目，使用下面的方法：
+$files=new RecursiveIteratorIterator(new RecursiveDirectoryIterator($filename));
+
+如果想要限制返回的项目数，可以用类LimitIterator
+$files=new LimitIterator($files,2,7)
+
+外部数据进入站内，无论是用户输入还是打开外部文件都涉及到引用未知数据的问题，php安全的首要观念就是检测一切外部数据，至于方法有若干函数htmlentities() strip_tags() escapeshellarg() 
+escapeshellcmd()等
+
+RSS新闻源是一种xml文件，详细格式参见：www.rssboard.org/rss-specification
+大致组织结构
+<rss>
+	<channel>
+		<title>
+		</title>
+		<description>
+		</description>
+		<link>
+		</link>
+		<item>
+			<title>
+			</title>
+			<link>
+			</link>
+			<description>
+			</description>
+			<pubDate>
+			</pubDate>
+		</item>
+		<item>
+			<title>
+			</title>
+			<link>
+			</link>
+			<description>
+			</description>
+			<pubDate>
+			</pubDate>
+		</item>
+	</channel>
+</rss>
+每个item是一条信息摘要，可以通过类SimpleXMLElement打开远程rss文件
+
+访问xml文件的类SimpleXMLElement
+每个标签都是对象的属性，同时同级别的同名标签组成了数组
+$myxml=simple_load_file($url)
+$myxml->channel->item就是数组，所以$myxml->channel->item[0]是合法的方法
+为了使用spl迭代器处理xml文档，这样$myxml=simple_load_file($url，'SimpleXMLIterator')
+$filtered=new LimitIterator($myxml,0,4);
+
+关于http头信息发送的隐性问题
+http头信息发送之前不能有任何的信息发送，包括空格等字符，有的编辑器会在每个文件的最开始添加一个字节顺序标记（BOM）的东西，
+结果就是你总是头信息报错你却找不出原因，所以如果你是这样的情况，请首选项里设置取消BOM
+
+下载处理脚本
+你现在想要提供用户下载一个图片（实际上可以是任何的文件）而不是供用户浏览，解决方案是怎样的呢？常常见到网页上的超链接提供了
+下载的功能，这又是怎样实现的呢？实质是超链接触发一个脚本，该脚本首先发送一些http头以提示用户下载的形式，然后将对应的文件打开发送
+到缓存区以供用户下载，具体的实现参看/others/php_lib/download.php
+
+图像处理
+无论是图像处理还是生成图像，都要有四个步骤
+1，将图像加载到内存 2，处理图像 3，保存图像到文件中 4，将内存中的图像销毁
+所以这里有两个问题需要注意，1， 图像的处理在内存中进行，如果没有保存到文件中的话处理无效 2，因为在内存中处理图像，所以处理较大
+的图像可能会引起脚本的运行问题
+
+目录分隔符
+DIRECTORY_SEPARATOR
+路径分割符
+PHP_SEPARATOR
+
+使用strpos和strrpos等函数检测特殊字符位置时，如果在0位置，检测方法为!==0，千万注意
+
+getimagesize
+如果传入的不是图像则返回false
+如果图像的尺寸不能确定（一个文件包含几个图片时经常这样）时，将返回的图像宽高均设为0
+
+创建图像资源到内存
+根据文件路径加载图像imagecreatefromjpeg($path)
+根据图像大小创建imagecreatetruecolor($width,$height)
+
+拷贝图像资源
+imagecopyresampled($dest,$source,$dleft,$dtop,$sleft,$stop,$dwidth,$height,$swidth,$sheight)
+将一个图像的某区域拷贝到另一个图像某区域
+
+保存图像资源
+imagejpeg($hr,$destination,[])
+
+销毁图像资源
+imagedestroy($hr)
+
+会话
+
+会话是基于web请求没有关联性而发展出的技术，所谓无关联性是指，在服务器看来每次访客都是新用户，因为服务器区分不同用户的机制，而
+cookie和会话就可以实现服务器对用户的区分，cookie是通过将与域关联的用户信息储存在用户计算机上，这样每次连接到对应域时服务器就可以
+获取用户计算机上对应的cookie用户信息，当然cookie有诸多的限制，所以我们来看一下会话的优势何在
+会话不仅仅储存信息在用户计算机上，准确的讲会话主要将信息储存在服务器端，用户计算机上的储存的信息是一个cookie文件，该文件是用来
+标识服务器端会话文件的信息，叫做会话id，用户端cookie与一个域关联，cookie中储存了会话id，通过会话id可以同域上服务器储存的会话文件
+关联起来，这样就建立起了客户端与服务器端通信的关联性
+会话的安全性
+服务器端来看安全性
+会话文件储存形式是未加密的纯文本格式的，如果服务器权限配置正确的话，一般难以直接浏览会话文件，但是万一被别人看到，是很容易看明
+白的，所以不建议在会话文件中存储一些敏感信息，会话更适用于储存一般信息，如用于记录用户活动或者仅仅为了在页面中传送变量。
+客户端看安全性
+会话正常情况的持续时间是到浏览器关闭的时候，也就是说如果用户离开网站或者离开计算机后，如果浏览器没有关闭别人就可以假冒用户之名
+操作，为了解决这个问题，一，要提供用户自行注销的机制（虽然用户常常是直接关闭选项卡离开站点的，一般人也不会想到注销跟关闭选项卡的
+区别，所以可以设计一个关闭选项卡触发注销的机制，这只能通过javascript实现的，这就要求用户端javascript一定要开启支持）二，服务器端
+要提供对客户的监控，如果超时则服务器端将cookie设置为无效，这样就可以避免大多数客户端的安全风险了。
+会话的客户端
+刚刚一直在讲客户端是通过一个cookie文件实现对会话文件的标识，其实还可以通过查询字符串实现会话id的标识，具体方法我还不知道，但是安
+全性低，不推荐是用，当然用户禁用cookie时，这也是个替代方案
+会话文件内容
+会话文件是有格式的纯文本文件，格式相当简单，容易解析，内容是分成一条一条的，其实就是一个变量，一个会话文件中储存着若干个会话变量
+，每个变量都是按照约定的格式写到文件中的
+
+session_start()
+每个使用会话的页面都要在最开始调用该函数，并且注意之前不能有任何页面信息被发送（想必这个函数实质是发送了http报头），故对这个函数
+实际作用的踹测，新建会话在两端的文件（第一次会话开启）或者验证会话id并开启此会话相关进程为后续会话做准备。
+
+操纵会话变量
+写入变量$_SESSION['name']=value;此命令将值对写到当前会话文件中
+删除变量unset($_SESSION['name'])此命令将对应会话文件中的指定变量移除
+删除整个会话$_SESSION=array()
+	注意：之所以没有使用unset($_SESSION),是因为这将导致会话的禁用（其实我有点不太理解，会话应该是一个用户跟一个域的关联吧，那么
+	unset($_SESSION)又为什么会引起会话禁用，禁用了谁跟谁的会话？，做个猜测，当前页面中若使用的是$_SESSION=array()，那么该域中
+	的别的页面仍然可以再设置删除会话变量，而如果使用的是unset($_SESSION)，意味着想服务器提交了清空会话文件并放弃会话的请求，
+	这样看来：
+	$_SESSION=array()仅仅清空会话文件内容，之后还可以添加移除内容
+	unset($_SESSION)移除会话文件
+	虽然二者均可以清空会话信息，可是方式不一样，千万要注意了
+	）
+	实验证明unset($_SESSION)不起任何作用，文件和文件内容都没有受到影响
+	unset($_SESSION[‘name']会删除变量内容
+	session_destroy()则会将会话文件删除
+删除会话的客户端if(isset($_COOKIE[session_name()]){setcookie(session_name(),'',time()-86400,'/'}
+之前讲的都是删除服务端的会话文件内容，如果会话文件被移除或者会话要结束了那么客户端的会话cookie也要失效
+
+session_destroy()
+会话结束，该函数将会删除服务端的会话文件
+
+更改会话id
+session_regenerate_id()这样可以保证会话变量保留而仅仅改变了会话的id，据说可以增强安全性，不知道该怎么用
+
+项目配置文件
+写一个项目的配置文件，对于一些项目级别的信息，如网站目录，网站所有者，联系信息，数据库设置，首选项等信息，最好是单独写一个配置
+文件mysite.config.php来记录这些信息，一来这样利于各个页面共享，二来便于维护修改项目级别的信息，再有就是如果有一天打算开源自己的
+项目的话，别人容易进行配置使用
+
+http报头
+每个http页面被发送之前，服务器都会先发送一个http报头，报头已发送则开始发送页面内容，若无显式发送报头则内容发送时自动触发报头发
+送，要注意的是，报头已发送后若再试图发送报头会产生错误
+
+加密
+加密的目的是让你的密码即使被人看到也不易被读懂，加密并不能解决你使用及其简单的密码被人破解的问题
+所以安全防范的第一招就是，监督用户，不让用户使用简单的密码
+第二招是，使用php中sha1加密算法，该算法是单向加密算法，每次验证密码是将输入生成密码同源加密进行比对，优点是密码的储存是加密形式
+不易读懂，也就是说一旦用户忘记了密码，管理员也无法从加密文中获取信息提示帮用户找回密码，唯一的方法是通过别的途径进行密码的重置，
+此外该方法已被暴力群举法攻破，
+所以有了第三招，给sha1加密的同时加盐salt，salt是一个随机生成的字符串，将其添加到密码中，格式：salt+sha1(salt+password)，这样每
+次验证时先取出salt，然后进行比对，与此同时限制用户输入密码次数来规避群举尝试
+
+重定向技术
+其实重定向技术不仅仅可以通过服务器端发送http头实现，还可以通过客户端的javascript实现，javascript实现虽然没有服务器端实现的报头
+发送限制，更为灵活，可是javascript有可能不被支持，所以使用服务器端技术进行重定向是优先考虑的方法
+
+错误信息
+在网站的开发阶段错误信息有助于网站的调试，可是当网站发布之后错误信息对用户的帮助并不是很大，用户更需要的是你给出一个解决方案，而
+不是你告诉她，哪里有可能出错了，对错误信息感兴趣的人是那些打算攻破你网站的人
+
+php代码显示在网页上
+将扩展名命名为.phps或者通过函数show_source()或highlight_file()，但前提是已经在apache中添加了AddType application/x-httpd-php-source .phps，并且可以在php.ini中修改显示代码用的颜色
+
+1，php一开始的简写意义是：personal home page，创作者用来跟踪他的在线简历被访问情况而做出的东西，后来成了超文		本预处理语言的简写：hypertext preprocessor，它的名字指明了它的主要用途，在服务器端处理信息后将信息发		送回浏览器，当然php的功能不仅仅是返回html这么简单，它在其它领域也很强，用官方的说法就是没有事情是		php干不了的。
+	注意：要明确php的作用范围是比较重要的，php负责的是将html源码送回给浏览器，至于显示页面是浏览器的事		情
+2，何为脚本语言
+	脚本语言同c语言之类的区别就是，脚本写的代码不需要程序员编译成二进制执行文件，而是通过事件驱动由专门的
+	解析器负责解析执行的，对于php而言就是当浏览器的请求触发了某段php代码后，网页服务器中的解析器将php解		析执行并将结果返回给浏览器
+3，一些网站
+	作者的php6 与mysql5基础教程 是不错的后续教材
+	www.zend.com-----开发php的核心成员集结的地方
+	www.php.net/query's functionname直接可以查询函数的功能
+4，php的局限性，就web开发而言php的局限性就是在于它不能负责客户端的处理，客户端得交给javascript
+5，php的竞争对手，asp.net（vb c#） , cgi(基于c和perl语言的) , jsp , ruby on rails ,coldfusion
+6，当你要发布自己的网站时，明确主机服务提供商所支持哪些php的功能，你的网站用了主机不支持的php功能，可是一件糟		糕的事情
+7，一些工具
+	filezilla开源的文件上传工具
+	文本编辑器，editplus	crimson editor
+	关于文本编辑器的注意事项：文本编辑器的字符集一定要与浏览器页面显示采用的字符集一致
+8，学会提问题，你有没有这样的经历，当你在一个论坛上想要求助时没有人理你，或者你打算帮助一个可怜的求助者时发现		你根本不知道他在问什么或者这个问题是你刚刚回答过别人的，为了尽快的得到回复，也为了那些帮助你的人可以		更加有效轻松，强烈建议阅读这篇文章，www.catb.org/~esr/faqs/smart-questions.html  eric steven raymond
+	写的how to ask questions the smart way
+9，PHP注意事项
+	最重要，也是最容易忽视的一点就是没有通过url而是通过file来直接访问php文件这样的结果就是php代码没有执行		被打印到了页面上。
+	如果你的php页面没有指定为php的扩展名，php代码不被执行，扩展名是用来告知服务器启用什么模块来执行文件
+	php标签发的内容自动发送至浏览器，无需任何显示的发送
+	php生成的源码可以在浏览器中浏览，这里有个问题就是如果你想要查看源码时发现生成的html代码都在一行上，
+	所以建议在用php生成html时添加\n \t这类东西，这样不会对页面有任何影响，这是让html源码更可读
+10，关于页面打印内容
+	print 
+	echo
+	print_r()
+	var_dump()
+	printf()
+	sprintf()
+	print 和echo 都是语言结构而不是函数，echo还可以一次打印多个值（逗号隔开）且没有返回值，而且echo和		print都不能打印数组对象的值，后两个函数来干这事情。
+11，注释
+	php支持的注释形式\\ # /**/
+	html注释<!--  -->
+	php的注释不会在html源码中看到，在php中为html写的html注释在html源码中可见
+12，调试
+	你是否url访问php页面
+	你的url路径文件名是否出错
+	使用phpinfo()查看你的php版本是否支持你调用的功能，或者该功能是否开启
+	要想查看错误php.ini中的display_errors error_reporting项一定要开启，否则出错时你看到的只是一个空白的页面
+	有时出错会写到html源码中，或者你可以从html源码来推断php哪里有问题了
+	使用数据库函数出错，将sql语句打印出来看有没有问题，查看是否该函数被php废弃或没有开启
+	根据php打印出来的出错提示排错，当然有时错误提示并不准确
+	parse error 一般是由于大小括号不匹配，还有就是<<<这个东西的前后不能有空白和别的字符
+	同样的一个解析错误，当你在双引号中引用数组时，数组的索引使用了单引号，解决方案，将数组元素赋给一个变		量后加入字符串，或者直接索引，不用单引号。
+	undefine 是否引用了不存在的索引，或变量
+	一个铁律是，如果你实在很难调试出结果，你就去干点别的事情
+13，变量的生存期
+	自定义变量在脚本结束时被销毁
+	预定义全局变量一直有效（也不能这么讲，session也不是一直有效，当浏览器关闭时session就失效了）
+	还有就是局部变量的作用域问题，如果想要在局部作用域中引用全局变量使用global
+14，小诀窍
+	如果你打印出来的东西多而乱，将它们放在pre标签会好些
+15，弱类型
+	"123"+1  等同于  123+1，所以php中用于连接字符串的运算符不是+
+16，php解析中的内容引号
+	在php中单引号和双引号是有区别的，php试图解析双引号中的内容，主要就是变量和转义字符仅在双引号内有效，		可以这样理解双引号中属于php语言的部分会被解析，而至于普通字符串或者html字符串原样输出到浏览器，至于		浏览器如何解析php生成的html源码那是浏览器的事情了，比如php会将双引号中的\n解析为换行放在html源码中
+	，而浏览器显示时得看情况是否将这个换行予以显示了。
+17，表单提交
+	php中一般情况是提取input控件下的text，password，submit,button,等值，其实除了上传文件file不能够提取外		都可以提取表单元素input的value属性值，例如复选框，按钮。此外还有非input控件的值也可提取例如textarea和		select，textarea可没有value属性这是个特例，如果想要对其插入值就直接写在标签中。
+	表单提交php自动转义，这是php的magic quote特性将来要废除，可是我的php仍然有这个东西，它会将提交过来		的表单值中的单双引号自动添加反斜杠进行转义，如果不想使用转义后的值则这样处理，stripslashes($_POST		['name']);将转义符去除，一般存到数据库之前应该进行这样的处理
+18，错误显示
+	在网站的开发阶段，我们当然可以开启display_errors 和 error_reporting，但是发布网站时，你显示的错误可能就		为攻击者提供了你网站的信息，因此发布时要关掉错误显示，在函数前添加@可以抑制错误显示，注意是一致错误		显示，而不是抑制错误的发生，但你也需要说了，我希望有的页面可以显示错误有的页面不显示错误，该怎么办,实		现很简单，因为php的配置不仅仅可以发生php.ini的文件中，你也可以在当前的脚本动态的配置php，函数ini_set		('display_errors',1)就是为了这个而设置的，这样就可以临时覆盖php.ini中的配置值，该函数还可以设置很多		的配置项，但是这里有个小问题要提前注意到，ini_set('display_errors',1)是个在脚本中的函数，如果说脚本产生了		一个严重的错误，而且是该函数还没有执行之前，那么该函数就不可能执行了，也就是所配置未发生
+	通过脚本中使用函数也可更改错误显示级别error_reporting(E_ALL | E_NOTICE | E_WARNING | E_PARSE | 		E_ERROR | E_STRICT等）注意这里的E_STRICT不包括在E_ALL中，测试阶段的建议报告级别是E_ALL | E_STRICT
+19，美元符号
+	$myvar=2.3	$$myvar不正确，成了引用	 "$  $myvar" 用东西隔开	"\$$myvar"转义
+	"$".$myvar连字符  "${$myvar}"花括号不会输出的
+20，数字格式化
+	round(num,point) 4.5舍为4 	3.5舍为4
+	number_format(num,point,pointstyle,千分位符号样式)有千分为分割符
+	printf()
+	sprintf()
+21，随机数
+	rand(ceil,floor)
+	getrandmax()取回rand可返回的最大随机数，因系统而异
+	mt_rand(something)适用于密码等场合
+22，连字符
+	合法连接：$myvar."wo"  $myvar.90   $myvar.$my  "woshi"."nishi"  CON常量  CON."my"
+23，处理字符的函数
+	我的换行去哪了
+	当你在textarea中换行输入多行的文字时，php收到的字符串中有换行符，可以当php把它收到的东西直接给你回显		时，你就会问为什么将我输入的多行文字拼成了一行，那些换行符去哪了，php偷吃了吗？没有，其实是浏览器偷		吃了，浏览器将多个空格以及换行这类的东西转换成一个空格，所以即便有了换行符，也只是html源码换行了，显
+	示不出效果，要显示效果两个解决方案，将输出的东西放在pre标签中，或者在数据返回之前用nl2br处理返回的数		据，该函数可以将里面的换行符替换为字符串"<br/>"
+	如果我输入<strong>到textarea，会有什么效果
+	这里总不乏一些家伙既有一点知识又有一点好奇心，他想试试，可对你来说他的试试就是你的噩梦，随意插入的		html会影响页面的布局，这还不算什么，如果他知道点数据库知识的话，你的网站可能就要关门了，幸运的是，		php为你提供了强有力的解决方案，将那些有好奇的家伙挡在门外，函数htmlentities()将所有的html标签转换为实		体，实体这个东西可以用来指代某些特殊字符，php以及html源码中出现的均是实体，由浏览器来负责将实体显示		为对应字符，这样一来就不可能将其解释为html语言了，而是普通的字符串，htmlspecialchars()将指定的html标		签转换为实体，stript_tags()将php以及html的标签去除。html_entity_decode()将实体编码后的字串转换为html字		串，				
+	wordwrap()将字串按指定的长度拆成数行
+	strtok(stirng，"mark")返回第一次遇到mark之前的子串，没有mark
+	strstr(string,"mark")返回strtok剩下的部分
+	stristr(string,"mark")不区分大小写的版本
+	substr(string,start,length)start可以是负值，length可以没有，从前往后提取
+	strlen(string)长度，包含空格，虽然可以strlen(str)检测值是否填入，但是鉴于空格的情况勿用
+	str_word_count()单词个数
+	strpos(string,sbustr)第一次出现的位置，stripos()
+	strcmp(str1,str2)  strcasecmp()  
+	strnatcmp(str1,str2)  strnatcasecmp()  更加精确的字符串比较
+	trim(string)  rtrim()  ltrim()建议对于表单数据经过去空格后再进行验证
+	str_replace(substr,replacement,srcstr)这三个参数都可以是数组  str_ireplace()
+	ucfirst(string)
+	ucwords(string)
+	strtoupper(str)
+	strtolower(str)
+24，url的query字符串编码
+	有时想要通过url传送的查询字符串的一些数据也许是不合法的，这时先将数据用urlencode()函数编码，urldecode		是一个相反功能的函数
+25，加密（encrypt）
+	有的数据有加密的需求，比如说用户的密码，加密可以在数据库中实现也可以在php中实现，不可恢复加密函数
+	crypt()因为其不可解密所以只能将输入的数据采用同样的方法加密后与原来加密的数据比对，依赖扩展模块mcrypt
+	的加密,mcrypt_encrypt()  mcrypt_decrypt()
+26，empty和isset
+	empty如果变量未定义，或者值为null false 0 ""都会返回true
+	isset只要变量已经定义了并且赋值了，即便是false "" 0也为真
+	注意了isset可以接受任意数目的参数，返回结果依据各参数求与
+	表单检测时如果用户输入了勿用的空格来填充值，那么isset是检测不出这种情况的，而empty则可以，所以你的方
+	案可以是trim后再isset，或者直接empty
+27，验证函数
+	is_
+	php中提供了丰富的is_类型的验证函数
+	is_object()  is_int()  is_array()  is_numeric()
+	checkdate()检验合法的日期值
+28，die() 和 exit
+	都可以终止脚本执行，常见应用die数据库die(mysql_error())，重定向header之后exit;
+29，数组的若干写法
+	$my=array(1=>"xiao","wen","bin");
+	$my=array("people"=>array("name"=>"xiao","age"=>23),"adderss"=>"zhejiang");不推荐
+	$mya=array("name"=>"xiao","age"=>23);
+	$my=array("people"=>$mya,"adderss"=>"zhejiang")推荐
+	$my[]="nishi";
+	除了array函数外的方法range(startvalue,endvalue,stepvalue)
+	range(0,10,2)  range('a','z',2)
+30，数组的处理
+	count() <=>  sizeof()
+	$my=array()重置数组
+	合并array_merge(arr1,arr2,....)
+	+  +=也可以合并数组，和array_merge的区别是，如果是数字索引的数组+会将后续出现与前面键值相同的元素丢		掉，而array_merge都保留，对于关联数组二者都会丢掉重复键值的元素，但是array_merge是丢掉之前出现的，+		是+丢掉之后出现的
+	foreach便利foreach($it as $key=>$value)当你可以选择for while但是显然它们对关联数组就没招了
+	排序
+	值排序
+	sort() rsort()返回的结果是重新经过数字索引的即便是关联数组
+	asort() arsort()返回的结果保留对应的键值，不更改键值
+	键排序
+	ksort()  krsort()会保留键值关系
+	自然排序natsort()  natcasesort()
+	自定义比较函数usort() uasort() ursort()
+	随机打乱顺序 shuffle()
+	删除数组unset($my)  删除数组一个元素unset($my[0]);
+31，数组与字符串的转换
+	explode(mark,string)
+	implode(mark,array) 等同于函数join
+32，表单项分组
+	像check radio  option这些家伙有时具有分组的现实意义，分组时的命名使用数组方法比如现在有一组radio，写成		这样<input type="radio" value="something" name="myradio[]" />注意name属性是数组的形式，这样的话在
+	表单提交后就可以通过foreach($_POST['myradio'] as $value) 或者 $_POST['myradio'][0]来访问数据，其实没有		必要用foreach来访问，虽然name是myradio[]但是总归name值一样，也就是说能够提交到php的数据只可能有一		个如果你设置value属性，那这个值就是on
+33，函数返回一个数组
+	这时候该是函数list登场的时刻了，注意的是list列出的变量数目必须与函数返回的数目一致，但可以采用忽略例如
+	list($var1,  , $var3,$var4);
+34，页面模板
+	有了php你可以将一个页面按逻辑需求划分为几块，常见的划分是页眉，页脚，内容，边栏。这样你就可以分别对		这些不同的逻辑块进行编码，包含那些通用的，改变那些常常变化的逻辑块就可以了，这样一来实现了代码重用，
+	二来将页面分割各个击破，优秀的页面分块smarty很是强大，但你可以自己实现简单的页面分块。
+	创建一个原型将页面分割成各个逻辑功能块
+	使用include require包含各块的页面，包含的页面可以是html或php
+35，关于引用外部文件
+	先假设一个情景，a文件引用了b文件，b文件引用了c文件，而你现在执行的是a文件，也就是说c文件最终是被a文		件引用的，所以在b中包含c文件时使用的相对路径（如果使用相对路径）是a相对于c文件的，而不是b相对于c的。
+	这是个很严肃的问题，我就为此产生过错误，我在想这是一个缺陷，被包含文件一般可以认为是比较底层的文件，
+	底层的文件的编写者并不知道以后谁要用它，我们这里拿b文件来讲，对它而言它知道的就是要实现功能需要引用c
+	文件，至于今后引用它自己的文件是谁它无从知晓，所以b引用c时的路径一定是b相对于c的路径，而a的出现让b难		堪了a包含b后，依据b相对于c的路径不一定可以找到c，什么php不在a文件中include时提供一种机制将a文件引用		到b文件的路径临时的附加到b相对于c的路径的前面，这样的话就肯定没错了，期待解决该问题。
+	绝对路径
+	磁盘写法 c:\\myfiles\file\filename
+	服务器根目录写法 /myfile/filename
+	相对路径
+	当前路径  filename   ./filename
+	当前路径下的子目录 subdir/file/filename
+	父文件夹 ../一级父 ../../../../
+36，常量
+	建议使用大写
+	可以使用连字符
+	在单双引号中不被解析，所以要记得千万不要指望引号中的常量发挥作用
+	defined判断是否定义该常量
+37，php中关于时间日期
+	php中强大的date函数可以用很多格式显示日期时间
+	time
+	mktime
+	date_default_timezone_set()设置服务器的时区，这样可以保证服务器的时区一定是你所要求的。
+	这里提到的时间日期都是针对于服务器的，注意客户端跟服务器的时间极有可能是不一致的，所以不要混淆这两者		，如果你想要获取客户端时间，用javascript
+	php新近引入了一个DateTime类，可以取代时间日期函数，不过有点复杂
+37，页面显示处理的集成
+	一个页面php就可以显示表单，并处理表单了，逻辑结构是
+	if(hidden is submit)//表单设置了一个hidden用来检测表单是否提交
+	{处理表单}
+	else{显示表单}
+	表单form 的action需要写成本页面地址，虽然不写也可以，因为表单提交后浏览器就会将页面导航至表单提交结果		页面，这由form的target属性设置，默认是当前页面自己，所以提交后当前页面会再次载入，但是指定action可以		让人看明白你的意图
+	检测表单是否提交还有一个方法，常规请求一个页面时是get方法，表单请求时可以设置为post，所以可以这样写
+	if($_SERVER['REQUEST_METHOD']==POST)处理表单
+	if(hidden is submit){处理表单}    {显示表单}这种模式可以在处理表单后再次显示表单，有时是必要的。
+	当表单已经已经填写，再次向用户显示是用户应该看到填写过的表单，而不是一页白纸，实例，
+	<input type='text' name='user_name' value="<?php if(isset($_POST['user_name'])){echo $_POST			['user_name'];}?>" />
+	<textarea name='user_desc' ><?php if(isset($_POST['user_desc'])){echo $_POST['user_name'];}?>
+	</textare>
+38，email
+	php中的mail函数好像很厉害
+39，缓存数据主体
+	这里先说一下什么会引起包头出错，包头发送之前有别的数据发送到浏览器，别的数据可能是裸露在外面的html代		码或者是通过echo  print 等具有向页面输出功能函数发出的数据，所以我们缓存的目的就是，在包头数据未发送之		前，阻止html和echo发送数据
+	不光是header函数一切通过http包头发送的数据都存在这个问题，比如session_start() setcookie()，现在要学习的		缓存就是针对这个问题的一个解决方案，在页面的首部调用开启缓存函数ob_start();  结尾调用ob_end_flush();它的		实现逻辑就是两个函数之间的所有数据除了包头数据都被缓存起来，直到ob_end_flush()调用，也可以不调用它而
+	调用ob_end_clean()将缓存的数据清空
+	php.ini 中有关于缓存大小的配置，此外缓存处理不止这里的几个函数，别的待查
+	其实自己手动也可以实现缓存，将html代码，或者echo等语句的执行赋给一个变量，页面结尾处echo 变量
+39，header()
+	发送包头数据，函数headers_sent()检测包头是否已经发送
+40，cookie
+	需求产生技术，当对web的依赖从单纯的页面浏览转变为与web进行交互时，似乎服务器应该知道是谁在同他进行		通信，他会问这个家伙又什么兴趣爱好，以前我有没有见过她，哦，对，那个游戏她已经赢了200分了，这一切对于		用户信息的需求推动着程序员们应该做点什么了，要做的事情仅仅就是将用户的信息记录下来，当用户再次访问网		站时就可以根据已有的信息做些事情了。
+	cookie就是这样，用户的信息保存在本地，需要时提取使用。
+	setcookie(name,value,expirse,path,damion,securty)
+	关于过期时间的设定，php设置cookie使用的时间一般是基于服务器的时间，而用户的时间可能跟服务器的时区不		一致，这就糟糕了，javascript不存在这个问题，看来还是用它设置cookie吧
+	如果不设置时间，默认浏览器关闭后无效
+	有时出于安全考虑，将cookie每隔5分钟左右设定删除一次
+	$_COOKIE
+	删除方法setcookie(name,'')或者setcookie(name,false,time()-10)一定要注意删除cookie时的参数一定要跟设置时		的一样（除了时间和值），还有就是对当前页面删除cookie后访问cookie依然有效，因为该页面载入时已经有了一		份cookie的副本
+41，session
+	session的数据储存在服务器上，相对于cookie数据量较大，原理是这样的，每个session有一个id以cookie的形式		储存在本地，每次会话时，向服务器发送该id，服务器根据id来找到用户相关的信息数据，
+	session_start();第一次调用会生成会话id，之后通过这个id与服务器交流信息，会话默认在浏览器关闭后无效，常见		的用途，在登录站点后储存用户信息，购物车进行购物，总之很多在页面见传送信息的例子都有用到session,当然你		也可以通过表单的hidden来在页面间传递信息，但会话更安全，可储存信息量更大。
+	注意了php中$_SESSION数组必须是关联数组
+	session_name  sesssio_set_cookie_params设置会话
+	有时出于安全的考虑，可以将会话加密后在储存，提取是再解密
+	会话的删除session_destroy()  unset($_SESSION['name'])
+42，函数
+	函数存在吗function_exits()也可以判断自定义函数
+	
+42，目录文件
+	file_exits()目录文件是否存在
+	touch()在指定目录创建空白文档
+	权限修改chgrp() chown() chmod()
+	新的文件读写函数
+	file_put_contents($hf,$data);
+	$data可以是数或字符串或数组，若文件不存在自动创建，若存在重写文件，想要追加文件，提供第三个参数
+	FILE_APPEND，每次提交的数据分行时$data.PHP_EOL，PHP_EOL是php中的换行常量
+	之前的写函数fopen()  fwrite() fclose()有很多的读写模式参见你的资源
+	写入文件之气最好is_writable()检测是否有写权限
+	锁定文件可以允许多人同时读写文件FILE_APPEND | LOCK_EX   或者 flock($hf,LOCK_SH | LOCK_EX | LOCK_UN
+	| LOCK_NB)多个标识符，当对文件追加时即便不锁定文件也不会出问题
+	$data=file_get_contents($flie);将文件所有内容返回为一个字符串
+	$myarray=file($file)读取文件所有内容，各行作为返回数组的元素
+	is_readable()
+	readfile()将会读取一个文件内容并发送到浏览器窗口
+	is_file()  is_dir()
+	scandir()将目录下的目录和文件名返回为一个数组，老版的用opendir() readdir() closedir()
+	filesize()   filemtime()
+	文件上传
+	客户端<form enctype="multipart/form-data">
+	           <input type="hidden" name="MAX_FILE_SIZE" value><input type="file">
+	服务器端$_FILE[name  type tmp_name error size ][]
+	move_uploaded_file();
+	glob()搜索文件目录，根据模式匹配
+	fileperms()返回文件权限fileatime()返回最好进入文件的时间　fileowner()返回文件拥有者名字
+	从完整路径中获取目录或文件名basename() dirname()
+	finfo_file()检测文件的mime 类型
+	目录生成mkdir()  删除目录rmdir()
+	fgets() feof()  fgetcsv()读取一行并根据分割符切成数组
+	依赖与行尾的函数最好启用行尾检测ini_set("auto_detect_line_endings",1)
+	
+43，双引号中的常量不能被解析
+
+44，建立动态网站是一个有用的建议是，先建立一个静态的页面为之添加css调试布局和外观，然后使用php动态生成内容
+
+45，关于表单值是否设置的问题
+	如果仅仅通过isset($_POST['name'])来检测是不行的，因为经过我的测试即便不填值这些测试也能通过，当然submit是例外了，所以不仅要
+	isset还要trim看是否等于空值来进行测试，哦对了，直接用empty就可以了
+46，提取文本
+	数据库中可以使用left(fieldname,length)或right(fieldname,length)，php中可以使用substr($str,start,length)等函数，提取内容时
+	当然不希望打断单词，所以可以这样substr($str,0,strrpos(substr($str,0,length),' '));，如果想要提取的是第一段内容的话，
+	substr($str,0,strpos($str,PHP_EOL));
+47，提取完整的句子
+	如何鉴别句子的分界有点难度，preg_split('/([.!?]["\']?\s)/',$text,$num+1,PREG_SPLIT_DELIM_CAPTURE);具体函数请参看phpsols写
+	的使用函数库
+48，文本格式化为html
+	方案一，好像有ckEditor之类的编辑器可以保证表单内容提交到数据库之前插入html标记
+	方案二，nl2br将nl转换为标记br，严格来说并没有格式文本成html，br不能算段落
+	方案三，写一个自定义函数用于将文本格式化为html，'<p>'.preg_replace('/[\r\n\+/','</p><p>',$text).'</p>';
+47，PAAMAYIM_NEKUDOTAYIM是php中的冒号的意思取自希伯来语，因为php的主创是以色列大学生
+
+47，注意了并不能使用isset检测所有的表单控件，我今天检测了file控件，结果明明是上传过文件可是就是为空
+
+[php网络管理]
+服务器的网络管理任务常常由python和perl来完成，但是随着php的发展现在php也可以实现服务器的网络管理任务
+检测是否有相应的dns信息
+checkdnsrr('example.com',type);
+获取与域名相关的信息
+dns_get_record('example.com',type,,);
+获取邮件交换记录
+getxmrr('example.com',,);
+服务和端口
+getservbyname('http',tcp|udp); return 80
+getservbyport(80,tcp|udp); return http
+使用套接字与指定服务通信
+$hs=fsockopen(host,port,,,)之后就可以使用普通的文件函数操作$hs句柄了，相当于将通信看成了文件的读写
+
+配置php
+php.ini
+.htaccess
+ini_set('display_errors','0')
+set_include_path(get_include_path().PATH_SEPARATOR.'yourpath');//本地测试和上传到服务器后的路径形式不同
+
+问题：一个表单处理对象需要从外部传入一个表单数据验证函数，也就是说将表单对象对表单处理的流程（查看有无未填项和错误项）和验证表
+	单的规则隔离开来，但是我传入的函数被赋给对象中的一个属性时仅仅是字符串，更为神奇的是，该属性一开始定义了默认验证函数（其实
+	就是一个占位函数），被赋值为字串后用函数的形式调用居然会调用原先的默认占位函数，好不神奇，明明已经赋值了，可是默认的占位函
+	数居然还是可以使用的，这也许是一个bug吗
+解决方案：我也许想明白了，因为对象已经实例化了所以不能够改变其原来的属性（如果是高级变量的话甚至值也是不可以改变的）
+	我只能用一个固定的约定名称作为一个全局函数来充当验证函数了
+
+
+

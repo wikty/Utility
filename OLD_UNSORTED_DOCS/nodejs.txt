@@ -1,0 +1,7 @@
+global installed
+learnyounode:learn basic nodejs,like http async i/o
+stream-adventure:learn how to compose streaming interfaces with .pipe()
+levelmeup:learn to use levelDB,a simple key/value store with a vibrant pageage ecosystem
+functional-javascript-workshow@latest:learn fundemental functional programming features 										of javascript in vanilla es5
+bytewiser@latest:learn how to maipulate binary data in node.js an html5 browsers
+expressworks@latest:learn the basics of the express.js framework

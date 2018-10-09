@@ -1,0 +1,48 @@
+emmet以插件的方式集成到了很多的editor中，这使得我们编写html和css代码是更加便捷
+
+
+emmet编写html代码：
+
+默认的标签式div，如果不给出标签名直接输入的话则添加到div中
+注意：emmet代码不允许中间夹杂莫名奇妙的空白
+emmet支持的选择器：
+		css选择器： tagName .class #id > + 
+		特有选择器：^		返回到父元素的同级，例：f>a^b ,也就是说a之后返回到了父元素f的同级，b将是f的下一个兄弟
+							并且^可以连续使用
+li*5 					*生成5个li
+li[data=$]*5			$用于生成数字序列，可以连用$$$生成类似000，001的东西
+ul>li.myClass$@-*5		$@-*N，用以指定从大到小的数字序列
+ul>li.myClass$@3*5		$@N*M，用以指定数字序列的开始值
+ul>li.item$@-3*5		$@-N*M，同时指定开始值和逆序
+!						生成一个标准的html5模板
+html:xt					生成一个过渡版的html4模板
+html:4s					生成一个严格版的html4模板
+p>(div>ul>li)			分组()，相当于一个块来处理
+p>(div>ul>li)*3			对分组进行重复
+a[href='example.com']   对css属性选择的支持
+a{text content} 		文本内容插入，注意a>{content}+b>{content}和a{conten}+b{content}是不同的
+
+
+emmet编写css代码：
+
+简写：w=>widht,m=>margin,h=>height,c=>color,bd=>border
+单位：单位可以写成css中的全名，默认单位是px，%的简写是p，em的简写是e，ex的简写是x
+多个属性值：类似margin这样的属性有多个属性值，多个属性值用-连接，如果属性值使用了单位则不需要-	
+			连接了，另外连接符不会同负号冲突。例：m10--10或者m10px-10=>margin:10px -10px;
+写多个语句：使用+一次写多个语句，例：m10-10+w100=>margin:10px 10px;width:100px;
+颜色值：c#3=>color:#333;,c#e0=>color:#e0e0e0;,c#fc0=>color:#ffcc00
+!important：使用!即可
+css3的字体导入：@f+
+实验性属性加浏览器前缀：使用-加属性即可，例：-trf=>--webkit-transform: ; -moz-transform: ; -ms-transform: ; 
+						-o-transform: ; transform: ;
+						甚至可以指定筛选浏览器和指定浏览器顺序 -wm-trf
+						m=>moz s=>ms o=>opera w=>webkit
+实验性属性的更新：只要更改一个值，后shift+ctrl+r即可将其他值一并更新
+线性渐变背景：lg(left,#fff 50%,#000)
+
+emmet的其他功能
+lorem ipsum（用于测试页面排版的一段文字，一直应用于传统印刷业）：emmet可以使用lorem,后可接单词数目，例：h1>lorem10
+块跳转：ctrl+shift+. 进入块  ctrl+shift+,跳出块
+获取图片的尺寸：移到img元素或者background引用处按下ctrl+U(shift+ctrl+u不起作用)可以自动获取图片数据并添加width和height属性
+将图片数据转换为data url：移到图片引用处ctrl+'
+

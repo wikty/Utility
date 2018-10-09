@@ -1,0 +1,792 @@
+1. CakePHP Basic Workflow
+	Client request a URL, e.g., http://www.example.com/cakes/buy
+	Router parses the URL into parameters: controller, action, and any other arguments
+	URL Mapping to a controller action, e.g., CakesController::buy()
+	The Controller's beforeFilter() is called before any controller action logic is executed
+	The Controller may use Model to  gain access to the application's data, e.g., Cake
+	After the model has retrieved the data, it is returned to the controller
+	The controller may use components to further refine the data or perform other opertions
+	Using the controller's set() method to set view context variable
+	The action's view is automatically rendered
+2. CakePHP Conventions
+	URL To Controller Conventions:
+		1. single word
+			http://www.example.com/posts/view/43 => 
+				/app/controller/PostsController::view(43)
+		2. multiple words
+			http://www.example.com/latest_articles/ =>
+				/app/conttoller/LatestArticlesController::index()
+	Controller Conventions:
+		1. controller class names are plural, CamelCased, and end in Controller,
+			e.g., PeopleController, LatestArticlesController are both ok.
+		2. when the url specifies a controller, but not an action, the default the
+			controller's index() method will invoked.
+		3. If a controller method has been prefixed with an underscore, the method
+			will not be accessible directly from the web but is avaiable for internal
+			use
+		4. Controller Would be defined in the /app/controller/PeopleController.php
+	Model And Database Conventions:
+		1. Model class names are singular and CamelCased
+		2. Database table names corresponding Model are plural and underscored.
+		3. The utility library Inflector to check the singular/plural of words
+		4. Foreign keys is table_name_id
+		5. Join tables name will join in alphabetical order
+		6. table must has a single-field primary key
+	Controller And View Contentions:
+		http://www.example.com/examples/view_all/ 
+			=>	ExamplesController::viewAll 
+				=>	/app/view/examples/view_all.ctp
+	File And Class Name Conventions:
+		*filenames match the class names, which are CamelCased.
+		Controller class ExamplesController is defined in the file ExamplesController.php
+		Component class ExampleComponent is defined in the file ExampleComponent.php
+		Model class OptionValue is defined in the file OptionValue.php
+		Behavior class SomeBehavior is defined in the file SomeBehavior.php
+		View class SuperSimpleView is defined in the file SuperSimpleView.php
+		Helper class BestEverHelper is defined in the file BestEverHelper.php
+3. CakePHP Extensions
+	Application extensions:
+		Extension parent class:
+			Controller => /app/Controller/AppController.php
+			Helper => /app/View/Helper/AppHelper.php
+			Model => /app/Model/AppModel.php
+		Modify Router:
+			the default router behavior assumes that the URL /controller/action/var1/var2
+			maps to Controller::action(var1, var2), but you can use routes to customize URLs
+			and how they are interpreted by your application
+		Add plugins:
+			a plugin is a package of controller, models and views that accomplishes a
+			sepecific purpose that can span multiple applications
+	Controller extensions:
+		Component:
+			If you have some logic you want to share between controllers(or 
+			application), a component is usually a good fit, e.g., email process
+			is a reusable logic, so you can use built-in EmailComponent
+		Controller's callbacks:
+			If you need to insert some logic bewteen Controller's core operations.
+			beforeFilter(): executed befored any controller action logic
+			beforeRender(): executed after controller logic, but before the view is rendered
+			afterFilter(): executed after all controller logic, including the view render,
+							there may be no difference between afterFilter and beforeRender
+							unless you're manually made a call to render() in controller
+							action and have included some logic after that call
+	Model extensions:
+		Behavior:
+			add common functionality between models
+		DataSource:
+			An abstraction that enable modles to manipulate different types of data
+			consistently, allow you associate records from different sources, e.g,
+			RSS, CSV..
+		Model callbacks:
+			beforeFind()
+			afterFind()
+			beforeValidate()
+			beforeSave()
+			afterSave()
+			beforeDelete()
+			afterDelete()
+	View extensions:
+		allow presentational logic to be accessed and shared between views, one of
+		the core helpers, JsHelper, makes AJAX requests within views much easies and
+		comes with support for jQuery, Prototype and Mootools.
+4. Controller
+	After routing has been applied and the correct controller has been found, your
+		controller's action is called
+	Controller should handle interpreting the request data, making sure the correct
+		models are called and the right response or view is rendered
+	Controller can be thought of as middle-man between the Model and View
+	You want to keep your controllers thin, and your models fat
+	Controllers possible to work with more than one mode as well
+	AppController inhericate from Controller, /app/Controller/AppController.php,
+		you can add common method to AppController
+	Controllers provide a number of methods which are called actions.
+	Action start with underscore is inaccessible from URL
+	Usually responses are in the form of a rendered view, but there are other ways
+		to create responses as well
+	AppController:
+		1. this class is the parent class to all of your application's controllers,
+			it is the ideal place to create code that is common to *all* of your 
+			controllers(Component is best used for code that is used in *many* controllers)
+		2. AppController attribute value arrays are merged with child controller class
+			arrays, the values in the child class will always override in AppController
+			(attributes: $components, $helpers, $users)
+		3. If you define $helpers, please add 'Html' and 'Form'
+		4. Call AppController's callbacks within child controller callbacks
+	Controller callbacks:
+		1. beforeFilter()
+			executed before every action in the controller, it's a handy place to check
+			for an active session or inspect user permissions
+		2. beforeRender()
+			executed after action logic, but before the view is rendered, it may be
+			needed if you are calling render() manually before the end of a given action
+		3. afterFilter()
+			excuted after every controller action ,and rendering is complete
+		4. beforeScaffold($method)
+			$method name of method called example index, edit, etc
+		5. afterScaffold($method)
+			$method name of method called either edit or update
+		6. afterScaffoldSave($method)
+			$method name of method called either edit or update
+		7. afterScaffoldSave($method)
+			$method name of method called either edit or update
+		8. scaffoldError($method)
+			$method name of method called example index, edit, etc
+	Controller methods:
+		1. pass data to views
+			Controller::set(string $varname, mixed $value)
+			Controller::set(associative-array) # quick way to assign several var
+		2. render view
+			Controller::render(string $view, string $layout)
+			*automatically called at the end of each requested controller action
+			*default view file used by render is determined by convention
+			param:$view, if starts with '/', is assumed to be a view or element file
+						relative to the /app/View folder, e.g., 
+						$this->render('/Elements/ajaxreturn')
+						or, render a plugin
+						$this->render('PluginName.PluginController/viewname')
+			param:$layout, allows you to specify the layout the view is rendered in
+		3. flow control
+			Controller::redirect(mixed $url, integer $status, boolean $exit)
+				param:$url, e.g, 
+					array('controller' => 'orders', 'action'=> 'thanks'),
+					array('action' => 'thanks'),
+					array('action' => 'edit', $id),
+					'/orders/thanks',
+					'http://www.example.com/orders/thanks',
+				param:$status, 301 is moved permanently or 303 temp moved
+				param:$exit, redirect method will issue an exit() after the redirect unless
+						 you set the param:$exit is false
+				*redirect to the referer page: $this->redirect($this->referer())
+				example:
+				http://www.example.com/posts/edit/5
+				$this->redirect(array(
+					'controller' => 'posts',
+					'action' => 'edit',
+					5
+				))
+				http://www.example.com/orders/confirm/product:pizza/quantity:5
+				$this->redirect(array(
+					'controller' => 'orders',
+					'action' => 'confirm',
+					'product' => 'pizza',
+					'quantity' => 5
+				))
+				http://www.example.com/orders/confirm?product=pizza&quantity=5#top
+				$this->redirect(array(
+					'controller' => 'orders',
+					'action' => 'confirm',
+					'?' => array(
+						'product' => 'pizza',
+						'quantity' =>5
+					),
+					'#' => 'top'
+				))
+			Controller::flash(string $message, string|array $url, integer $pause, string 
+					$layout)
+				like redirect, different in that it shows a message before passing the
+				user on to another url
+				param:$message, holds the message to be display
+				param:$url, like redirect param:$url
+				param:$pause, pause $pause seconds before redirect user
+				param:$layout, specify the message display using template name
+		4. load required models classes
+			Controller::constructClasses()
+			loads the models required by the controller, this loading process is done
+			by CakePHP normally, but this method is handy to have when accessing 
+			controllers from a different perspective, if you need CakePHP in a cmd-line
+			script or some other outside use, constructClasses() may come in handy
+		5. returns request url
+			Controller::referer(mixed $default, boolean $local=false)
+			returns the referering url for the current request, parameter $default can
+			be used to supply a default url to use if HTTP_REFERER cannot be read from
+			headers, parameter $local if set to true, restricts refering urls local server
+		6. disable cache
+			Controller::disableCache()
+			used to tell the user's browser not to cache the results of the current request
+			the corresponding http header:
+				Expires: Mon, 26 Jul 1997 05:00:00 GMT
+				Last-Modified: [current datetime] GMT
+				Cache-Control: no-store, no-cache, must-revalidate
+				Cache-Control: post-check=0, pre-check=0
+				Pragma: no-cache
+		7. post data to model
+			Controller::postConditions(array $data, mixed $op, string $bool, 
+				boolean $exclusive)
+			use this method to turn a set of POSTed model data(like HtmlHepler) into
+			a set of find conditions for a model, this is a quick shortcut on building
+			search logic, e.g.,
+			# filter the set of results
+			public function index(){
+				# generate the filter conditions object
+				$conditions = $this->postConditions($this->request->data);
+				# filter the set of results
+				$orders = $this->Order->find('all', compact('conditions'));
+				$this->set('orders', $orders)
+			}
+			# filter the set of results, using SQL operation
+			$conditions = $this->postConditions($this->request->data,
+				array(
+					'age' => '>=',
+					'username' => 'LIKE'
+				)
+			)
+			param:$bool, allows you to tell CakePHP what SQl boolean operator to use
+						between the find conditions, string like 'AND','OR','XOR'
+			param:$exclusive, if set to true, fields not included in $op will not be
+								included in the returned conditions
+		8. paginate
+			Controller::paginate()
+			used for pagination results fetched by your models, you can specify page size,
+			model find condition, and more
+		9. call controller's action
+			Controller::requestAction(string $url, array $options)
+			this function calls a controller's action from any location and returns data
+			from the action
+			param:$url, is a CakePHP URL
+			param:$options, extra data pass to the receiving controller action
+			*you can use requestAction() to retrieve a fully rendered view by passing
+			*'return', requestAction($url, array('return'))
+		10. load model
+			Controller::loadModel(string $modelClass, mixed $id)
+			handy when you need to use a model which is not the controll's default model
+			or its associated model,e.g.,
+			$this->loadModel('Article');
+			$recentArticles = $this->Article->find('all',
+				array('limit' => 5, 'order' => 'Aritcle.created DESC')
+			);
+			$this->loadModel('User', 2);
+			$user = $this->User->read()
+	Controller attributes:
+		Controller::$name
+			should be set to the name of the controller, usually this is just the plural
+			form of the primary model the controller uses, can be omitted, but saves
+			CakePHP from inflecting it
+		Controller::$uses
+			Controllers have access to their primary model avaiable by default, e.g,
+			examplesController can access its model by $this->Example. However, when
+			allowing a controller to access additional models through the $uses variable
+			, the name of the current controller's model must also be included
+		Controller::$helpers
+			the Html, Form and Session Helpers are avaiable by default, as is the
+			SessionComponent. But if you choose to define your own $helpers array in
+			AppController, make sure to included Html and Form if you want them still
+			avaiable by default in your controllers
+		Controller::$components
+			components array allows you to set which Components a controller will use
+5. CakeRequest
+	CakeRequest is the default request objet used in CakePHP.
+	By default CakeRequest is assigned to $this->request(in controllers, views, helpers),
+		you can also access it in Component by using the controller reference
+	*process the GET, POST, and FILES arrays into the data structures you are familiar
+	*provide environment introspection pertaining to the request, like headers sent,
+	*	the client's IP address, and the subdomain/domain information
+	*Provide access to request parameters both as array indexes and object properties
+	Accessing request parameters:
+		# object properties
+		$this->request->username
+		# array indexes
+		$this->request['username']
+		# params
+		$this->request->params['username']
+	Common request parameters:
+		plugin: the plugin handling the request, will be null for no plugin
+		controller: the controller handling the current request
+		action: the action handling the current request
+		prefix: the prefix for the current action
+		bare: present when the request came fromm requestAction and included bare option.
+	Accessing Querystring parameters:
+		http://www.example.com/index?page=1&sort=title
+		$this->request->query['page']
+		$this->request->query('keyname') # if key does not exist will return null
+		$this->request['url']['page'] # will be deprecated
+	Accessing post data:
+		In HTML Form input's name is like, name='data[ModelName][fieldname]'
+		$this->request->data['ModelName']['fieldname']
+		$this->request->data('ModelName.fieldname') # not exist will return null
+	Accessing put or delete data:
+		$this->request->data
+	Accessing XML or JSON data:
+		you can read input data in any format using CakeRequest::input()
+		$data = $this->request->input('json_decode') # specify a decode function name
+		$data = $this->request->input('XmL::build', array('return' => 'domdocument'));
+	Accessing path information:
+		$this->request->base # contains the base path
+		$this->request->webroot # contains the webroot directory
+		$this->request->here # contains the full address to the current request
+	Accessing domain information:
+		$this->request->domain($tldLength=1)
+			returns the domain name your application is running on
+		$this->request->subdomains($tldLength=1)
+			returns subdomains your application is running on as an array
+		$this->request->host()
+			returns the host your application is on
+	Inspection the request:
+		$this->request->is('post')
+		$this->request->isPost()
+		Built-in Detector:
+			is('get'), is('post'), is('put'), is('delete'), is('head'),
+			is('options') check to see if the current request is OPTIONS
+			is('ajax') check to see if request came with X-Requested-with=XmlHttpRequest
+			is('ssl') check to see if the request is via SSL
+			is('flash') check to see if the request has a User-Agent of Flash
+			is('mobile') check to see if request came from a common list of mobile a agents
+		Customizes request Detector:
+			# add an environment detector
+			$this->request->addDetector(
+				'post',
+				array('env' => 'REQUEST_METHOD', 'value' => 'POST')
+			);
+			# add a pattern value detector
+			$this->request->addDetector(
+				'iphone',
+				array('env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i')
+			)
+			# add a option detetor
+			$this->request->addDetector(
+				'internalIp',
+				array(
+					'env' => 'CLIENT_IP',
+					'options' => array('192.168.0.101', '192.168.0.100')
+				)
+			)
+			# add a callback detector, can an anoymouse function or regular function
+			$this->request->addDetector(
+				'awesome',
+				array('callback' => function($request){
+					return isset($request->awesome);
+				})
+			)
+	Methods interface:
+		CakeRequest::method()
+			returns the HTTP method the request was made with
+		CakeRequest::onlyAllow($method)
+			set allowed HTTP methods, if not matched will throw MethodNotAllowedException
+		CakeRequest::referer($local=false)
+			returns the referering address for the request
+		CakeRequest::clientIp($safe=true)
+			returns the current visitor's IP address
+		CakeRequest::header($name)
+			allows you to access any of the HTTP_* headers that were used for the request
+		CakeRequest::input($callback[, $options])
+			retrieve the input data for a request, and optionally pass it through a 
+			decoding function, useful when interacting with XML or JSON request body
+			content
+		CakeRequest::data($name)
+			provides dot notation access to request data, allows for reading and 
+			modification of request data, calls can be chained together as well
+			# modify request data
+			$this->request->data('Post.title', 'news')->data('Comment.1.author','wikty')
+			# read from request data
+			$value = $this->request->data('Post.title');
+		CakeRequest::querey($name)
+			provides dot notation access to URL query data
+			$value = $this->request->query('username');
+		CakeRequest::is($type)
+			check whether or not a request matches a certain criteria, uses the built-in
+			detection rules as well as any additional rules defined with addDetector()
+		CakeRequest::addDetector($name, $options)
+			add a detector to be used with is()
+		CakeRequest::accepts($type=null)
+			find out which content types the client accepts or check if they accept
+			a particular type of content
+			# get all types
+			$this->request->accepts()
+			# check for a single type
+			$this->request->accepts('application/json')
+		static CakeRequest::acceptLanguage($language=null)
+			get either all the languages accepted by the client, or check if a specific
+			language is accepted
+			# get the list of accepted languages
+			CakeRequest::acceptLanguage()
+			# check if a specific language is accepted
+			CakeRequest::acceptLanguage('es-es');
+		CakeRequest::param($name)
+			safely read values in $this->request->params
+6. CakeResponse
+	*sending headers for redirects
+	*sending content type headers
+	*sending any header
+	*sending the response body
+	Override response class:
+		you can using a custom class to replace the default response class CakeResponse
+		in /app/webroot/index.php configure that
+	Dealing with content types:
+		CakeResponse::type(mixed $types)
+		# add a content type(non-built-in type)
+		$this->response->type(array('vcf' => 'text/v-card'));
+		# set the response Content-Type to vcard
+		# actually, you usually set Content-Type in your beforFilter()
+		$this->response->type('vcf');
+	Sending files as response:
+		CakeResponse::file($filepath)
+		Usage:
+			$this->response->file('filepath');
+			# return response object ot prevent controller from trying to
+			# render a view
+			return $this->response;
+		Content-Type:
+			CakePHP will send proper content type header if it's a know file 
+			type listed in CakeResponse::_mimeTypes, you can add new types prior 
+			to calling file() by using the response->type()
+		Force download:
+			force a file to be download instead of being displayed in the browser
+			$this->response->file('filepath',
+				array('download' => true, 'name' => 'foo')
+			)
+	Sending a string as file:
+		example:
+			public function sendIcs(){
+				$icsString = $this->Calendar->generateIcs();
+				$this->resposne->body($icsString);
+				$this->response->type('ics');
+				# force file download
+				$this->response->download('filename_for_download.ics');
+				# return response object to prevent controller from trying render view
+				return $this->response;
+			}
+	Sending headers:
+		# set a single header
+		$this->response->header('Location', 'http://example.com');
+		# set multiple headeres
+		$this->response->header(array(
+			'Location' => 'http://example.com',
+			'X-Extra' => 'my header'
+		));
+		$this->responnse->header(array(
+			'WWW-Authenticate: Netotiate',
+			'Content-Type: application/pdf'
+		))
+	Interacting with browser cache:
+		Disable cache controller action results
+			$this->response->disableCache()
+		Tell client cache response
+			$this->response->cache('-1 minute', '+5 days');
+			Last-Modified is -1 minute
+			Expires and max-age are +5 days
+		Cache-Control header:
+			# all or part of it is intended for a single user
+			Cache-Control: private, max-age=3600, must-revalidate
+			# share with users
+			Cache-Control: public, max-age=3600, must-revalidate
+			$this->response->sharable(true, 3600); # public
+		Expires header:
+			$this->response->expires('+5 days');
+			this method also accept a DateTime instance or any string that can be parsed
+			by the DateTime
+		Etag header:
+			Etag is a string that uniquely indentifies the requested resource, it is
+			very much like a checksum of a file, caching will compare checksums to tell
+			whether they match or not
+			public function index(){
+				$articles = $this->Article->find('all');
+				$this->response->etag($this->Article->generateHash($articles));
+				# if file is not modified, return response
+				if($this->response->checkNotModified($this->request)){
+					return $this->response;
+				}
+			}
+		Last-Modified header:
+			public function view(){
+				$article = $this->Article->find('first');
+				$this->response->modified($article['Article']['modified']);
+				if($this->response->checkNotModified($this->request)){
+					return $this->response;
+				}
+			}
+	Vary header:
+		In some cases you might want to serve different content using the same URL
+		$this->response->vary('User-Agent');
+		$this->response->vary('Accept-Encoding', 'User-Agent');
+		$this->resoonse->vary('Accept-Language');
+	Testing:
+		example:
+		public function test_something(){
+			$this->controller->response = $this->getMock('CakeResponse');
+			$this->controller->response->expects($this->once())->method('header');
+		}
+	Methods interface:
+		CakeResponse::header($header=null, $value=null)
+			allows you to directly set one or more headers to be sent with response
+		CakeResponse::location($url=null)
+			allows you to directly set redirect location header to be sent with response
+			# get current location header
+			$location = $this->response->location();
+			# set the redirect location
+			$this->response->location('http://example.com');
+		CakeResponse::charset($charset=null)
+			sets the charset that will be used in the response
+		CakeResponse::type($contentType=null)
+			sets the content type of the response, you can either use a known content
+			type alias or the full of the content type name
+		CakeResponse::cache($since, $time='+1 days')
+			allows you to set caching headers in the response
+		CakeResponse::disableCache()
+			sets the headers to disable client caching for the response
+		CakeResponse::sharable(boolean $public, $time)
+			sets the Cache-Control header to be either public or private and optionally
+			sets a max-age directive of the resource
+		CakeResponse::expires($time=null)
+			allows to set the Expires header
+		CakeResponse::etag($tag=null, $weak=false)
+			sets the Etag header to uniquely identify a response resource
+		CakeResponse::modified($time=null)
+			sets the Last-Modified header to a specific date and time in the correct format
+		CakeResponse::checkNotModified(CakeRequest $request)
+			compares the cache headers for the request object with the cache header from
+			response and determines if it can still be considered fresh, if so, deletes
+			the response content, and sends the 304 Not-Modified header
+		CakeResponse::compress()
+			turns on gzip compression for the request
+		CakeResponse::download($filename)
+			allows you to send a response as an attachment,and to set its filename
+		CakeResposne::statuscode($code=null)
+			allows you to set the status code of response
+		CakeResponse::body($content=null)
+			set the content body of the response
+		CakeResponse::send()
+			once you are done creating a response, calling send() will send all the
+			set headers and the body, this is done automatically at the end of each
+			request by Dispatcher
+		CakeResponse::file($path, $options=array())
+			allows you to set the Content-Disposition header of a file either to display
+			or to download
+7. Scaffold
+	Application scaffolding is a technique that allows a developer to define and create
+		a basic application that can create, retrieve, update and delete objects
+	Scaffolding in CakePHP also allows developers to define how objects are related to
+		each other, and to create and break those link
+	It's a loose structure you throw up real quick during the beginning of a project in
+		order to get up and going, if you find yourself really wanting to customize your 
+		logic and your views, it's time to pull your scaffolding down in order to 
+		write some code
+	Usage just three step:
+		/app/Controller/CategoriesController.php
+		class CategoriesController extends AppController{
+			public $scaffold;
+		}
+		/app/Model/Category.php
+		class Category extends AppModel{
+		}
+		create table categories
+		above done, http://localhost/categories is avaiable
+	Associcate models:
+		/app/Controller/GroupsController.php
+		class GroupsController extends AppController{
+			public $scaffold;
+		}
+		/app/Controller/UserController.php
+		class UserController extends AppController{
+			public $scaffold;
+		}
+		/app/Model/User.php
+		class User extends AppModel{
+			public $belongsTo = 'Group';
+		}
+		/app/Model/Group.php
+		class Group extends AppModel{
+			public $hasMany = 'User';
+		}
+		data table users should has field group_id and references groups(id)
+	Display Field:
+		class User extends AppModel{
+			public $displayField = 'first_name';
+		}
+	Admin interface with scaffolding:
+		enable admin routing 
+			/app/Config/core.php Configure::write('Routing.prefixes', array('admin'))
+		generate admin with scaffolding
+			public $scaffold = 'admin';
+		you will now be able to access admin, http://localhost/admin
+	Customizing scaffold views:
+		customize scaffold views for a sepcific controller
+		/app/View/Posts/scaffold.index.ctp
+		/app/View/Posts/scaffold.form.ctp
+		customize scaffold views for all controllers
+		/app/View/Scaffolds/index.ctp
+		/app/View/Scaffolds/view.ctp
+8. PagesController
+	CakePHP ships with a default controller PagesController.php, this is a simple and 
+		optional controller for serving up static content
+	/app/View/pages/about_us.ctp => http://localhost/pages/about_us
+	you can find copy in /lib/Cake/Console/Templates/skel/Controller/PagesController.php
+9. Component
+	components are packages of logic that are shared between controllers, if you find
+	yourself wanting to copy and paste things between controllers, you might consider
+	wrapping some functionality in a component
+	Built-in Components:
+		class PaginatorComponent(ComponentCollection $colletion, array $settings=array())
+			example:
+			class PostsController extends AppController{
+				# using Paginator Component
+				public $components = array('Paginator');
+				# pagination query conditions
+				public $paginate = array(
+					# filter fields
+					'fields' => array('Post.id', 'Post.created'),
+					# limit the number of results
+					'limit' => 25,
+					# the results' order by what
+					'order' => array(
+						'Post.title' => 'asc'
+					)
+				)
+			}
+			Other keys can be included $paginate: conditions,page,contain,joins,recursive
+			Multiple models
+				class PostsController extends AppController{
+					public $paginate = array(
+						'Post' => array(...),
+						'Author' => array(...)
+					)
+				}
+			Fetch pagination results
+				$this->Paginator->settings = $this->paginate;
+				# similar to findAll(), but fetches paged results
+				$data = $this->Paginator->paginate('Article');
+				# fetch results by conditions
+				$data = $this->Paginator->paginate(
+				'Article',
+				array('Article.title LIKE' => 'a%')
+				);
+				# or $this->Paginator->settings = array(
+				#	'conditions' => array('Article.title LIKE'=>'a%'),
+				#	'limit' => 10
+				# );
+				$this->set('data', $data);
+			Override paginate and paginateCount
+			Control which fields used for ordering:
+				$this->Paginator->paginate('Article', array('Article.title LIKE' => 'a%'),
+					array('title','slug'))
+				order by title and slug
+			Limit the maxinum number of rows
+				cakephp default limit 100
+				public $paginate = array('maxLimit' => 10)
+			Pagination with GET parameters
+				public $paginate = array(
+					'paramType' => 'querystring'
+				)
+				or $this->Paginator->settings['paramType'] = 'querystring'
+			Out of range page requests
+				PaginatorComponent will throw a NotFoundException when trying to access
+				a non-existent page
+				public function index(){
+					try{
+						$this->Paginator->paginate();
+					}catch(NotFoundException $e){
+						# do-something here like redirecting to first or last page
+						# $this->request->params['paging'] will give you required info.
+					}
+				}
+			AJAX Pagination
+				may be used JsHelper and RequestHandlerComponent
+		class SessionComponent(ComponentCollection $collection, array $settings=array())
+			The dot notation is used for all Session component methods wherever a name/key used
+			SessionComponent::write($name, $value)
+				$this->Session->write('Person.eyeColor', 'Green')
+			SessionComponent::read($name)
+				$this->Session->read('Person.eyeColor')
+			SessionComponent::check($name)
+				$this->Session->check($name)
+				if had set $_SESSION[$name] return true
+			SessionComponent::delete($name)
+				$this->Session->delete('Person.eyeColor')
+				$this->Session->delete('Person')
+			SessionComponent::destroy()
+				$this->Session->destroy()
+				delete the session cookie and all session data stored in the temporary file
+			SessionComponent::setFlash(string $message, string $element='default',
+				array $params=array(), string $key='flash')
+				Display a one-time notification message to the user after processing
+				a form or acknowledging data
+					# in the controller
+					$this->Session->setFlash('You stuff has been saved')
+					# in the view
+					echo $this->Session->flash('You stuff has been saved')
+					#  differene kinds of flash message, error and positive notification
+					$this->Session->setFlash('Somethin bad','default',array(),'bad')
+					$this->Session->setFlash('something good','default',array(),'good')
+					# which element(/app/View/Elements) should be used to render message
+					$this->Session->setFlash('something','flash_custome')
+					# $params allows to pass additional view variables
+					$this->Session->setFlash('some-message',
+						'default',array('class' => 'example_class'),'good'
+					)
+					# use  a plugin for render
+					$this->Session->setFlash('message','flash_no_spam',
+						array('plugin' => 'Comment')
+						# will use /app/Plugin/Comment/View/Elements/flash_no_spam.ctp
+					)
+		class AuthComponent(ComponentCollection $collection, array $settings=array())
+			In CakePHP, there are several built-in ways of authenticating users stored:
+				FormAuthenticate: allows you authenticate users based on form POST data
+				BasicAuthenticate: allows you authenticate user using Basic HTTP
+				DigestAuthenticate:allows you authenticate users using Digest HTTP
+			which authenticate should you using?
+				generally you use FormAuthenticate
+				if you build an API or webservice, you should use basic authenticate or digest
+				authenticate, the basic authenticate is un-suitable for applications without
+				SSL, the digest authenticate is suitable for application without SSL
+			Configuring Authentication
+				you can configure one or many handlers for authentication, using multiple
+				handlers allows you to support different ways of logging users in
+				you can configure authentication handlers in your controller's beforFilter
+				or in the $components array
+				#basic setup, set FormAuthenticate
+				$this->Auth->authenticate = array('Form')
+				#pass settings in
+				$this->Auth->authenticate = array(
+					'Basic' => array('userModel' => 'Member'),
+					'Form' => array('userModel' => Member)
+				)
+				or $this->Auth->authenticate = array(
+					AuthComponent::ALL => array('userModel' => 'Member'),
+					# any settings passed to a specified authentication object will override
+					# the matching key in the 'all' key
+					'Basice',
+					'Form'
+				)
+				configuration keys:
+					fields: the fields to use to identify a user by
+					userModel: the model name of the User, default to User
+					scope: additional conditions to use when looking up and authenticating users
+							, i.e. array('User.is_active' => 1)
+					contain: containable options for when the user record is loaded
+					passwordHasher: password hasher class, default to Simple
+				# pass settings in $component array
+				public $component = array(
+				'Auth' => array(
+						# the other Auth configure
+						'loginAction' => array(
+							'controller' => 'users',
+							'action' => 'login',
+							'plugin' => 'users'
+						),
+						'authError' => 'Did you really think you are allowed to see that?',
+						# the configure for Auth
+						'authenticate' => array(
+								'Form' => array(
+										'fields' => array('username' => 'email')
+									)
+							)
+					)
+				)
+				the login function:
+				public function login(){
+					if($this->request->is('post')){
+						if($this->Auth->login()){
+							return $this->redirect($this->Auth->redirectUrl());
+						}
+						else{
+							$this->Session->setFlash(
+								__('Username or password is incorrect'),
+								'default',
+								array(),
+								'auth'
+							);
+						}
+					}
+				}
+				
+
+				
+
