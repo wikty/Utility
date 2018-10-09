@@ -1,0 +1,15 @@
+﻿  stdafx.cpp
+  ConsoleApplication1.cpp
+e:\programs\opencv3\build\install\include\opencv2\core\mat.hpp(1965): warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+e:\programs\opencv3\build\install\include\opencv2\core\persistence.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+e:\programs\opencv3\build\install\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+e:\programs\opencv3\build\install\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+c:\users\djj\desktop\projects\c++\consoleapplication1\consoleapplication1\consoleapplication1.cpp(132): warning C4804: '<': unsafe use of type 'bool' in operation
+c:\users\djj\desktop\projects\c++\consoleapplication1\consoleapplication1\consoleapplication1.cpp(236): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\djj\desktop\projects\c++\consoleapplication1\consoleapplication1\consoleapplication1.cpp(239): warning C4244: '=': conversion from 'double' to 'unsigned char', possible loss of data
+c:\users\djj\desktop\projects\c++\consoleapplication1\consoleapplication1\consoleapplication1.cpp(242): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\djj\desktop\projects\c++\consoleapplication1\consoleapplication1\consoleapplication1.cpp(247): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\djj\desktop\projects\c++\consoleapplication1\consoleapplication1\consoleapplication1.cpp(294): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\djj\desktop\projects\c++\consoleapplication1\consoleapplication1\consoleapplication1.cpp(300): warning C4305: '*=': truncation from 'double' to 'float'
+  ConsoleApplication1.vcxproj -> C:\Users\djj\Desktop\projects\C++\ConsoleApplication1\Debug\ConsoleApplication1.exe
+  ConsoleApplication1.vcxproj -> C:\Users\djj\Desktop\projects\C++\ConsoleApplication1\Debug\ConsoleApplication1.pdb (Full PDB)
